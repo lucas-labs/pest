@@ -1,0 +1,29 @@
+line-length = 100
+tab-size = 4
+output-format = "text"
+
+
+select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
+
+ignore = [
+    "A",         # flake8-builtins https://beta.ruff.rs/docs/settings/#flake8-builtins
+    "ANN101",    # missing-type-self https://beta.ruff.rs/docs/rules/missing-type-self/
+    "ANN102",    # missing-type-cls https://beta.ruff.rs/docs/rules/missing-type-cls/
+    "ANN401",    # any-type https://beta.ruff.rs/docs/rules/any-type/
+    # "ANN204",    # missing-return-type https://beta.ruff.rs/docs/rules/missing-return-type/
+    # "E402",      # module-import-not-at-top-of-file https://beta.ruff.rs/docs/rules/module-import-not-at-top-of-file/
+    # "F401"       # unused-import https://beta.ruff.rs/docs/rules/unused-import/
+]
+
+[flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "single"
+
+
+[flake8-annotations]
+mypy-init-return = true
+
+
+[extend-per-file-ignores]
+"__init__.py" = ["F401"]

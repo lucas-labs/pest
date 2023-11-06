@@ -1,0 +1,56 @@
+{
+    "files.exclude": {
+        // 📙 sub-libs
+        // "tools": true,
+
+        // ⚙️ config
+        // "**/**/*.code-workspace": true,
+        // // "pyproject.toml": true,
+        // "poetry.lock": true,
+
+        // // 🧼 linters & styles
+        // // ".ruff.toml": true,
+        // "coco.yml": true,
+        // ".env": true,
+
+        // // 🧪 tests
+        // "tests": true,
+
+        // // 🗑️
+        // ".venv": true,
+        // ".vscode": true,
+        // ".ruff_cache": true,
+        // "**/**/__pycache__": true,
+        // ".git": true,
+        // ".gitignore": true,
+
+        // // 📝 docs
+        // "**/**/README.md": true
+    },
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.organizeImports": true
+        },
+    },
+    "autopep8.args": [
+        "--max-line-length=100",
+        // "--ignore E402"
+    ],
+
+    "evenBetterToml.schema.associations": {
+        "\\.?coco(\\.yml|\\.yaml|rc)$": "https://gist.githubusercontent.com/lucas-labs/0cb798e4b6c7fc720c7111c40d215c21/raw/cb068efd7d73794e738a5240a80f0cb729883553/coco-schema.json"
+    },
+
+    "python.testing.pytestArgs": [
+        "app",
+        "--verbose",
+        "--no-header",
+        "--import-mode=importlib",
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
+}
