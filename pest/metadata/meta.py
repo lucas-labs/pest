@@ -13,7 +13,7 @@ GenericValue = TypeVar('GenericValue')
 
 
 def get_meta(
-    callable: Callable[..., Any],
+    callable: Callable[..., Any] | type | object,
     *,
     type: type[DataType] = dict[str, Any]
 ) -> DataType:

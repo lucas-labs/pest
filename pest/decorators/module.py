@@ -3,6 +3,7 @@ from typing import Callable, TypedDict, TypeVar, Unpack
 from ..decorators._common import meta_decorator
 from ..metadata.types import ModuleMeta
 from ..metadata.types.module_meta import InjectionToken, Provider
+from ..primitives.controller import Controller
 from ..primitives.module import Module
 
 Class = TypeVar('Class', bound=type)
@@ -12,6 +13,7 @@ class ModuleOptions(TypedDict, total=False):
     imports: list[type]
     providers: list[Provider]
     exports: list[InjectionToken]
+    controllers: list[type[Controller]]
 
 
 def module(**options: Unpack[ModuleOptions]) -> Callable:

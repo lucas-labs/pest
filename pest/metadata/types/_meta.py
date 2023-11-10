@@ -7,6 +7,7 @@ class MetaType(str, Enum):
     MODULE = 'MODULE'
     INJECTABLE = 'INJECTABLE'
     CONTROLLER = 'CONTROLLER'
+    HANDLER = 'HANDLER'
 
 
 @dataclass

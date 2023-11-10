@@ -3,6 +3,8 @@ from typing import Callable, Generic, TypeAlias, TypeVar, Union
 
 from rodi import ServiceLifeStyle
 
+# if TYPE_CHECKING:
+from ...primitives.controller import Controller
 from ._meta import Meta, MetaType
 
 T = TypeVar('T')
@@ -54,3 +56,4 @@ class ModuleMeta(Meta):
     imports: list[type] | None
     providers: list[Provider] | None
     exports: list[InjectionToken] | None
+    controllers: list[type[Controller]] | None

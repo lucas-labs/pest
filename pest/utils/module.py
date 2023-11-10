@@ -7,10 +7,11 @@ if TYPE_CHECKING:
 
 
 def as_tree(
-    obj: type | tuple[str, str],
+    obj: object | tuple[str, str],
     prefix: str = '',
     is_last: bool = True,
-    with_providers: bool = True
+    with_providers: bool = True,
+    with_controllers: bool = True,
 ) -> str:
     """returns a tree representation of the module and its submodules"""
     if isinstance(obj, tuple):
@@ -18,7 +19,7 @@ def as_tree(
         if t == 'provider':
             obj_name = '│' + c(f'{" ○ " if prefix else ""}{n}', color='magenta')
         else:
-            obj_name = '│' + c(f'{" ○ " if prefix else ""}{n}', color='blue')
+            obj_name = '│' + c(f'{" □ " if prefix else ""}{n}', color='blue')
     else:
         obj_name = f'{"├─ " if prefix else ""}{obj.__class__.__name__}'
 
@@ -37,6 +38,14 @@ def as_tree(
             provider_name = __get_provider_name(provider)
             result += as_tree(
                 ('provider', provider_name), prefix, i == len(providers) - 1
+            )
+
+    if with_controllers:
+        controllers = getattr(obj, 'controllers', [])
+        for i, controller in enumerate(controllers):
+            controller_name = controller.__name__
+            result += as_tree(
+                ('controller', controller_name), prefix, i == len(controllers) - 1
             )
 
     imports = getattr(obj, 'imports', [])

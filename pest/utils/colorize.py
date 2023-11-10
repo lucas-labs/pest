@@ -106,8 +106,11 @@ def c(
     color: Color | None = None,
     on_color: Highlight | None = None,
     attrs: Iterable[Attribute] | None = None,
+    no_color: bool = False,
 ) -> str:
     result = str(text)
+    if no_color:
+        return result
 
     fmt_str = '\033[%dm%s'
     if color is not None:

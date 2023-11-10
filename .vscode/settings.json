@@ -5,27 +5,29 @@
 
         // ⚙️ config
         // "**/**/*.code-workspace": true,
-        // // "pyproject.toml": true,
-        // "poetry.lock": true,
+        // "pyproject.toml": true,
+        "poetry.lock": true,
+        "poetry.toml": true,
 
-        // // 🧼 linters & styles
-        // // ".ruff.toml": true,
-        // "coco.yml": true,
-        // ".env": true,
+        // 🧼 linters & styles
+        // ".ruff.toml": true,
+        "coco.yml": true,
+        ".env": true,
 
-        // // 🧪 tests
+        // 🧪 tests
         // "tests": true,
 
-        // // 🗑️
-        // ".venv": true,
-        // ".vscode": true,
-        // ".ruff_cache": true,
-        // "**/**/__pycache__": true,
-        // ".git": true,
-        // ".gitignore": true,
+        // 🗑️
+        ".venv": true,
+        ".vscode": true,
+        ".ruff_cache": true,
+        "**/**/__pycache__": true,
+        ".git": true,
+        ".gitignore": true,
+        ".pytest_cache": true,
 
-        // // 📝 docs
-        // "**/**/README.md": true
+        // 📝 docs
+        "**/**/README.md": true
     },
     "[python]": {
         "editor.formatOnSave": true,
@@ -44,7 +46,7 @@
     },
 
     "python.testing.pytestArgs": [
-        "app",
+        "tests",
         "--verbose",
         "--no-header",
         "--import-mode=importlib",

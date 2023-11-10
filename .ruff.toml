@@ -24,6 +24,15 @@ multiline-quotes = "single"
 [flake8-annotations]
 mypy-init-return = true
 
+[per-file-ignores]
+# ignore in tests:
+#    S101 (use of assert)
+#    ANN201 (missing type annotation)
+#    E701 (multiple statements on one line)
+"**/**/test/*.py" =  ["S101", "ANN201", "E701"]
+"**/**/tests/*.py" = ["S101", "ANN201", "E701"]
+"**/**/test_*.py" =  ["S101", "ANN201", "E701"]
+
 
 [extend-per-file-ignores]
 "__init__.py" = ["F401"]
