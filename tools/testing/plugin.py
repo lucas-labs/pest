@@ -20,9 +20,6 @@ from colorama import Fore, Style
 
 from .loader import load_test_info
 
-# if TYPE_CHECKING:
-#     from _pytest.main import Session
-
 STORAGE = {'parents': {}}
 STATUS_ICONS = {
     'passed': '✓',
@@ -246,12 +243,14 @@ def pytest_configure() -> None:
     import importlib
 
     import _pytest
+    import _pytest.terminal
+
     _pytest.terminal.TerminalReporter \
-        .pytest_runtest_logstart = logstart_replacer
+        .pytest_runtest_logstart = logstart_replacer  # type: ignore
     _pytest.terminal.TerminalReporter \
         .pytest_runtest_logreport = report_replacer
     _pytest.terminal.TerminalReporter \
-        .pytest_runtest_logfinish = logend_replacer
+        .pytest_runtest_logfinish = logend_replacer  # type: ignore
     _pytest.terminal.TerminalReporter \
         .summary_failures = summary_failures_replacer
     _pytest.terminal.TerminalReporter \

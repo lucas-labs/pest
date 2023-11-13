@@ -33,6 +33,7 @@ def load_class(module_name: str, class_name: str) -> str:
     module = MODULE_CACHE[module_name]
 
     text = class_name
+    module_class = None
     if class_name and hasattr(module, class_name):
         module_class = getattr(module, class_name)
         if hasattr(module_class, '__doc__') and module_class.__doc__:

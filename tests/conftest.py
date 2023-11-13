@@ -4,7 +4,8 @@ import pytest
 
 from pest.decorators.controller import controller
 from pest.decorators.module import module
-from pest.primitives.module import Module, setup_module
+from pest.primitives.module import Module
+from pest.primitives.module import setup_module as _setup_module
 
 
 class ProviderFoo:
@@ -34,14 +35,14 @@ class ParentMod:
     pass
 
 
-@controller('/')
-class TestController:
+@controller('')
+class FooController:
     baz: ProviderBaz
     bar: ProviderBar
 
 
 @module(
-    controllers=[TestController],
+    controllers=[FooController],
     providers=[ProviderFoo, ProviderBar, ProviderBaz],
 )
 class ModuleWithController:
@@ -50,14 +51,14 @@ class ModuleWithController:
 
 @pytest.fixture()
 def mod() -> Mod:
-    return cast(Mod, setup_module(Mod))
+    return cast(Mod, _setup_module(Mod))
 
 
 @pytest.fixture()
 def parent_mod() -> Module:
-    return setup_module(ParentMod)
+    return _setup_module(ParentMod)
 
 
 @pytest.fixture()
 def module_with_controller() -> Module:
-    return setup_module(ModuleWithController)
+    return _setup_module(ModuleWithController)

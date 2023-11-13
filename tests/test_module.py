@@ -4,13 +4,14 @@ from rodi import Container
 
 from pest.decorators.module import Module, module
 from pest.metadata.meta import META_KEY
-from pest.metadata.types._meta import MetaType
+from pest.metadata.types._meta import PestType
+from pest.primitives.common import status
 
 # aliased porque setup_module es un builtin de pytest
-from pest.primitives.module import ModuleStatus
+from pest.primitives.module import Status
 from pest.primitives.module import setup_module as _setup_module
 
-from .conftest import Mod, ParentMod, ProviderBar, ProviderBaz, ProviderFoo, TestController
+from .conftest import FooController, Mod, ParentMod, ProviderBar, ProviderBaz, ProviderFoo
 
 
 def test_module_inheritance():
@@ -43,7 +44,7 @@ def test_module_meta():
     # check it has the right keys
     assert isinstance(meta, dict)
     assert 'meta_type' in meta
-    assert meta['meta_type'] == MetaType.MODULE
+    assert meta['meta_type'] == PestType.MODULE
 
     assert 'imports' in meta
     assert isinstance(meta['imports'], list)
@@ -73,7 +74,7 @@ def test_module_setup():
     assert isinstance(mod, Module)
 
     # check it's initialized
-    assert mod.get_status() == ModuleStatus.INITIALIZED
+    assert status(mod) == Status.READY
 
 
 def test_module_container(mod: Mod):
@@ -116,8 +117,8 @@ def test_di_module_with_controller(module_with_controller: Module):
     """
     assert module_with_controller is not None
 
-    ctrl = module_with_controller.get(TestController)
-    assert isinstance(ctrl, TestController)
+    ctrl = module_with_controller.get(FooController)
+    assert isinstance(ctrl, FooController)
 
     baz_svc = getattr(ctrl, 'baz', None)
     bar_svc = getattr(ctrl, 'bar', None)
@@ -139,14 +140,14 @@ def test_module_with_children_setup():
     assert isinstance(parent_mod, Module)
 
     # check it's initialized
-    assert parent_mod.get_status() == ModuleStatus.INITIALIZED
+    assert status(parent_mod) == Status.READY
 
     # check it has children
     assert len(parent_mod.imports) > 0
 
     # check all children are initialized
     for child in parent_mod.imports:
-        assert child.get_status() == ModuleStatus.INITIALIZED
+        assert status(child) == Status.READY
         assert child.container is not None
         assert isinstance(child.container, Container)
 
