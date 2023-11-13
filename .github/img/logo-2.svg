@@ -2,7 +2,7 @@
   <defs>
     <style>
       .a {
-        fill: #ffb5b5;
+        fill: #060401;
       }
 
       .b {
@@ -10,11 +10,25 @@
       }
 
       .c {
-        opacity: 0.5;
+        opacity: 0.7;
         fill: url(#a);
       }
+
+      @media (prefers-color-scheme: dark) {
+        .a {
+          fill: #ffb5b5;
+        }
+
+        .b {
+          fill: #d7402b;
+        }
+
+        .c {
+          opacity: 0.8;
+        }
+      }
     </style>
-    <radialGradient id="a" cx="9.18793" cy="79.67465" r="28.65756" gradientTransform="translate(62.35376 -15.21519) scale(1 0.76856)" gradientUnits="userSpaceOnUse">
+    <radialGradient id="a" cx="72.0269" cy="49.35361" r="28.65756" gradientTransform="translate(-0.48521 8.41793) scale(1 0.76856)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#d7402b" stop-opacity="0.5"/>
       <stop offset="0.16457" stop-color="#d7402b" stop-opacity="0.4743"/>
       <stop offset="0.37401" stop-color="#d7402b" stop-opacity="0.40082"/>
@@ -33,5 +47,5 @@
     </g>
     <path class="b" d="M66.68136,46.95146c.68342,2.43288,3.09937,3.04726,5.94817,2.51828,2.91216-.54075,4.13481-2.35886,3.85812-4.5345-.35227-2.76978-3.25653-2.77594-5.858-2.31479C67.97812,43.09049,66.03892,44.51863,66.68136,46.95146Z"/>
   </g>
-  <ellipse class="c" cx="71.54169" cy="46.01942" rx="28.65756" ry="22.02501" transform="matrix(0.91759, -0.39754, 0.39754, 0.91759, -12.39841, 32.2332)"/>
+  <ellipse class="c" cx="71.54169" cy="46.34906" rx="28.65756" ry="22.02501" transform="matrix(0.91759, -0.39754, 0.39754, 0.91759, -12.52945, 32.26036)"/>
 </svg>
