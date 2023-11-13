@@ -4,7 +4,7 @@ from typing import Any, Sequence
 
 from fastapi import Response
 
-from ._meta import Meta, MetaType
+from ._meta import Meta, PestType
 
 
 class HttpMethod(str, Enum):
@@ -21,7 +21,7 @@ class HttpMethod(str, Enum):
 
 @dataclass
 class HandlerMeta(Meta):
-    meta_type: MetaType = field(default=MetaType.HANDLER, init=False)
+    meta_type: PestType = field(default=PestType.HANDLER, init=False)
     methods: list[str]
     path: str
     response_model: Any | None

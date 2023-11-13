@@ -3,7 +3,7 @@ from typing import Any, Callable, Sequence, TypedDict, TypeVar, Unpack
 
 from pest.decorators._common import meta_decorator
 
-from ..metadata.types import ControllerMeta
+from ..metadata.types.controller_meta import ControllerMeta
 from ..primitives.controller import Controller
 
 Class = TypeVar('Class', bound=type)
@@ -28,8 +28,7 @@ def controller(
             'prefix': prefix,
             **options,
         },
-        base=Controller,
-        singleton=True
+        base=Controller
     )
 
 

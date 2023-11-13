@@ -1,9 +1,4 @@
-from typing import TYPE_CHECKING
-
 from .colorize import c
-
-if TYPE_CHECKING:
-    pass
 
 
 def as_tree(

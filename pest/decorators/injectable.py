@@ -1,14 +1,14 @@
 from abc import ABC
 from typing import Callable, TypedDict, TypeVar, Unpack
 
-from ..metadata.types import InjectableMeta, MetaType
+from ..metadata.types import InjectableMeta, PestType
 from ._common import meta_decorator
 
 Cls = TypeVar('Cls', bound=type)
 
 
 class Injectable(ABC):
-    __pest_object_type__: MetaType = MetaType.INJECTABLE
+    __pest_object_type__: PestType = PestType.INJECTABLE
 
 
 class InjectableOptions(TypedDict, total=False):

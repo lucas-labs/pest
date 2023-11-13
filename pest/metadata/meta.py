@@ -15,12 +15,15 @@ GenericValue = TypeVar('GenericValue')
 def get_meta(
     callable: Callable[..., Any] | type | object,
     *,
-    type: type[DataType] = dict[str, Any]
+    type: type[DataType] = dict[str, Any],
+    raise_error: bool = True
 ) -> DataType:
     """🐀 ⇝ get pest `metadata` from a `callable`"""
 
     if not hasattr(callable, META_KEY):
-        raise ValueError(f'No metadata for {callable}')
+        if raise_error:
+            raise ValueError(f'No metadata for {callable}')
+        return cast(DataType, {})
 
     meta = getattr(callable, META_KEY)
 
@@ -39,7 +42,7 @@ def get_meta_value(
 ) -> GenericValue:
     """🐀 ⇝ get pest metadata `value` from a `callable` by `key`"""
 
-    meta = get_meta(callable)
+    meta = get_meta(callable, raise_error=False)
     return cast(type, meta.get(key, default))
 
 

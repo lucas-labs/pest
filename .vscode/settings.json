@@ -18,8 +18,9 @@
         // "tests": true,
 
         // 🗑️
+        ".patches": true,
         ".venv": true,
-        ".vscode": true,
+        // ".vscode": true,
         ".ruff_cache": true,
         "**/**/__pycache__": true,
         ".git": true,
@@ -54,5 +55,8 @@
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.exclude": [
+        "**/.patches/**/",
+    ]
 }

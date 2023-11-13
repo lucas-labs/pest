@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Protocol
 
 
-class MetaType(str, Enum):
+class PestType(str, Enum):
     MODULE = 'MODULE'
     INJECTABLE = 'INJECTABLE'
     CONTROLLER = 'CONTROLLER'
@@ -12,4 +12,4 @@ class MetaType(str, Enum):
 
 @dataclass
 class Meta(Protocol):
-    meta_type: MetaType
+    meta_type: PestType

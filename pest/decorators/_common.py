@@ -4,7 +4,7 @@ from typing import Any, Callable, Mapping, TypeVar
 from dacite import Config, from_dict
 
 from ..metadata.meta import inject_metadata
-from ..metadata.types import Meta
+from ..metadata.types._meta import Meta
 
 T = TypeVar('T')
 K = TypeVar('K')
@@ -111,3 +111,11 @@ def meta_decorator(
         return use_base(base)(cls) if base is not None else cls
 
     return wrapper
+
+
+def compose_decorators(*decs: Callable[..., Any]) -> Callable[..., Any]:
+    def deco(f: Callable[..., Any]) -> Callable[..., Any]:
+        for dec in reversed(decs):
+            f = dec(f)
+        return f
+    return deco

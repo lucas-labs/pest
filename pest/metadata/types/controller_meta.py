@@ -4,12 +4,12 @@ from typing import Any, Callable, Sequence
 
 from starlette.types import Lifespan
 
-from ._meta import Meta, MetaType
+from ._meta import Meta, PestType
 
 
 @dataclass
 class ControllerMeta(Meta):
-    meta_type: MetaType = field(default=MetaType.CONTROLLER, init=False)
+    meta_type: PestType = field(default=PestType.CONTROLLER, init=False)
     prefix: str
     tags: list[str | Enum] | None
     redirect_slashes: bool | None

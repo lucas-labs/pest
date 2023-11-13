@@ -1,14 +1,13 @@
-from abc import ABC
-from enum import Enum
 from typing import Any, TypeVar
 
+from fastapi import APIRouter
 from rodi import ActivationScope, Container, ServiceLifeStyle
 
 import pest.utils.module as module_utils
+from pest.metadata.types._meta import PestType
 
 from ..exceptions.base import PestException
 from ..metadata.meta import get_meta
-from ..metadata.types._meta import MetaType
 from ..metadata.types.module_meta import (
     ClassProvider,
     ExistingProvider,
@@ -18,13 +17,9 @@ from ..metadata.types.module_meta import (
     Provider,
     ValueProvider,
 )
-from .controller import Controller
-
-
-class ModuleStatus(str, Enum):
-    NOT_INITIALIZED = 'NOT_INITIALIZED'
-    INITIALIZING = 'INITIALIZING'
-    INITIALIZED = 'INITIALIZED'
+from .common import PestPrimitive
+from .controller import Controller, setup_controller
+from .types.status import Status
 
 
 def setup_module(
@@ -48,9 +43,7 @@ def setup_module(
 T = TypeVar('T')
 
 
-class Module(ABC):
-    __pest_object_type__: MetaType = MetaType.MODULE
-    __status__: ModuleStatus
+class Module(PestPrimitive):
     __imported__providers__: dict[InjectionToken, 'Module']
     imports: list['Module']
     container: Container
@@ -58,19 +51,32 @@ class Module(ABC):
     exports: list[InjectionToken]
     controllers: list[type[Controller]]
 
+    @property
+    def routers(self) -> list[APIRouter]:
+        return [
+            controller.__router__
+            for controller in self.controllers
+            if controller.__router__ is not None
+        ]
+
+    @classmethod
+    @property
+    def __pest_object_type__(cls) -> PestType:
+        return PestType.MODULE
+
     def __init__(self) -> None:
-        self.__status__ = ModuleStatus.NOT_INITIALIZED
+        self.__class_status__ = Status.NOT_SETUP
         self.__imported__providers__ = {}
         self.imports = []
         self.providers = []
         self.exports = []
-        self.container = Container()
+        self.container = Container(strict=False)
         self.controllers = []
 
     def __setup_module__(self) -> None:
-        if self.__status__ != ModuleStatus.NOT_INITIALIZED:
+        if self.__class_status__ != Status.NOT_SETUP:
             return
-        self.__status__ = ModuleStatus.INITIALIZING
+        self.__class_status__ = Status.SETTING_UP
 
         # get module metadata
         meta: ModuleMeta = get_meta(self.__class__, type=ModuleMeta)
@@ -91,6 +97,7 @@ class Module(ABC):
 
         # register controllers in the di container
         for controller in self.controllers:
+            setup_controller(controller, self)
             self.register(controller)
 
         # register providers exported by child modules
@@ -101,7 +108,7 @@ class Module(ABC):
                 ] = imported_module
 
         # we're done
-        self.__status__ = ModuleStatus.INITIALIZED
+        self.__class_status__ = Status.READY
 
     def register(self, provider: Provider) -> None:
         match provider:
@@ -136,7 +143,8 @@ class Module(ABC):
         if token in self.__imported__providers__:
             return self._get_from_imported(token, scope=scope)
 
-        return self.container.resolve(token, scope=scope)
+        x = self.container.resolve(token, scope=scope)
+        return x
 
     def _get_from_imported(
         self,
@@ -147,6 +155,3 @@ class Module(ABC):
 
     def __str__(self) -> str:
         return module_utils.as_tree(self)
-
-    def get_status(self) -> ModuleStatus:
-        return self.__status__
