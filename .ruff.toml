@@ -2,7 +2,6 @@ line-length = 100
 tab-size = 4
 output-format = "text"
 
-
 select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
 
 ignore = [
@@ -23,6 +22,8 @@ multiline-quotes = "single"
 
 [flake8-annotations]
 mypy-init-return = true
+
+
 
 [per-file-ignores]
 # ignore in tests:
