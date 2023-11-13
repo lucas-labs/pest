@@ -28,7 +28,7 @@
         ".pytest_cache": true,
 
         // 📝 docs
-        "**/**/README.md": true
+        // "**/**/README.md": true
     },
     "[python]": {
         "editor.formatOnSave": true,
