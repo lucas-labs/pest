@@ -20,7 +20,7 @@ from fastapi.utils import (
 from starlette.responses import JSONResponse, Response
 from starlette.routing import BaseRoute
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ...primitives.controller import Controller
 
 
@@ -110,9 +110,6 @@ class PestRouter(APIRouter):
             openapi_extra=openapi_extra,
             generate_unique_id_function=generate_unique_id_function,
         )
-
-        if alternate_path == path:
-            return
 
         super().add_api_route(
             alternate_path,

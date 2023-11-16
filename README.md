@@ -1,11 +1,14 @@
 <p align="center">
-  <img width="250" src="./.github/img/logo.svg">
+  <img width="150" src="./.github/img/logo.svg">
 </p>
+<br/>
 
 <p align="center">
-  <img width="250" src="./.github/img/logo-2.svg">
-</p>
-
-<p align="center">
-  <img width="250" src="./.github/img/logo-3.svg">
+<strong>
+<code>pest = fastapi + rodi + mvc</code>
+<br/><br/>
+🐀
+<br/><br/>
+Python library for building modularized API's. Inspired by NestJS.
+</strong>
 </p>

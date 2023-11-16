@@ -9,7 +9,7 @@ from fastapi.routing import APIRoute
 from ..metadata.types.handler_meta import HandlerMeta
 from ..utils.functions import clean_dict
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .controller import Controller
 
 HandlerFn: TypeAlias = Callable[..., Any]
@@ -18,10 +18,15 @@ HandlerTuple: TypeAlias = tuple[HandlerFn, HandlerMeta]
 
 def setup_handler(cls: type['Controller'], handler: HandlerTuple) -> APIRoute:
     """🐀 ⇝ sets up a request handler"""
-    from ..decorators.handler import HandlerOptions
+    from ..decorators.dicts.handler_dict import HandlerMetaDict
     handler_fn, handler_meta = handler
-    meta_dict = clean_dict(asdict(handler_meta), HandlerOptions)
-    route = APIRoute(endpoint=handler_fn, path=handler_meta.path, **meta_dict)
+    meta_dict = clean_dict(asdict(handler_meta), HandlerMetaDict)
+    route = APIRoute(
+        endpoint=handler_fn,
+        path=handler_meta.path,
+        methods=handler_meta.methods,
+        **meta_dict
+    )
     _patch_route_signature(cls, route)
 
     return route

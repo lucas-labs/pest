@@ -1,4 +1,4 @@
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar, cast
 
 from fastapi import APIRouter
 from rodi import ActivationScope, Container, ServiceLifeStyle
@@ -18,12 +18,37 @@ from ..metadata.types.module_meta import (
     ValueProvider,
 )
 from .common import PestPrimitive
-from .controller import Controller, setup_controller
+from .controller import Controller, router_of, setup_controller
 from .types.status import Status
 
 
+def parent_of(module: 'Module') -> Optional['Module']:
+    """returns the parent module of a given module"""
+    if not isinstance(module, Module):
+        raise PestException(
+            f'{module.__name__} is not a module.',
+            hint=f'decorate `{module.__name__}` with the `@module` decorator '
+            '(or one of its aliases)'
+        )
+
+    return module.__parent_module__
+
+
+def contained_in(module: 'Module') -> list[tuple[InjectionToken, Any]]:
+    """returns the child modules of a given module"""
+    if not isinstance(module, Module):
+        raise PestException(
+            f'{module.__name__} is not a module.',
+            hint=f'decorate `{module.__name__}` with the `@module` decorator '
+            '(or one of its aliases)'
+        )
+
+    return list(module.container)
+
+
 def setup_module(
-    clazz: type
+    clazz: type,
+    parent_clazz: Optional['Module'] = None,
 ) -> 'Module':
     """
     functions that sets up a module. Avoids accessing the
@@ -35,8 +60,17 @@ def setup_module(
             hint=f'decorate `{clazz.__name__}` with the `@module` decorator (or one of its aliases)'
         )
 
+    if parent_clazz is not None and not isinstance(parent_clazz, Module):
+        raise PestException(
+            f'{parent_clazz.__name__} is not a module.',
+            hint=(
+                f'decorate `{parent_clazz.__name__}` with the `@module` '
+                'decorator (or one of its aliases)'
+            )
+        )
+
     module = clazz()
-    module.__setup_module__()
+    module.__setup_module__(parent_clazz)
     return module
 
 
@@ -45,6 +79,7 @@ T = TypeVar('T')
 
 class Module(PestPrimitive):
     __imported__providers__: dict[InjectionToken, 'Module']
+    __parent_module__: Optional['Module']
     imports: list['Module']
     container: Container
     providers: list[Any]
@@ -53,11 +88,7 @@ class Module(PestPrimitive):
 
     @property
     def routers(self) -> list[APIRouter]:
-        return [
-            controller.__router__
-            for controller in self.controllers
-            if controller.__router__ is not None
-        ]
+        return self.__get_routers()
 
     @classmethod
     @property
@@ -73,18 +104,16 @@ class Module(PestPrimitive):
         self.container = Container(strict=False)
         self.controllers = []
 
-    def __setup_module__(self) -> None:
+    def __setup_module__(self, parent: Optional['Module']) -> None:
         if self.__class_status__ != Status.NOT_SETUP:
             return
         self.__class_status__ = Status.SETTING_UP
 
+        if parent is not None and isinstance(parent, Module):
+            self.__parent_module__ = parent
+
         # get module metadata
         meta: ModuleMeta = get_meta(self.__class__, type=ModuleMeta)
-
-        # setup child modules
-        for child in meta.imports if meta.imports else []:
-            child_instance = setup_module(child)
-            self.imports += [child_instance]
 
         # set internal properties
         self.providers = meta.providers if meta.providers else []
@@ -99,6 +128,27 @@ class Module(PestPrimitive):
         for controller in self.controllers:
             setup_controller(controller, self)
             self.register(controller)
+
+        # register parent providers as factory providers here, so that we
+        # can have access to services provided by the parent module
+        # or globally (in the root module)
+        if parent is not None:
+            for provider, _ in contained_in(parent):
+                def resolve_from_parent() -> Any:
+                    return parent.get(cast(
+                        InjectionToken,
+                        provider
+                    ))
+
+                self.register(FactoryProvider(
+                    provide=provider,
+                    use_factory=resolve_from_parent
+                ))
+
+        # setup child modules
+        for child in meta.imports if meta.imports else []:
+            child_instance = setup_module(child, self)
+            self.imports += [child_instance]
 
         # register providers exported by child modules
         for imported_module in self.imports:
@@ -141,17 +191,26 @@ class Module(PestPrimitive):
 
     def get(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
         if token in self.__imported__providers__:
-            return self._get_from_imported(token, scope=scope)
+            return self.__get_from_imported(token, scope=scope)
 
-        x = self.container.resolve(token, scope=scope)
-        return x
+        return self.container.resolve(token, scope=scope)
 
-    def _get_from_imported(
+    def __get_from_imported(
         self,
         token: InjectionToken[T],
         scope: ActivationScope | None = None
     ) -> T:
         return self.__imported__providers__[token].get(token, scope=scope)
+
+    def __get_routers(self) -> list[APIRouter]:
+        routers = []
+        for controller in self.controllers:
+            routers += [router_of(controller)]
+
+        for child in self.imports:
+            routers += child.__get_routers()
+
+        return routers
 
     def __str__(self) -> str:
         return module_utils.as_tree(self)

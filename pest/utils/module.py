@@ -30,7 +30,7 @@ def as_tree(
     if with_providers:
         providers = getattr(obj, 'providers', [])
         for i, provider in enumerate(providers):
-            provider_name = __get_provider_name(provider)
+            provider_name = _get_provider_name(provider)
             result += as_tree(
                 ('provider', provider_name), prefix, i == len(providers) - 1
             )
@@ -50,7 +50,7 @@ def as_tree(
     return result
 
 
-def __get_provider_name(provider: type) -> str:
+def _get_provider_name(provider: type) -> str:
     injection_token = getattr(provider, 'provide', None)
 
     if injection_token is None:

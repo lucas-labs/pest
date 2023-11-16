@@ -11,7 +11,14 @@ from pest.primitives.common import status
 from pest.primitives.module import Status
 from pest.primitives.module import setup_module as _setup_module
 
-from .conftest import FooController, Mod, ParentMod, ProviderBar, ProviderBaz, ProviderFoo
+from .cfg.pest_primitives import (
+    FooController,
+    Mod,
+    ParentMod,
+    ProviderBar,
+    ProviderBaz,
+    ProviderFoo,
+)
 
 
 def test_module_inheritance():

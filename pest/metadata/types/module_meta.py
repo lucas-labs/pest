@@ -51,7 +51,7 @@ class ExistingProvider(ProviderBase, Generic[T]):
 
 @dataclass
 class ModuleMeta(Meta):
-    meta_type: PestType = field(default=PestType.MODULE, init=False)
+    meta_type: PestType = field(default=PestType.MODULE, init=False, metadata={'expose': False})
     imports: list[type] | None
     providers: list[Provider] | None
     exports: list[InjectionToken] | None

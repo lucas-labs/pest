@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 from fastapi.routing import APIRoute
 
+from ..exceptions.base import PestException
 from ..metadata.meta import get_meta, get_meta_value
 from ..metadata.types._meta import PestType
 from ..metadata.types.handler_meta import HandlerMeta
@@ -12,7 +13,7 @@ from .common import PestPrimitive
 from .handler import HandlerTuple, setup_handler
 from .types.status import Status
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .module import Module
 
 NOT_CONTROLLER = 'Class {cls} is not a subclass of Controller'
@@ -21,17 +22,17 @@ NOT_CONTROLLER = 'Class {cls} is not a subclass of Controller'
 def setup_controller(cls: type, module: Optional['Module'] = None) -> None:
     """🐀 ⇝ sets up a `controller` class"""
     if not issubclass(cls, Controller):
-        raise TypeError(NOT_CONTROLLER.format(cls=cls.__name__))
+        raise PestException(NOT_CONTROLLER.format(cls=cls.__name__))
     cls.__setup_controller_class__(module)
 
 
 def router_of(cls: type) -> PestRouter:
     """🐀 ⇝ obtains a `controller`'s router"""
     if not issubclass(cls, Controller):
-        raise TypeError(NOT_CONTROLLER.format(cls=cls.__name__))
+        raise PestException(NOT_CONTROLLER.format(cls=cls.__name__))
 
     if cls.__router__ is None:
-        raise ValueError(f'Controller {cls.__name__} has not been setup')
+        raise PestException(f'Controller {cls.__name__} has not been setup')
 
     return cls.__router__
 
@@ -43,11 +44,11 @@ def routes_of(cls: type) -> list[APIRoute]:
 
 def module_of(cls: type) -> 'Module':
     if not issubclass(cls, Controller):
-        raise TypeError(NOT_CONTROLLER.format(cls=cls.__name__))
+        raise PestException(NOT_CONTROLLER.format(cls=cls.__name__))
 
     mod = cls.__parent_module__
     if mod is None:
-        raise ValueError(f'Parent module of controller {cls.__name__} has not been setup')
+        raise PestException(f'Parent module of controller {cls.__name__} has not been setup')
 
     return mod
 

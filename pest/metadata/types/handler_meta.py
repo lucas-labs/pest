@@ -21,9 +21,9 @@ class HttpMethod(str, Enum):
 
 @dataclass
 class HandlerMeta(Meta):
-    meta_type: PestType = field(default=PestType.HANDLER, init=False)
-    methods: list[str]
-    path: str
+    meta_type: PestType = field(default=PestType.HANDLER, init=False, metadata={'expose': False})
+    methods: list[str] = field(metadata={'expose': False})
+    path: str = field(metadata={'expose': False})
     response_model: Any | None
     response_class: type[Response] | None
     status_code: int | None

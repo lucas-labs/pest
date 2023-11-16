@@ -19,10 +19,6 @@
           fill: #ffb5b5;
         }
 
-        .b {
-          fill: #d7402b;
-        }
-
         .c {
           opacity: 0.8;
         }

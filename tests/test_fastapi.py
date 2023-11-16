@@ -1,47 +1,78 @@
 from fastapi.testclient import TestClient
 
-from pest.decorators.controller import controller
-from pest.decorators.handler import get
-from pest.decorators.module import module
 from pest.primitives.application import PestApplication
-from pest.primitives.module import setup_module as _setup_module
+
+from .cfg.app.data.data import TodoRepo
+from .cfg.app.modules.todo.services.todo_service import TodoService
 
 
-class FooService:
-    def get_bar(self) -> str:
-        return 'bar'
+def test_global_app_provider(app_n_client: tuple[PestApplication, TestClient]) -> None:
+    """🐀 app :: providers :: should add metadata to the decorated class"""
+    app, _ = app_n_client
+
+    repo = app.resolve(TodoRepo)
+    assert isinstance(repo, TodoRepo)
+
+    # check that the repo is a singleton
+    repo2 = app.resolve(TodoRepo)
+    assert id(repo) == id(repo2)
+
+    # get service from TodoModule (inner module)
+    service = app.resolve(TodoService)
+    assert isinstance(service, TodoService)
 
 
-@controller('/foo')
-class FooController:
-    svc: FooService
+def test_fastapi_handlers(app_n_client: tuple[PestApplication, TestClient]) -> None:
+    """🐀 app :: handlers :: should respond http requests"""
+    _, client = app_n_client
 
-    @get('/bar')
-    def get_a_bar(self):
-        return {'msg': self.svc.get_bar()}
-
-
-@module(
-    providers=[FooService],
-    controllers=[FooController]
-)
-class FooModule:
-    pass
-
-
-foo_module = _setup_module(FooModule)
-routers = foo_module.routers
-
-app = PestApplication()
-
-for router in routers:
-    app.include_router(router)
-
-client = TestClient(app)
-
-
-def test_read_main():
-    """🐀 app :: controller resolution :: should resolve a controller and its dependencies"""
-    response = client.get('/foo/bar')
+    # get without path param
+    response = client.get('/todo')
     assert response.status_code == 200
-    assert response.json() == {'msg': 'bar'}
+    all_todos = response.json()
+    assert isinstance(all_todos, list)
+    assert len(all_todos) > 0
+
+    length = len(all_todos)
+
+    # get with path param
+    response = client.get('/todo/1')
+    assert response.status_code == 200
+    todo_one = response.json()
+    assert isinstance(todo_one, dict)
+    assert todo_one['id'] == 1
+    assert todo_one['done'] is False
+
+    # post (create)
+    response = client.post('/todo', json={'title': 'new todo'})
+    assert response.status_code == 200
+    new_todo = response.json()
+    assert isinstance(new_todo, dict)
+    assert new_todo['title'] == 'new todo'
+    assert new_todo['done'] is False
+    assert new_todo['id'] == len(all_todos) + 1
+
+    # get all again
+    response = client.get('/todo')
+    all_again = response.json()
+    assert len(all_again) == length + 1
+
+    # patch (update)
+    response = client.patch('/todo/1', json={'done': True})
+    assert response.status_code == 200
+    todo_one = response.json()
+    assert isinstance(todo_one, dict)
+    assert todo_one['id'] == 1
+    assert todo_one['done'] is True
+
+    # delete
+    response = client.delete('/todo/1')
+    assert response.status_code == 200
+    todo_one = response.json()
+    assert isinstance(todo_one, dict)
+    assert todo_one['id'] == 1
+
+    # get all again
+    response = client.get('/todo')
+    all_again = response.json()
+    assert len(all_again) == length

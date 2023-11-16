@@ -117,7 +117,7 @@ def make_patches() -> int:
     return OK
 
 
-def apply_patches():
+def apply_patches() -> int:
     # patch {original} -i {original_file_name}.patch
     for patch in cfg.patches:
         paths = get_paths(patch)
@@ -130,3 +130,5 @@ def apply_patches():
         print(f'Running {c(" ".join(command), color="blue")}')
         result = run(command, capture_output=True, encoding='utf-8')  # noqa: S603
         print(result.stdout.strip())
+
+    return OK

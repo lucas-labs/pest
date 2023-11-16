@@ -18,17 +18,30 @@ from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.types import IncEx
 from fastapi.utils import generate_unique_id
+from rodi import ActivationScope
 from starlette.routing import BaseRoute
 
+from ..metadata.types.module_meta import InjectionToken
+from .module import Module, T
 from .types.fastapi_params import FastAPIParams
+
+
+def root_module(app: 'PestApplication') -> Module:
+    return app.__pest_module__
 
 
 class PestApplication(FastAPI):
     """🐀 ⇝ what a pest!"""
 
-    # def __init__(self, *, x: int, **kwargs: Unpack[FastAPIParams]) -> None:
-    def __init__(self, **kwargs: Unpack[FastAPIParams]) -> None:
+    def __init__(self, module: Module, **kwargs: Unpack[FastAPIParams]) -> None:
         super().__init__(**kwargs)
+        self.__pest_module__ = module
+
+    def __str__(self) -> str:
+        return str(root_module(self))
+
+    def resolve(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
+        return root_module(self).get(token, scope)
 
     def add_api_route(
         self,

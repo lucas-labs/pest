@@ -3,6 +3,7 @@ from typing import Any, Callable, TypedDict, TypeVar, Union, cast
 
 from dacite import Config, from_dict
 
+from ..exceptions.base import PestException
 from .types._meta import Meta
 
 META_KEY = '__pest__'
@@ -22,7 +23,7 @@ def get_meta(
 
     if not hasattr(callable, META_KEY):
         if raise_error:
-            raise ValueError(f'No metadata for {callable}')
+            raise PestException(f'No metadata for {callable}')
         return cast(DataType, {})
 
     meta = getattr(callable, META_KEY)
@@ -63,7 +64,7 @@ def inject_metadata(
     dict_meta = {}
     if metadata is not None:
         if not is_dataclass(metadata):
-            raise TypeError('metadata must be a dataclass')
+            raise PestException('metadata must be a dataclass')
         dict_meta = asdict(metadata)
 
     meta = get_meta(callable)

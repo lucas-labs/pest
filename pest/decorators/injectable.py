@@ -1,30 +1,30 @@
-from abc import ABC
-from typing import Callable, TypedDict, TypeVar, Unpack
+# from abc import ABC
+# from typing import Callable, TypedDict, TypeVar, Unpack
 
-from ..metadata.types import InjectableMeta, PestType
-from ._common import meta_decorator
+# # from ..metadata.types import InjectableMeta, PestType
+# from ._common import meta_decorator
 
-Cls = TypeVar('Cls', bound=type)
-
-
-class Injectable(ABC):
-    __pest_object_type__: PestType = PestType.INJECTABLE
+# Cls = TypeVar('Cls', bound=type)
 
 
-class InjectableOptions(TypedDict, total=False):
-    pass
+# class Injectable(ABC):
+#     __pest_object_type__: PestType = PestType.INJECTABLE
 
 
-def injectable(**options: Unpack[InjectableOptions]) -> Callable:
-    """🐀 ⇝ decorator that marks a class as an injectable service"""
-    return meta_decorator(meta_type=InjectableMeta, meta=options, base=Injectable)
+# class InjectableOptions(TypedDict, total=False):
+#     pass
 
 
-def service(**options: Unpack[InjectableOptions]) -> Callable:
-    """🐀 ⇝ decorator that marks a class as an injectable service"""
-    return injectable(**options)
+# def injectable(**options: Unpack[InjectableOptions]) -> Callable:
+#     """🐀 ⇝ decorator that marks a class as an injectable service"""
+#     return meta_decorator(meta_type=InjectableMeta, meta=options, base=Injectable)
 
 
-def provider(**options: Unpack[InjectableOptions]) -> Callable:
-    """🐀 ⇝ decorator that marks a class as an injectable service"""
-    return injectable(**options)
+# def service(**options: Unpack[InjectableOptions]) -> Callable:
+#     """🐀 ⇝ decorator that marks a class as an injectable service"""
+#     return injectable(**options)
+
+
+# def provider(**options: Unpack[InjectableOptions]) -> Callable:
+#     """🐀 ⇝ decorator that marks a class as an injectable service"""
+#     return injectable(**options)
