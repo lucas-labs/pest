@@ -2,13 +2,15 @@
 pytest plugin: reporter parecido a mocha.js
 """
 
+from collections import Counter
 from functools import partial
-from typing import Callable, Mapping
+from typing import Callable, Dict, List, Mapping, Optional
 
 from _pytest import timing
 from _pytest.reports import BaseReport, CollectReport, TestReport
 from _pytest.terminal import (
     TerminalReporter,
+    WarningReport,
     _color_for_type,
     _color_for_type_default,
     _folded_skips,
@@ -46,6 +48,51 @@ def logend_replacer(self: TerminalReporter, nodeid: int, location: str) -> None:
 
 def logstart_replacer(self: TerminalReporter, nodeid: int, location: str) -> None:
     pass
+
+
+def summary_warnings(self: TerminalReporter) -> None:
+    if self.hasopt('w'):
+        all_warnings: Optional[List[WarningReport]] = self.stats.get('warnings')
+        if not all_warnings:
+            return
+
+        final = self._already_displayed_warnings is not None
+        if final:
+            warning_reports = all_warnings[self._already_displayed_warnings:]
+        else:
+            warning_reports = all_warnings
+        self._already_displayed_warnings = len(warning_reports)
+        if not warning_reports:
+            return
+
+        reports_grouped_by_message: Dict[str, List[WarningReport]] = {}
+        for wr in warning_reports:
+            reports_grouped_by_message.setdefault(wr.message, []).append(wr)
+
+        def collapsed_location_report(reports: List[WarningReport]) -> str:
+            locations = []
+            for w in reports:
+                location = w.get_location(self.config)
+                if location:
+                    locations.append(location)
+
+            if len(locations) < 10:
+                return '\n'.join(map(str, locations))
+
+            counts_by_filename = Counter(
+                str(loc).split('::', 1)[0] for loc in locations
+            )
+            return '\n'.join(
+                '{}: {} warning{}'.format(k, v, 's' if v > 1 else '')
+                for k, v in counts_by_filename.items()
+            )
+
+        self.write('\n\nWarnings\n', yellow=True, bold=True)
+        self.write_sep('-', None, yellow=True, bold=True)
+        for message, _ in reports_grouped_by_message.items():
+            message = message.rstrip()
+            self._tw.line(message)
+            self._tw.line()
 
 
 def summary_stats(self: TerminalReporter) -> None:
@@ -245,6 +292,8 @@ def pytest_configure() -> None:
     import _pytest
     import _pytest.terminal
 
+    _pytest.terminal.TerminalReporter \
+        .summary_warnings = summary_warnings  # type: ignore
     _pytest.terminal.TerminalReporter \
         .pytest_runtest_logstart = logstart_replacer  # type: ignore
     _pytest.terminal.TerminalReporter \

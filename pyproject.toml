@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "pest"
 version = "0.0.1"
-description = ""
-authors = ["Lucas Colombo <lucasncolombo@gmail.com>"]
+description = "🐀 ⇝ fastapi + rodi + mvc | python library for building modularized API's. Inspired by NestJS."
+authors = ["lucaslabs <lucas@lucaslabs.tech>"]
 readme = "README.md"
+license = "MIT"
 
 packages = [
     { include = "pest" },
@@ -11,12 +12,16 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.8"
 fastapi = "0.103.2"
-pydantic = "1.10.8"
+pydantic = ">=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0"
 rodi = "^2.0.4"
-uvicorn = "^0.23.2"
 dacite = "^1.8.1"
+uvicorn = "^0.23.2"
+loguru = "^0.7.2"
+
+[tool.poetry.extras]
+logs = ["loguru"]
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.3"
