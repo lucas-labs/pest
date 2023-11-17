@@ -37,7 +37,12 @@ class TodoRepo:
             return max([todo.id for todo in self.todos]) + 1
 
         new_todo = TodoModel(
-            **todo.dict(),
+            **(
+                # HACK: model_dump was added in pydantic@2 and will replace dict()
+                # from @3x onwards; this is a temporary hack to support both
+                # versions until pydantic@2x is widely adopted
+                todo.model_dump() if hasattr(todo, 'model_dump') else todo.dict()
+            ),
             id=next_id(),
             done=False,
         )

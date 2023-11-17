@@ -93,19 +93,3 @@ def test_controller_handlers_setup():
     assert isinstance(route_slash, APIRoute)
     assert route.path == '/foo/bar'
     assert route_slash.path == '/foo/bar/'
-
-
-# IDEA: actualmente tenemos el problemita de que cuando iniciemos el handler method, hay que
-#       inyectarle la clase en su self. Ese self es una dependencia del parámetro y eso
-#       es un problema, porque fastapi funciona bien con Depends() pero no con mi
-#       implementacion de di. Una buena solución podría ser que en vez de usar container.resolve
-#       (que no sé ni cómo hacerlo) usemos algo tipo Depends(resolve_class(cls))
-#       donde resolve_class será una función dependencia que depende a su vez de Request.
-#       quizá de aquí pueda sacar el modulo de alguna forma y así obtener el container
-#       y dentro de mi resolve_class puedo resolver cls usando mi container....
-#       Para investigar:
-#         - https://fastapi.tiangolo.com/advanced/advanced-dependencies/#parameterized-dependencies
-#         - https://github.com/tiangolo/fastapi/blob/480620372a662aa9025c47410fbc90a255b2fc94/fastapi/security/oauth2.py#L473
-#             este es un ejemplo de dependencia que depende de Request y está parametrizada (como
-#            la que quiero hacer yo con resolve_class(cls), donde cls es el parámetro). Usa un
-#            callable instance para lograrlo. Quizá pueda hacer algo similar con mi resolve_class
