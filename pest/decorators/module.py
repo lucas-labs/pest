@@ -8,13 +8,6 @@ from .dicts.module_dict import ModuleMetaDict
 Class = TypeVar('Class', bound=type)
 
 
-# class ModuleOptions(TypedDict, total=False):
-#     imports: list[type]
-#     providers: list[Provider]
-#     exports: list[InjectionToken]
-#     controllers: list[type[Controller]]
-
-
 def module(**options: Unpack[ModuleMetaDict]) -> Callable:
     """🐀 ⇝ decorator that marks a class as a module"""
     return meta_decorator(meta=options, base=Module, meta_type=ModuleMeta, singleton=True)

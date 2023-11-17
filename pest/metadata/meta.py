@@ -4,6 +4,7 @@ from typing import Any, Callable, TypedDict, TypeVar, Union, cast
 from dacite import Config, from_dict
 
 from ..exceptions.base import PestException
+from ..utils.functions import drop_keys, keep_keys
 from .types._meta import Meta
 
 META_KEY = '__pest__'
@@ -14,19 +15,41 @@ GenericValue = TypeVar('GenericValue')
 
 
 def get_meta(
-    callable: Callable[..., Any] | type | object,
+    target: Callable[..., Any] | type | object,
     *,
     type: type[DataType] = dict[str, Any],
-    raise_error: bool = True
+    raise_error: bool = True,
+    clean: bool = False,
+    keep: list[str] | None = None,
+    drop: list[str] | None = None
 ) -> DataType:
-    """🐀 ⇝ get pest `metadata` from a `callable`"""
+    """🐀 ⇝ get pest `metadata` from a `callable`
+    #### Params
+    - target: target object, type or function
+    - type: return type (will create an instance if it's a `dataclass`)
+    - raise_error: wether to raise an error if no metadata was found in the target
+    - clean: wether to clean up the resulting object (will remove `meta_type` by default)
+    - keep: if `clean == True`, will only keep the key the keys provided here
+    - drop: if `clean == True`, will drop all keys provided here and keep the rest.
+    """
 
-    if not hasattr(callable, META_KEY):
+    if not hasattr(target, META_KEY):
         if raise_error:
-            raise PestException(f'No metadata for {callable}')
+            raise PestException(f'No metadata for {target}')
         return cast(DataType, {})
 
-    meta = getattr(callable, META_KEY)
+    meta = getattr(target, META_KEY)
+
+    # clean up the metadata
+    if clean:
+        if keep is not None and len(keep) > 0:
+            meta = keep_keys(meta, keep)
+
+        if drop is not None and len(drop) > 0:
+            meta = drop_keys(meta, drop)
+
+        if not keep and not drop:
+            meta = drop_keys(meta, ['meta_type'])
 
     if is_dataclass(type):
         return cast(type, from_dict(type, meta, config=Config(check_types=False)))

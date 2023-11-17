@@ -5,8 +5,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional
 from fastapi.routing import APIRoute
 
 from ..exceptions.base import PestException
-from ..metadata.meta import get_meta, get_meta_value
+from ..metadata.meta import get_meta, get_meta_value, inject_metadata
 from ..metadata.types._meta import PestType
+from ..metadata.types.controller_meta import ControllerMeta
 from ..metadata.types.handler_meta import HandlerMeta
 from ..utils.fastapi.router import PestRouter
 from .common import PestPrimitive
@@ -17,6 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from .module import Module
 
 NOT_CONTROLLER = 'Class {cls} is not a subclass of Controller'
+NOT_ROUTER = 'Object is not a subclass of PestRouter'
 
 
 def setup_controller(cls: type, module: Optional['Module'] = None) -> None:
@@ -63,13 +65,21 @@ class Controller(PestPrimitive):
         return PestType.CONTROLLER
 
     @classmethod
+    def __str__(cls) -> str:
+        meta = get_meta(cls, type=ControllerMeta, clean=True)
+        return f'Controller {meta.prefix} rokokokoko'
+
+    @classmethod
+    def __repr__(cls) -> str:
+        return cls.__str__()
+
+    @classmethod
     def __setup_controller_class__(cls, module: Optional['Module']) -> None:
         """sets up a controller class"""
-        meta = get_meta(cls, type=dict)
-        cls.__router__ = PestRouter(
-            prefix=meta['prefix'],
-        )
+        meta = get_meta(cls, type=dict, clean=True)
+        cls.__router__ = PestRouter(**meta)
         cls.__parent_module__ = module
+        inject_metadata(cls.__router__, name=f'{cls.__name__} {meta.get("prefix", "")}')
 
         router = cls.__make_router__()
         cls.__router__.include_router(router)
