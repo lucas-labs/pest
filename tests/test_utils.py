@@ -1,4 +1,4 @@
-from pest.primitives.module import setup_module as _setup_module
+from pest.core.module import setup_module as _setup_module
 from pest.utils.colorize import c
 from pest.utils.module import _get_provider_name, as_tree
 

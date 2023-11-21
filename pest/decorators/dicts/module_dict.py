@@ -9,8 +9,8 @@ Do not edit manually.
 
 from typing import TypedDict
 
+from ...core.controller import Controller
 from ...metadata.types.module_meta import InjectionToken, Provider
-from ...primitives.controller import Controller
 
 
 class ModuleMetaDict(TypedDict, total=False):

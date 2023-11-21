@@ -1,8 +1,8 @@
 from typing import Callable, TypeVar, Unpack
 
+from ..core.module import Module
 from ..decorators._common import meta_decorator
 from ..metadata.types.module_meta import ModuleMeta
-from ..primitives.module import Module
 from .dicts.module_dict import ModuleMetaDict
 
 Class = TypeVar('Class', bound=type)

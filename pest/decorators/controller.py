@@ -2,8 +2,8 @@ from typing import Callable, TypeVar, Unpack
 
 from pest.decorators._common import meta_decorator
 
+from ..core.controller import Controller
 from ..metadata.types.controller_meta import ControllerMeta
-from ..primitives.controller import Controller
 from .dicts.controller_dict import ControllerMetaDict
 
 Class = TypeVar('Class', bound=type)
@@ -34,5 +34,10 @@ def router(prefix: str, **options: Unpack[ControllerMetaDict]) -> Callable:
 
 
 def rtr(prefix: str, **options: Unpack[ControllerMetaDict]) -> Callable:
+    """🐀 ⇝ decorator that marks a class as a `router`"""
+    return controller(prefix, **options)
+
+
+def api(prefix: str, **options: Unpack[ControllerMetaDict]) -> Callable:
     """🐀 ⇝ decorator that marks a class as a `router`"""
     return controller(prefix, **options)

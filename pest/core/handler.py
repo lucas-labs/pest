@@ -34,9 +34,11 @@ def setup_handler(cls: type['Controller'], handler: HandlerTuple) -> APIRoute:
 
 def _patch_route_signature(cls: type['Controller'], route: APIRoute) -> None:
     """
-    changes the signature of a route's endpoint to ensure that FastAPI
-    performs dependency injection correctly and does not expect a `self`
-    parameter as a query parameter.
+    Changes the signature of a route's endpoint to ensure that FastAPI
+    performs dependency injection correctly and doesn't expect a `self`
+    parameter as a query parameter. To do so, we replace the first
+    parameter of the endpoint with a `Depends` object that resolves the
+    controller instance using `rodi`.
     """
     controller = PestControllerInjector(token=cls)
 
@@ -53,7 +55,13 @@ def _patch_route_signature(cls: type['Controller'], route: APIRoute) -> None:
 
 
 class PestControllerInjector:
-    """🐀 ⇝ injector to be used with fastapi's `Depends`"""
+    """
+    Injector to be used with fastapi's `Depends`
+
+    This injector is used to inject the instance of the controller into
+    the request handler's self parameter, by resolving the controller
+    using `rodi`.
+    """
 
     def __init__(
         self,

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from pest.primitives.application import PestApplication
+from pest.core.application import PestApplication
 
 from .cfg.app.data.data import TodoRepo
 from .cfg.app.modules.todo.services.todo_service import TodoService

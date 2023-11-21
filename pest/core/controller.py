@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 from fastapi.routing import APIRoute
 
-from ..exceptions.base import PestException
 from ..metadata.meta import get_meta, get_meta_value, inject_metadata
 from ..metadata.types._meta import PestType
 from ..metadata.types.controller_meta import ControllerMeta
 from ..metadata.types.handler_meta import HandlerMeta
+from ..utils.exceptions.base import PestException
 from ..utils.fastapi.router import PestRouter
 from .common import PestPrimitive
 from .handler import HandlerTuple, setup_handler
@@ -67,7 +67,7 @@ class Controller(PestPrimitive):
     @classmethod
     def __str__(cls) -> str:
         meta = get_meta(cls, type=ControllerMeta, clean=True)
-        return f'Controller {meta.prefix} rokokokoko'
+        return f'Controller {meta.prefix}'
 
     @classmethod
     def __repr__(cls) -> str:

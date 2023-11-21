@@ -5,7 +5,7 @@
 
 <p align="center">
 <strong>
-<code>pest = fastapi + rodi + mvc</code>
+<code>pest = fastapi + rodi + mvc + Optional[loguru]</code>
 <br/><br/>
 🐀
 <br/><br/>

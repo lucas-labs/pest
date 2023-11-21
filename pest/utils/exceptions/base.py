@@ -1,6 +1,6 @@
 import re
 
-from ..utils.colorize import c
+from ..colorize import c
 
 
 class PestException(Exception):

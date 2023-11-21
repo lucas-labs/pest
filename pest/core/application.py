@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import (
+    Annotated,
     Any,
     Callable,
     Coroutine,
@@ -16,12 +17,18 @@ from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.params import Depends
 from fastapi.responses import JSONResponse
-from fastapi.types import IncEx
+from fastapi.types import DecoratedCallable, IncEx
 from fastapi.utils import generate_unique_id
 from rodi import ActivationScope
+from starlette.middleware import Middleware
 from starlette.routing import BaseRoute
+from typing_extensions import Doc
 
 from ..metadata.types.module_meta import InjectionToken
+from ..middleware.base import (
+    PestBaseHTTPMiddleware,
+)
+from ..middleware.types import MiddlewareDef
 from .module import Module, T
 from .types.fastapi_params import FastAPIParams
 
@@ -33,15 +40,30 @@ def root_module(app: 'PestApplication') -> Module:
 class PestApplication(FastAPI):
     """🐀 ⇝ what a pest!"""
 
-    def __init__(self, module: Module, **kwargs: Unpack[FastAPIParams]) -> None:
+    def __init__(
+        self, module: Module, middleware: MiddlewareDef, **kwargs: Unpack[FastAPIParams]
+    ) -> None:
         super().__init__(**kwargs)
         self.__pest_module__ = module
+
+        self.user_middleware: List[Middleware] = (
+            [] if middleware is None else [
+                middleware
+                if isinstance(middleware, Middleware)
+                else Middleware(PestBaseHTTPMiddleware, dispatch=middleware, provideFn=self.resolve)
+                for middleware in middleware
+            ]
+        )
+        print('ok')
 
     def __str__(self) -> str:
         return str(root_module(self))
 
     def resolve(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
         return root_module(self).get(token, scope)
+
+    def can_provide(self, token: InjectionToken[T]) -> bool:
+        return root_module(self).can_provide(token)
 
     def add_api_route(
         self,
@@ -132,3 +154,46 @@ class PestApplication(FastAPI):
             callbacks=callbacks,
             generate_unique_id_function=generate_unique_id_function,
         )
+
+    def middleware(
+        self,
+        middleware_type: Annotated[
+            str,
+            Doc(
+                '''
+                The type of middleware. Currently only supports `http`.
+                '''
+            ),
+        ],
+    ) -> Callable[[DecoratedCallable], DecoratedCallable]:
+        """
+        Add a middleware to the application.
+
+        Read more about it in the
+        [FastAPI docs for Middleware](https://fastapi.tiangolo.com/tutorial/middleware/).
+
+        ## Example
+
+        ```python
+        import time
+
+        from fastapi import FastAPI, Request
+
+        app = FastAPI()
+
+
+        @app.middleware("http")
+        async def add_process_time_header(request: Request, call_next):
+            start_time = time.time()
+            response = await call_next(request)
+            process_time = time.time() - start_time
+            response.headers["X-Process-Time"] = str(process_time)
+            return response
+        ```
+        """
+
+        def decorator(func: DecoratedCallable) -> DecoratedCallable:
+            self.add_middleware(PestBaseHTTPMiddleware, dispatch=func, provideFn=self.resolve)
+            return func
+
+        return decorator

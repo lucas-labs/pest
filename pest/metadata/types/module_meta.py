@@ -3,7 +3,7 @@ from typing import Callable, Generic, TypeAlias, TypeVar, Union
 
 from rodi import ServiceLifeStyle
 
-from ...primitives.controller import Controller
+from ...core.controller import Controller
 from ._meta import Meta, PestType
 
 T = TypeVar('T')

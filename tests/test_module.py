@@ -2,14 +2,14 @@ from typing import cast
 
 from rodi import Container
 
+from pest.core.common import status
+
+# aliased porque setup_module es un builtin de pytest
+from pest.core.module import Status
+from pest.core.module import setup_module as _setup_module
 from pest.decorators.module import Module, module
 from pest.metadata.meta import META_KEY
 from pest.metadata.types._meta import PestType
-from pest.primitives.common import status
-
-# aliased porque setup_module es un builtin de pytest
-from pest.primitives.module import Status
-from pest.primitives.module import setup_module as _setup_module
 
 from .cfg.pest_primitives import (
     FooController,
