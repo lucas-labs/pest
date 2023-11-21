@@ -2,13 +2,13 @@
 
 from fastapi.routing import APIRoute
 
+from pest.core.common import primitive_type, status
+from pest.core.controller import Controller, router_of, setup_controller
+from pest.core.types.status import Status
 from pest.decorators.controller import controller
 from pest.decorators.handler import get
 from pest.metadata.meta import META_KEY
 from pest.metadata.types._meta import PestType
-from pest.primitives.common import primitive_type, status
-from pest.primitives.controller import Controller, router_of, setup_controller
-from pest.primitives.types.status import Status
 from pest.utils.fastapi.router import PestRouter
 
 # aliased porque setup_module es un builtin de pytest

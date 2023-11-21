@@ -6,7 +6,7 @@ from fnmatch import fnmatch
 from pprint import pformat
 from typing import Unpack, cast
 
-from ...exceptions.base import PestException
+from ...utils.exceptions.base import PestException
 from ...utils.functions import set_if_none
 from .. import LoggingOptions, LogLevel, SinkOptions
 
@@ -29,11 +29,23 @@ FORMAT = env(
     str,
     '<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | '
     '<level>{level: <8}</level> | '
-    '<cyan>{name}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>',
+    '<cyan>{name}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>'
+    '{exception}',
 )
 
 
 class _InterceptorHandler(pylogging.Handler):
+    def get_exc(self, record: pylogging.LogRecord) -> tuple[str, BaseException] | None:
+        exc = record.exc_info
+        if (
+            exc is None or
+            (exc is not None and exc[0] is None) or
+            (exc is not None and exc[1] is None)
+        ):
+            return
+
+        return (exc[0].__name__, exc[1])
+
     def emit(self, record: pylogging.LogRecord) -> None:
         """intercepts a python log (logging lib) and sends it to loguru"""
         try:
@@ -46,12 +58,16 @@ class _InterceptorHandler(pylogging.Handler):
             frame = frame.f_back
             depth += 1
 
-        loguru_logger.bind(
+        log = loguru_logger.bind(
             access=True if record.name == 'uvicorn.access' else None
-        ).opt(
+        )
+
+        e = self.get_exc(record)
+
+        log.opt(
             depth=depth,
             exception=record.exc_info,
-        ).log(level, record.getMessage())
+        ).log(level, f'{e[0]}: {e[1]}' if e else record.getMessage())
 
 
 def no_access(record: loguru.Record) -> bool:
@@ -65,9 +81,7 @@ def format_record(record: loguru.Record) -> str:
             record['extra']['payload'], indent=4, compact=True, width=88
         )
         format_string += '\n<level>{extra[payload]}</level>'
-
-    format_string += '{exception}\n'
-    return format_string
+    return format_string + '\n'
 
 
 class Loguru:
@@ -152,6 +166,7 @@ class Loguru:
         loguru_logger.add(
             sys.stdout,
             colorize=True,
+            diagnose=False,
             format=format_record,
             level=level,
             filter=lambda record: (

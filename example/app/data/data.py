@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from ..modules.todo.models.todo import TodoCreate, TodoModel
@@ -69,3 +70,6 @@ class TodoRepo:
         if todo is not None:
             self.todos.remove(todo)
         return todo
+
+    def now(self) -> str:
+        return datetime.now().strftime('%H:%M:%S:%f')[:-3]

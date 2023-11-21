@@ -3,9 +3,9 @@ from typing import cast
 import pytest
 from fastapi.testclient import TestClient
 
-from pest.primitives.application import PestApplication
-from pest.primitives.module import Module
-from pest.primitives.module import setup_module as _setup_module
+from pest.core.application import PestApplication
+from pest.core.module import Module
+from pest.core.module import setup_module as _setup_module
 
 from .app.app import bootstrap_app
 from .pest_primitives import (

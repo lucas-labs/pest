@@ -8,7 +8,6 @@ from typing import (
 )
 
 from fastapi import Request, Response
-from fastapi.middleware import Middleware
 from fastapi.params import Depends
 from fastapi.routing import APIRouter
 from starlette.routing import BaseRoute
@@ -32,7 +31,6 @@ class FastAPIParams(TypedDict, total=False):
     redoc_url: str
     swagger_ui_oauth2_redirect_url: str
     swagger_ui_init_oauth: dict[str, Any]
-    middleware: Sequence[Middleware]
     exception_handlers: dict[
         int | type[Exception],
         Callable[[Request, Any], Coroutine[Any, Any, Response]],

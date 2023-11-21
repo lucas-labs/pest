@@ -6,7 +6,6 @@ from rodi import ActivationScope, Container, ServiceLifeStyle
 import pest.utils.module as module_utils
 from pest.metadata.types._meta import PestType
 
-from ..exceptions.base import PestException
 from ..metadata.meta import get_meta
 from ..metadata.types.module_meta import (
     ClassProvider,
@@ -17,6 +16,7 @@ from ..metadata.types.module_meta import (
     Provider,
     ValueProvider,
 )
+from ..utils.exceptions.base import PestException
 from .common import PestPrimitive
 from .controller import Controller, router_of, setup_controller
 from .types.status import Status
@@ -188,6 +188,11 @@ class Module(PestPrimitive):
                 self.container.add_transient(
                     provider
                 )
+
+    def can_provide(self, token: InjectionToken) -> bool:
+        if token in self.__imported__providers__ or token in self.container:
+            return True
+        return False
 
     def get(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
         if token in self.__imported__providers__:

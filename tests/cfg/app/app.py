@@ -1,5 +1,5 @@
+from pest.core.application import PestApplication
 from pest.factory import Pest
-from pest.primitives.application import PestApplication
 
 from .app_module import AppModule
 

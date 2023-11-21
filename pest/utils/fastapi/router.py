@@ -21,7 +21,7 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import BaseRoute
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ...primitives.controller import Controller
+    from ...core.controller import Controller
 
 
 class PestRouter(APIRouter):
