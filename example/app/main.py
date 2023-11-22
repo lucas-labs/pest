@@ -70,7 +70,10 @@ app = Pest.create(
     middleware=[
         Middleware(PureAsgiMiddleware),
         pest_middleware
-    ]
+    ],
+    cors={
+        'allow_origins': ['*'],
+    }
 )
 
 

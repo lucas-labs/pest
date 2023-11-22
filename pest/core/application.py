@@ -24,6 +24,9 @@ from starlette.middleware import Middleware
 from starlette.routing import BaseRoute
 from typing_extensions import Doc
 
+from pest.logging import log
+from pest.middleware.types import CorsOptions
+
 from ..metadata.types.module_meta import InjectionToken
 from ..middleware.base import (
     PestBaseHTTPMiddleware,
@@ -197,3 +200,12 @@ class PestApplication(FastAPI):
             return func
 
         return decorator
+
+    def enable_cors(self, **opts: Unpack[CorsOptions]) -> None:
+        from starlette.middleware.cors import CORSMiddleware
+
+        from ..middleware.types import DEFAULT_CORS_OPTIONS
+
+        log.debug(f'Enabling CORS with options: {DEFAULT_CORS_OPTIONS | opts}')
+
+        self.add_middleware(CORSMiddleware, **opts)
