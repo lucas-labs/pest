@@ -6,6 +6,7 @@ from rodi import ActivationScope, Container, ServiceLifeStyle
 import pest.utils.module as module_utils
 from pest.metadata.types._meta import PestType
 
+from ..exceptions.base.pest import PestException
 from ..metadata.meta import get_meta
 from ..metadata.types.module_meta import (
     ClassProvider,
@@ -16,7 +17,6 @@ from ..metadata.types.module_meta import (
     Provider,
     ValueProvider,
 )
-from ..utils.exceptions.base import PestException
 from .common import PestPrimitive
 from .controller import Controller, router_of, setup_controller
 from .types.status import Status

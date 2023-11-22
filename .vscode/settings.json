@@ -21,7 +21,7 @@
         ".coverage": true,
 
         // 🗑️
-        ".patches": true,
+        // ".patches": true,
         ".venv": true,
         ".vscode": true,
         ".ruff_cache": true,

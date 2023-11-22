@@ -6,7 +6,7 @@ from fnmatch import fnmatch
 from pprint import pformat
 from typing import Unpack, cast
 
-from ...utils.exceptions.base import PestException
+from ...exceptions.base.pest import PestException
 from ...utils.functions import set_if_none
 from .. import LoggingOptions, LogLevel, SinkOptions
 
@@ -67,7 +67,7 @@ class _InterceptorHandler(pylogging.Handler):
         log.opt(
             depth=depth,
             exception=record.exc_info,
-        ).log(level, f'{e[0]}: {e[1]}' if e else record.getMessage())
+        ).log(level, f'{e[0]}: {e[1]}\n\n' if e else record.getMessage())
 
 
 def no_access(record: loguru.Record) -> bool:

@@ -8,7 +8,7 @@ from ._meta import Meta, PestType
 
 T = TypeVar('T')
 
-InjectionToken: TypeAlias = str | type | type[T]
+InjectionToken: TypeAlias = type | type[T]
 Class: TypeAlias = type
 Factory: TypeAlias = Callable[..., T]
 Scope: TypeAlias = ServiceLifeStyle

@@ -4,7 +4,7 @@ from typing import TypeGuard
 
 from pest.metadata.types._meta import PestType
 
-from ...utils.exceptions.base import PestException
+from ...exceptions.base.pest import PestException
 from ..types.status import Status
 
 
