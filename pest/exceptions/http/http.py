@@ -56,6 +56,7 @@ class BadRequestException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `400` Bad Request"""
         super().__init__(
             status_code=400,
             detail=detail,
@@ -78,6 +79,7 @@ class UnauthorizedException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `401` Unauthorized"""
         super().__init__(
             status_code=401,
             detail=detail,
@@ -100,6 +102,7 @@ class ForbiddenException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `403` Forbidden"""
         super().__init__(
             status_code=403,
             detail=detail,
@@ -120,6 +123,7 @@ class NotFoundException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `404` Not Found"""
         super().__init__(
             status_code=404,
             detail=detail,
@@ -141,6 +145,7 @@ class MethodNotAllowedException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `405` Method Not Allowed"""
         super().__init__(
             status_code=405,
             detail=detail,
@@ -162,6 +167,7 @@ class NotAcceptableException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `406` Not Acceptable"""
         super().__init__(
             status_code=406,
             detail=detail,
@@ -183,6 +189,7 @@ class ProxyAuthenticationRequiredException(PestHTTPException):
         headers: dict[str, Any] | None = None,
         headers_: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `407` Proxy Authentication Required"""
         super().__init__(
             status_code=407,
             detail=detail,
@@ -204,6 +211,7 @@ class RequestTimeoutException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `408` Request Timeout"""
         super().__init__(
             status_code=408,
             detail=detail,
@@ -225,6 +233,7 @@ class ConflictException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `409` Conflict"""
         super().__init__(
             status_code=409,
             detail=detail,
@@ -245,6 +254,7 @@ class GoneException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `410` Gone"""
         super().__init__(
             status_code=410,
             detail=detail,
@@ -265,6 +275,7 @@ class PreconditionFailedException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `412` Precondition Failed"""
         super().__init__(
             status_code=412,
             detail=detail,
@@ -286,6 +297,7 @@ class PayloadTooLargeException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `413` Payload Too Large"""
         super().__init__(
             status_code=413,
             detail=detail,
@@ -308,6 +320,7 @@ class UnsupportedMediaTypeException(PestHTTPException):
         headers: dict[str, Any] | None = None,
         media_type: str | None = None,
     ) -> None:
+        """🐀 ⇝ `415` Unsupported Media Type"""
         super().__init__(
             status_code=415,
             detail=detail,
@@ -331,6 +344,7 @@ class ImATeapotException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `418` I'm a teapot"""
         super().__init__(
             status_code=418,
             detail=detail,
@@ -351,6 +365,7 @@ class UnprocessableEntityException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `422` Unprocessable Entity"""
         super().__init__(
             status_code=422,
             detail=detail,
@@ -374,6 +389,7 @@ class InternalServerErrorException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `500` Internal Server Error"""
         super().__init__(
             status_code=500,
             detail=detail,
@@ -394,6 +410,7 @@ class NotImplementedException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `501` Not Implemented"""
         super().__init__(
             status_code=501,
             detail=detail,
@@ -415,6 +432,7 @@ class BadGatewayException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `502` Bad Gateway"""
         super().__init__(
             status_code=502,
             detail=detail,
@@ -435,6 +453,7 @@ class ServiceUnavailableException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `503` Service Unavailable"""
         super().__init__(
             status_code=503,
             detail=detail,
@@ -456,6 +475,7 @@ class GatewayTimeoutException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `504` Gateway Timeout"""
         super().__init__(
             status_code=504,
             detail=detail,
@@ -476,6 +496,7 @@ class HttpVersionNotSupportedException(PestHTTPException):
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
+        """🐀 ⇝ `505` HTTP Version Not Supported"""
         super().__init__(
             status_code=505,
             detail=detail,

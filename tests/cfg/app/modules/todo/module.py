@@ -1,5 +1,3 @@
-
-
 from pest.decorators.module import module
 
 from .controllers.todo_controller import TodoController

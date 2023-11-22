@@ -22,6 +22,7 @@ def test_colorize_no_color_option():
 
 
 def test_module_tree_generation():
+    """🐀 utils :: module :: should generate a tree representation of a module"""
     module = _setup_module(FooModule)
 
     tree = as_tree(module)

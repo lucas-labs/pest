@@ -10,6 +10,7 @@ from .app_creator import make_app as make_app
 
 
 class Pest:
+    """🐀 ⇝ the main class of the framework, used to create and initialize a pest application"""
     @classmethod
     def create(
         cls,

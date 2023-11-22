@@ -7,6 +7,7 @@ from fastapi import Depends, Request
 from fastapi.routing import APIRoute
 
 from ..metadata.types.handler_meta import HandlerMeta
+from ..middleware.di import scope_from
 from ..utils.functions import clean_dict
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -77,7 +78,8 @@ class PestControllerInjector:
     async def __call__(self, request: Request) -> Any:
         """🐀 ⇝ returns the controller to be injected"""
         from .controller import module_of
+        scope = scope_from(request)
         module = module_of(self.token)
-        controller = module.get(self.token)
+        controller = module.get(self.token, scope)
 
         return controller
