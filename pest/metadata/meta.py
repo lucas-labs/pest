@@ -3,7 +3,7 @@ from typing import Any, Callable, TypedDict, TypeVar, Union, cast
 
 from dacite import Config, from_dict
 
-from ..utils.exceptions.base import PestException
+from ..exceptions.base.pest import PestException
 from ..utils.functions import drop_keys, keep_keys
 from .types._meta import Meta
 

@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import List
 
+from pest.utils.functions import dump_model
+
 from ..modules.todo.models.todo import TodoCreate, TodoModel
 
 default_todos = [
@@ -38,12 +40,7 @@ class TodoRepo:
             return max([todo.id for todo in self.todos]) + 1
 
         new_todo = TodoModel(
-            **(
-                # HACK: model_dump was added in pydantic@2 and will replace dict()
-                # from @3x onwards; this is a temporary hack to support both
-                # versions until pydantic@2x is widely adopted
-                todo.model_dump() if hasattr(todo, 'model_dump') else todo.dict()
-            ),
+            **(dump_model(todo)),
             id=next_id(),
             done=False,
         )

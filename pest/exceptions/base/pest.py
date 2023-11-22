@@ -1,10 +1,15 @@
+
 import re
 
-from ..colorize import c
+from ...utils.colorize import c
 
 
 class PestException(Exception):
-    """Base class for all exceptions raised by Pest."""
+    """Base class for all exceptions raised by Pest during setup
+
+    This exception is not meant to be used outside of pest's internals, since it's not
+    handled by any of the asgi exception handlers.
+    """
 
     def __init__(
         self,

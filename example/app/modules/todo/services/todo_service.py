@@ -1,5 +1,7 @@
 import fastapi
 
+from pest.exceptions.http.http import ForbiddenException
+
 from ....data.data import TodoRepo
 from ..models.todo import TodoCreate, TodoModel
 
@@ -20,6 +22,14 @@ class TodoService:
         return self.repo.get_all()
 
     def get(self, id: int) -> TodoModel:
+        if (id == 10):
+            # nestjs style http exception raising
+            raise ForbiddenException('Number 10 is reserved for Lionel Messi only')
+
+        if (id == 11):
+            # to test default exception handler
+            raise Exception('This is a test exception')
+
         return validate(self.repo.get_by_id(id))
 
     def create(self, todo: TodoCreate) -> TodoModel:

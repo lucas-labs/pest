@@ -15,11 +15,14 @@ from typing import (
 
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
+from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
 from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
 from fastapi.utils import generate_unique_id
+from pydantic import ValidationError
 from rodi import ActivationScope
+from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.routing import BaseRoute
 from typing_extensions import Doc
@@ -27,6 +30,7 @@ from typing_extensions import Doc
 from pest.logging import log
 from pest.middleware.types import CorsOptions
 
+from ..exceptions import handle
 from ..metadata.types.module_meta import InjectionToken
 from ..middleware.base import (
     PestBaseHTTPMiddleware,
@@ -57,7 +61,23 @@ class PestApplication(FastAPI):
                 for middleware in middleware
             ]
         )
-        print('ok')
+
+        self.add_exception_handlers([
+            (HTTPException, handle.http),
+            (ValidationError, handle.request_validation),
+            (RequestValidationError, handle.request_validation),
+            (WebSocketRequestValidationError, handle.websocket_request_validation),
+
+            # for everything else, there's Mastercard (or was it Bancard? 🤔)
+            (Exception, handle.the_rest),
+        ])
+
+    def add_exception_handlers(
+        self,
+        handlers: list[tuple[int | type[Exception], Callable]]
+    ) -> None:  # pragma: no cover
+        for error, handler in handlers:
+            self.add_exception_handler(error, handler)
 
     def __str__(self) -> str:
         return str(root_module(self))

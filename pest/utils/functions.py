@@ -1,5 +1,7 @@
 from typing import Any, TypedDict, TypeVar, cast
 
+from pydantic import BaseModel
+
 T = TypeVar('T', bound=dict)
 
 
@@ -38,3 +40,20 @@ def set_if_none(d: dict, key: str, value: Any) -> None:
     """set a value in a dictionary only if it does not exist on it already"""
     if key not in d:
         d[key] = value
+
+
+def dump_model(model: BaseModel) -> dict[str, Any]:
+    """dump a pydantic model to a dict
+
+    HACK: this is a temporary function to support the new pydantic's model_dump() function
+    while not breaking compatibility with pydantic@2x. This function works as a centralised
+    way of future changes once pydantic<2 is dropped and model_dump() is the only
+    function available. When that happens, this function will be removed and all calls to it
+    will be replaced by `model.model_dump()`.
+    """
+
+    return (
+        model.model_dump(exclude_none=True, exclude_unset=True)
+        if hasattr(model, 'model_dump')
+        else model.dict(exclude_none=True, exclude_unset=True)
+    )
