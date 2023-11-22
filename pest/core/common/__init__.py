@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
-from pydoc import classname
 from typing import TypeGuard
 
 from pest.metadata.types._meta import PestType

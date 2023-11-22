@@ -1,5 +1,5 @@
 line-length = 100
-tab-size = 4
+indent-width = 4
 output-format = "text"
 
 select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
@@ -14,6 +14,10 @@ ignore = [
     # "F401"       # unused-import https://beta.ruff.rs/docs/rules/unused-import/
 ]
 
+extend-exclude = [
+    ".patches"
+]
+
 [flake8-quotes]
 docstring-quotes = "double"
 inline-quotes = "single"
@@ -25,15 +29,13 @@ mypy-init-return = true
 
 
 
-[per-file-ignores]
+[extend-per-file-ignores]
 # ignore in tests:
 #    S101 (use of assert)
 #    ANN201 (missing type annotation)
 #    E701 (multiple statements on one line)
+#    F401 (unused import)
 "**/**/test/*.py" =  ["S101", "ANN201", "E701"]
 "**/**/tests/*.py" = ["S101", "ANN201", "E701"]
 "**/**/test_*.py" =  ["S101", "ANN201", "E701"]
-
-
-[extend-per-file-ignores]
-"__init__.py" = ["F401"]
+# "__init__.py" = ["F401"]

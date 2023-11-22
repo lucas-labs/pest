@@ -13,7 +13,18 @@
             "justMyCode": false
         },
         {
-            "name": "Python: FastAPI",
+            "name": "FastAPI: Example",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "example.app.main:app",
+                "--reload",
+            ],
+            "justMyCode": false
+        },
+        {
+            "name": "FastAPI: Test",
             "type": "python",
             "request": "launch",
             "module": "uvicorn",
