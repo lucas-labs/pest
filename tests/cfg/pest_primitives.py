@@ -1,5 +1,6 @@
 from pest.decorators.controller import controller
 from pest.decorators.module import module
+from pest.metadata.types.module_meta import ClassProvider, Scope
 
 
 class ProviderFoo:
@@ -50,4 +51,17 @@ class FooModule:
     providers=[ProviderFoo, ProviderBar, ProviderBaz],
 )
 class ModuleWithController:
+    pass
+
+
+@module(
+    providers=[
+        ClassProvider(
+            provide=ProviderFoo,
+            use_class=ProviderFoo,
+            scope=Scope.SCOPED
+        )
+    ]
+)
+class ScopeTestModule:
     pass

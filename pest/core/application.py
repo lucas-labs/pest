@@ -16,6 +16,7 @@ from typing import (
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
+from fastapi.middleware.asyncexitstack import AsyncExitStackMiddleware
 from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
@@ -24,7 +25,10 @@ from pydantic import ValidationError
 from rodi import ActivationScope
 from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
+from starlette.middleware.errors import ServerErrorMiddleware
+from starlette.middleware.exceptions import ExceptionMiddleware
 from starlette.routing import BaseRoute
+from starlette.types import ASGIApp
 from typing_extensions import Doc
 
 from pest.logging import log
@@ -35,6 +39,7 @@ from ..metadata.types.module_meta import InjectionToken
 from ..middleware.base import (
     PestBaseHTTPMiddleware,
 )
+from ..middleware.di import di_scope_middleware
 from ..middleware.types import MiddlewareDef
 from .module import Module, T
 from .types.fastapi_params import FastAPIParams
@@ -229,3 +234,36 @@ class PestApplication(FastAPI):
         log.debug(f'Enabling CORS with options: {DEFAULT_CORS_OPTIONS | opts}')
 
         self.add_middleware(CORSMiddleware, **opts)
+
+    def build_middleware_stack(self) -> ASGIApp:
+        # Duplicate/override from FastAPI to add the di_scope_middleware, which
+        # is required for Pest's DI to work. We need it to run before any other
+        # user-defined middleware, as it is responsible for injecting the
+        # the per-request scope into the DI container, that might be needed
+        # by other middlewares to be able to correctly resolve their dependencies.
+        debug = self.debug
+        error_handler = None
+        exception_handlers = {}
+
+        for key, value in self.exception_handlers.items():
+            if key in (500, Exception):
+                error_handler = value
+            else:
+                exception_handlers[key] = value
+
+        di_scope_mw = [
+            Middleware(PestBaseHTTPMiddleware, dispatch=di_scope_middleware, provideFn=self.resolve)
+        ]
+
+        middleware = (
+            [Middleware(ServerErrorMiddleware, handler=error_handler, debug=debug)]
+            + di_scope_mw  # <--- this is the only difference
+            + self.user_middleware
+            + [Middleware(ExceptionMiddleware, handlers=exception_handlers, debug=debug)]
+            + [Middleware(AsyncExitStackMiddleware)]
+        )
+
+        app = self.router
+        for cls, options in reversed(middleware):
+            app = cls(app=app, **options)
+        return app

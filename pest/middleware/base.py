@@ -23,6 +23,7 @@ from starlette.responses import Response
 from starlette.types import ASGIApp
 
 from ..metadata.types.module_meta import InjectionToken
+from .di import scope_from
 
 ProvideFn: TypeAlias = Callable[[InjectionToken[T], Optional[ActivationScope]], T]
 
@@ -58,12 +59,13 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
 
         @functools.wraps(dispatch)
         async def dispatch_fn(request: Request, call_next: RequestResponseEndpoint) -> Response:
-            args, kwargs = self.__resolve_args(dispatch)
+            scope = scope_from(request)
+            args, kwargs = self.__resolve_args(dispatch, scope)
             return await dispatch(request, call_next, *args, **kwargs)
 
         return dispatch_fn
 
-    def __resolve_args(self, function: DispatchFunction) -> tuple[tuple, dict]:
+    def __resolve_args(self, function: DispatchFunction, scope: ActivationScope | None) -> tuple[tuple, dict]:
         signature = Signature.from_callable(function)
         parameters = signature.parameters
         args = []
@@ -76,10 +78,10 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
                 continue
 
             if param.kind == param.POSITIONAL_ONLY or param.kind == param.POSITIONAL_OR_KEYWORD:
-                args.append(self.provide(param.annotation, None))
+                args.append(self.provide(param.annotation, scope))
 
             elif param.kind == param.KEYWORD_ONLY:
-                kwargs[name] = self.provide(param.annotation, None)
+                kwargs[name] = self.provide(param.annotation, scope)
 
         return tuple(args), kwargs
 

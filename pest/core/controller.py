@@ -45,6 +45,7 @@ def routes_of(cls: type) -> list[APIRoute]:
 
 
 def module_of(cls: type) -> 'Module':
+    """🐀 ⇝ obtains the parent module of a `controller`"""
     if not issubclass(cls, Controller):
         raise PestException(NOT_CONTROLLER.format(cls=cls.__name__))
 
