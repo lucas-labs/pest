@@ -6,7 +6,7 @@
       .c { opacity: 0.6; fill: url(#a); }
 
       @media (prefers-color-scheme: dark) {
-        .a { fill: #fcd3d3; }
+        <!-- .a { fill: #fcd3d3; } -->
         .c { opacity: 0.6; }
       }
     </style>
