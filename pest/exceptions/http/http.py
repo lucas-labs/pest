@@ -8,7 +8,7 @@ from .status import http_status
 
 
 class ExceptionResponse(BaseModel):
-    """🐀 ⇝ Base exception response"""
+    """Error response model"""
     code: int = Field(..., description='HTTP status code')
     error: str | None = Field(default=None, description='HTTP status phrase')
     message: list[str] | str | None = Field(default=None, description='Error message')

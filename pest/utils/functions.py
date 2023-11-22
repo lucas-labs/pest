@@ -46,7 +46,7 @@ def dump_model(model: BaseModel) -> dict[str, Any]:
     """dump a pydantic model to a dict
 
     HACK: this is a temporary function to support the new pydantic's model_dump() function
-    while not breaking compatibility with pydantic@2x. This function works as a centralised
+    while not breaking compatibility with pydantic@<1. This function works as a centralised
     way of future changes once pydantic<2 is dropped and model_dump() is the only
     function available. When that happens, this function will be removed and all calls to it
     will be replaced by `model.model_dump()`.
@@ -56,4 +56,21 @@ def dump_model(model: BaseModel) -> dict[str, Any]:
         model.model_dump(exclude_none=True, exclude_unset=True)
         if hasattr(model, 'model_dump')
         else model.dict(exclude_none=True, exclude_unset=True)
+    )
+
+
+def model_schema(model: type[BaseModel]) -> dict[str, Any]:
+    """return a pydantic model's schema
+
+    HACK: this is a temporary function to support the new pydantic's model_json_schema()
+    function while not breaking compatibility with pydantic@<2. This function works as a
+    centralised way of future changes once pydantic<2 is dropped and model_json_schema() is
+    the only function available. When that happens, this function will be removed and all
+    calls to it will be replaced by `model.model_json_schema()`.
+    """
+
+    return (
+        model.model_json_schema()
+        if hasattr(model, 'model_json_schema')
+        else model.schema()
     )
