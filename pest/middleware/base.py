@@ -1,5 +1,4 @@
 
-import functools
 from inspect import Signature, isclass, isfunction
 from typing import (
     Any,
@@ -8,64 +7,95 @@ from typing import (
     Protocol,
     TypeAlias,
     TypeGuard,
+    cast,
+    final,
     runtime_checkable,
 )
 
 from rodi import ActivationScope
-from starlette.middleware.base import (
-    BaseHTTPMiddleware,
-    DispatchFunction,
-    RequestResponseEndpoint,
-    T,
-)
+from starlette.middleware.base import BaseHTTPMiddleware, DispatchFunction, T
+from starlette.middleware.base import RequestResponseEndpoint as CallNext
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
 
+from ..core.module import Module
 from ..metadata.types.module_meta import InjectionToken
 from .di import scope_from
 
 ProvideFn: TypeAlias = Callable[[InjectionToken[T], Optional[ActivationScope]], T]
+UseFn: TypeAlias = Callable[[Request, CallNext], Response]
 
 
 @runtime_checkable
-class PestMwDispatcher(Protocol):
+class PestMiddlwareCallback(Protocol):
     async def __call__(
         self,
         request: Request,
-        call_next: RequestResponseEndpoint,
+        call_next: CallNext,
     ) -> Response:
         ...
+
+
+@runtime_checkable
+class PestMiddleware(Protocol):
+    async def use(
+        self,
+        request: Request,
+        call_next: CallNext
+    ) -> Response:
+        ...
+
+    @final
+    async def __call__(
+        self,
+        request: Request,
+        call_next: CallNext,
+    ) -> Response:
+        return await self.use(request, call_next)
 
 
 class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
     """🐀 ⇝ asgi middleware that receivs an injetor function and a dispatch funtion
 
-    same as `starlette`'s `BaseHTTPMiddleware` but this one supports receiving injection
+    same as `starlette`'s `BaseHTTPMiddleware` but this one supports di injection
     """
 
     def __init__(
         self,
         app: ASGIApp,
-        provideFn: ProvideFn,
-        dispatch: PestMwDispatcher
+        parent_module: Module,
+        dispatch: PestMiddlwareCallback
     ) -> None:
-        self.provide = provideFn
+        self.parent_module = parent_module
         super().__init__(app, dispatch=self.__dispatch_fn(dispatch))
 
-    def __dispatch_fn(self, dispatch: PestMwDispatcher) -> DispatchFunction | None:
+    def __dispatch_fn(
+        self, dispatch: PestMiddlwareCallback | type[PestMiddlwareCallback]
+    ) -> DispatchFunction | None:
         if dispatch is None:
             return dispatch
 
-        @functools.wraps(dispatch)
-        async def dispatch_fn(request: Request, call_next: RequestResponseEndpoint) -> Response:
+        if _is_class_pest_mw_callback(dispatch):
+            self.parent_module.register(dispatch)
+
+        async def wrapper(request: Request, call_next: CallNext) -> Response:
             scope = scope_from(request)
-            args, kwargs = self.__resolve_args(dispatch, scope)
-            return await dispatch(request, call_next, *args, **kwargs)
+            dispatch_fn = cast(
+                PestMiddlwareCallback,
+                dispatch
+                if not isclass(dispatch)
+                else self.parent_module.get(dispatch, scope)
+            )
 
-        return dispatch_fn
+            args, kwargs = self.__resolve_dispatcher_args(dispatch_fn, scope)
+            return await dispatch_fn(request, call_next, *args, **kwargs)
 
-    def __resolve_args(self, function: DispatchFunction, scope: ActivationScope | None) -> tuple[tuple, dict]:
+        return wrapper
+
+    def __resolve_dispatcher_args(
+        self, function: DispatchFunction, scope: ActivationScope | None
+    ) -> tuple[tuple, dict]:
         signature = Signature.from_callable(function)
         parameters = signature.parameters
         args = []
@@ -78,23 +108,29 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
                 continue
 
             if param.kind == param.POSITIONAL_ONLY or param.kind == param.POSITIONAL_OR_KEYWORD:
-                args.append(self.provide(param.annotation, scope))
+                args.append(self.parent_module.get(param.annotation, scope))
 
             elif param.kind == param.KEYWORD_ONLY:
-                kwargs[name] = self.provide(param.annotation, scope)
+                kwargs[name] = self.parent_module.get(param.annotation, scope)
 
         return tuple(args), kwargs
 
 
 def inject() -> Any:
-    """🐀 ⇝ placeholder to indicate that a parameter should be injected"""
+    """🐀 ⇝ placeholder to indicate that a parameter should be injected 💉"""
     ...
 
 
-def is_pest_dispatcher(obj: Any) -> TypeGuard[PestMwDispatcher]:
+def _is_class_pest_mw_callback(obj: Any) -> TypeGuard[type[PestMiddlwareCallback]]:
+    """checks if an object is a **class** that respects the pest middleware callback protocol"""
+    return _is_pest_mw_callback(obj) and isclass(obj)
+
+
+def _is_pest_mw_callback(obj: Any) -> TypeGuard[PestMiddlwareCallback | type[PestMiddlwareCallback]]:
+    """checks if an object respects the pest middleware callback protocol"""
     respects_protocol = (
-        isclass(obj) and issubclass(obj, PestMwDispatcher) or
-        callable(obj) and isinstance(obj, PestMwDispatcher)
+        isclass(obj) and issubclass(obj, PestMiddlwareCallback) or
+        callable(obj) and isinstance(obj, PestMiddlwareCallback)
     )
 
     if not respects_protocol:

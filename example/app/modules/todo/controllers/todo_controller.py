@@ -15,7 +15,7 @@ IdPathParam: TypeAlias = Annotated[int, Path(description='''A todo's **unique** 
 
 @controller('/todo', tags=['Todo'])
 class TodoController:
-    todos: TodoService  # <- automatically injected
+    todos: TodoService  # 💉 automatically injected
 
     @get('/')
     def get_all_todos(self) -> list[ReadTodoModel]:

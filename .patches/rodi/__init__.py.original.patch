@@ -1,6 +1,18 @@
---- "D:\\users\\lucas\\Desktop\\dev\\python\\pest\\.patches\\rodi\\__init__.py.original"	2023-11-12 22:43:39.892416300 -0300
-+++ "D:\\users\\lucas\\Desktop\\dev\\python\\pest\\.patches\\rodi/__init__.py"	2023-11-12 20:43:53.450989400 -0300
-@@ -475,7 +475,12 @@
+--- "D:\\users\\lucas\\Desktop\\dev\\python\\pest\\.patches\\rodi\\__init__.py.original"	2023-11-24 01:40:13.787287300 -0300
++++ "D:\\users\\lucas\\Desktop\\dev\\python\\pest\\.patches\\rodi/__init__.py"	2023-11-24 01:39:23.859523600 -0300
+@@ -20,6 +20,11 @@
+     get_type_hints,
+ )
+ 
++if sys.version_info >= (3, 9):  # pragma: no cover
++    from typing import _no_init_or_replace_init as _no_init
++elif sys.version_info >= (3, 8):  # pragma: no cover
++    from typing import _no_init
++
+ try:
+     from typing import Protocol
+ except ImportError:  # pragma: no cover
+@@ -475,7 +480,12 @@
          assert (
              reg is not None
          ), f"A resolver for type {class_name(desired_type)} is not configured"
@@ -14,7 +26,7 @@
  
      def _get_resolvers_for_parameters(
          self,
-@@ -567,11 +572,12 @@
+@@ -567,11 +577,23 @@
          """
          Returns a value indicating whether a class attribute should be ignored for
          dependency resolution, by name and value.
@@ -28,10 +40,30 @@
 +        is_initialized = getattr(self.concrete_type, key, None) is not None
 +
 +        return is_classvar or is_initialized
++
++    def _has_default_init(self):
++        init = getattr(self.concrete_type, "__init__", None)
++
++        if init is object.__init__:
++            return True
++
++        if sys.version_info >= (3, 8):  # pragma: no cover
++            if init is _no_init:
++                return True
++        return False
  
      def _resolve_by_annotations(
          self, context: ResolutionContext, annotations: Dict[str, Type]
-@@ -1146,14 +1152,24 @@
+@@ -599,7 +621,7 @@
+         chain = context.dynamic_chain
+         chain.append(concrete_type)
+ 
+-        if getattr(concrete_type, "__init__") is object.__init__:
++        if self._has_default_init():
+             annotations = get_type_hints(
+                 concrete_type,
+                 vars(sys.modules[concrete_type.__module__]),
+@@ -1146,14 +1168,24 @@
              _map: Dict[Union[str, Type], Type] = {}
  
              for _type, resolver in self._map.items():
