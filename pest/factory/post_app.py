@@ -4,10 +4,7 @@ from ..middleware.types import CorsOptions
 from ..utils.functions import model_schema
 
 
-def setup(
-    app: PestApplication,
-    cors: CorsOptions | None = None
-) -> PestApplication:
+def setup(app: PestApplication, cors: CorsOptions | None = None) -> PestApplication:
     """Initializes stuff that needs the app to already exist to be able to setup"""
     __setup_cors(app, cors)
     __patch_open_api(app)
@@ -32,9 +29,9 @@ def __patch_open_api(app: PestApplication) -> None:
     for path in openapi_schema['paths']:
         for method in openapi_schema['paths'][path]:
             if openapi_schema['paths'][path][method]['responses'].get('422'):
-                openapi_schema['paths'][path][method]['responses'][
-                    '400'
-                ] = openapi_schema['paths'][path][method]['responses']['422']
+                openapi_schema['paths'][path][method]['responses']['400'] = openapi_schema['paths'][
+                    path
+                ][method]['responses']['422']
 
                 # change schema ref to ErrorReponse instead of HTTPValidationError
                 openapi_schema['paths'][path][method]['responses']['400']['content'][
@@ -49,7 +46,7 @@ def __patch_open_api(app: PestApplication) -> None:
                     'error': 'Bad Request',
                     'message': [
                         'error hint',
-                    ]
+                    ],
                 }
 
                 # remove 422

@@ -21,7 +21,7 @@ except ImportError as e:  # noqa: F841
             'Install `loguru` to use logging configuration '
             'system: `pip install pest[loguru]`, `poetry add pest[loguru]` '
             'or just `pip install loguru` or `poetry add loguru`'
-        )
+        ),
     )
 
 FORMAT = env(
@@ -38,9 +38,9 @@ class _InterceptorHandler(pylogging.Handler):
     def get_exc(self, record: pylogging.LogRecord) -> tuple[str, BaseException] | None:
         exc = record.exc_info
         if (
-            exc is None or
-            (exc is not None and exc[0] is None) or
-            (exc is not None and exc[1] is None)
+            exc is None
+            or (exc is not None and exc[0] is None)
+            or (exc is not None and exc[1] is None)
         ):
             return
 
@@ -58,9 +58,7 @@ class _InterceptorHandler(pylogging.Handler):
             frame = frame.f_back
             depth += 1
 
-        log = loguru_logger.bind(
-            access=True if record.name == 'uvicorn.access' else None
-        )
+        log = loguru_logger.bind(access=True if record.name == 'uvicorn.access' else None)
 
         e = self.get_exc(record)
 
@@ -169,9 +167,7 @@ class Loguru:
             diagnose=False,
             format=format_record,
             level=level,
-            filter=lambda record: (
-                (True if access_log else no_access(record))
-            )
+            filter=lambda record: ((True if access_log else no_access(record))),
         )
 
         for sink in sinks:

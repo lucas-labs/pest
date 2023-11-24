@@ -22,7 +22,7 @@ async def pest_middleware(
     # it's just there for type checking, otherwise my_middleware wouldn't be
     # considered a valid middleware function (needs a default value for the
     # Protocol to be "respected"). Might be changed in the future.
-    repo: TodoRepo = inject()  # injection works in middleware too!
+    repo: TodoRepo = inject(),  # injection works in middleware too!
 ) -> Response:
     response = await call_next(request)
     response.headers['X-Process-Time-1'] = repo.now()
@@ -61,19 +61,12 @@ app = Pest.create(
         'intercept': [('uvicorn*', LogLevel.DEBUG), 'pest*', 'fastapi'],
         'level': LogLevel.DEBUG,
         'access_log': True,
-        'sinks': [{
-            'sink': 'example/logs/app.log',
-            'rotation': '1 week',
-            'format': format_record
-        }],
+        'sinks': [{'sink': 'example/logs/app.log', 'rotation': '1 week', 'format': format_record}],
     },
-    middleware=[
-        Middleware(PureAsgiMiddleware),
-        pest_middleware
-    ],
+    middleware=[Middleware(PureAsgiMiddleware), pest_middleware],
     cors={
         'allow_origins': ['*'],
-    }
+    },
 )
 
 
@@ -82,7 +75,7 @@ app = Pest.create(
 async def fastapi_middleware(
     request: Request,
     call_next: RequestResponseEndpoint,
-    repo: TodoRepo  # but we can inject stuff now too!
+    repo: TodoRepo,  # but we can inject stuff now too!
 ) -> Response:
     response = await call_next(request)
     response.headers['X-Process-Time-3'] = repo.now()

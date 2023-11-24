@@ -1,4 +1,3 @@
-
 import ast
 import os
 import pathlib
@@ -11,20 +10,13 @@ from pest.metadata.types.handler_meta import HandlerMeta
 from pest.metadata.types.module_meta import ModuleMeta
 from pest.utils.colorize import c
 
-metas = [
-    ModuleMeta,
-    HandlerMeta,
-    ControllerMeta
-]
+metas = [ModuleMeta, HandlerMeta, ControllerMeta]
 
 types_path = os.path.join(os.getcwd(), 'pest', 'decorators', 'dicts')
 
 
 def to_snake_case(name: str) -> str:
-    return ''.join([
-        '_' + char.lower() if char.isupper() else char
-        for char in name
-    ]).lstrip('_')
+    return ''.join(['_' + char.lower() if char.isupper() else char for char in name]).lstrip('_')
 
 
 def extract_imports(code: str) -> list[tuple[str, list[str]]]:
@@ -57,15 +49,13 @@ def fix_rel_import(import_line: str, module_path: str, destination: str) -> str:
         return f"./{'/'.join(parent_dirs + parts)}.py"
 
     relative_import_path = import_path_to_os_relative_path(import_line)
-    absolute_import_path = os.path.abspath(
-        os.path.join(module_dir, relative_import_path)
-    )
+    absolute_import_path = os.path.abspath(os.path.join(module_dir, relative_import_path))
 
     relative_path = pathlib.Path(os.path.relpath(absolute_import_path, new_path))
     relative_parts = list(
-        map(lambda part: '' if part == '..' else (
-            str(part).replace('.py', '')
-        ), relative_path.parts)
+        map(
+            lambda part: '' if part == '..' else (str(part).replace('.py', '')), relative_path.parts
+        )
     )
 
     return f"{'.'.join(relative_parts)}"
@@ -78,14 +68,14 @@ def extract_class_vars(code: str, class_name: str) -> list[tuple[str, str]]:
 
         def _should_expose(self, item: ast.AnnAssign | ast.Assign) -> bool:
             value = item.value
-            if (isinstance(value, ast.Call)):
+            if isinstance(value, ast.Call):
                 if isinstance(value.func, ast.Name) and value.func.id == 'field':
                     keywords = value.keywords
                 elif (
-                    isinstance(value.func, ast.Attribute) and
-                    value.func.attr == 'field' and
-                    isinstance(value.func.value, ast.Name) and
-                    value.func.value.id == 'dataclasses'
+                    isinstance(value.func, ast.Attribute)
+                    and value.func.attr == 'field'
+                    and isinstance(value.func.value, ast.Name)
+                    and value.func.value.id == 'dataclasses'
                 ):
                     keywords = value.keywords
                 else:
@@ -93,15 +83,15 @@ def extract_class_vars(code: str, class_name: str) -> list[tuple[str, str]]:
 
                 for keyword in keywords if keywords is not None else []:
                     meta = None
-                    if (keyword.arg == 'metadata' and isinstance(keyword.value, ast.Dict)):
+                    if keyword.arg == 'metadata' and isinstance(keyword.value, ast.Dict):
                         meta = dict(zip(keyword.value.keys, keyword.value.values))
 
                     for k, v in meta.items() if meta is not None else []:
                         if (
-                            isinstance(k, ast.Constant) and
-                            isinstance(v, ast.Constant) and
-                            k.value == 'expose' and
-                            v.value is False
+                            isinstance(k, ast.Constant)
+                            and isinstance(v, ast.Constant)
+                            and k.value == 'expose'
+                            and v.value is False
                         ):
                             return False
 
@@ -119,8 +109,8 @@ def extract_class_vars(code: str, class_name: str) -> list[tuple[str, str]]:
 
                                 var_name = target.id
                                 var_type = ast.get_source_segment(
-                                    code, item.value
-                                    if isinstance(item, ast.Assign) else item.annotation
+                                    code,
+                                    item.value if isinstance(item, ast.Assign) else item.annotation,
                                 )
                                 self.variables.append((var_name, var_type))
 
@@ -137,9 +127,9 @@ def extract_type_aliases(code: str) -> list[str]:
         if isinstance(node, ast.AnnAssign):
             target, annotation = node.target, node.annotation
             if (
-                isinstance(target, ast.Name) and
-                isinstance(annotation, ast.Name) and
-                annotation.id == 'TypeAlias'
+                isinstance(target, ast.Name)
+                and isinstance(annotation, ast.Name)
+                and annotation.id == 'TypeAlias'
             ):
                 type_aliases.append(target.id)
 
@@ -159,24 +149,23 @@ def write_file(
     module_path: str,
     module_src: str,
     meta_name: str,
-    new_name: str | None = None
+    new_name: str | None = None,
 ) -> None:
-    relative_module_path_from_cwd = (
-        relcwd(module_path)
-        .replace('\\', '/')
-    )
+    relative_module_path_from_cwd = relcwd(module_path).replace('\\', '/')
 
     with open(typed_dict_path, 'w') as f:
         # docstring at the top of the file indicating that it is auto-generated by the tool
-        f.writelines([
-            '"""\n',
-            f'Module providing typed dicts for the metadata {meta_name}:\n',
-            f'- {relative_module_path_from_cwd}\n\n',
-            'ATTENTION:\n',
-            'This file was auto-generated by tools/generator.py.\n',
-            'Do not edit manually.\n',
-            '"""\n\n'
-        ])
+        f.writelines(
+            [
+                '"""\n',
+                f'Module providing typed dicts for the metadata {meta_name}:\n',
+                f'- {relative_module_path_from_cwd}\n\n',
+                'ATTENTION:\n',
+                'This file was auto-generated by tools/generator.py.\n',
+                'Do not edit manually.\n',
+                '"""\n\n',
+            ]
+        )
 
         f.write('from typing import TypedDict\n')
         # imports
@@ -192,9 +181,7 @@ def write_file(
             # type aliases are defined in the same module as the class, so get the file name
             # of the module (without the .py extension) and import the alias from there
             module_name = fix_rel_import(
-                f'.{pathlib.Path(module_path).stem}',
-                module_path,
-                typed_dict_path
+                f'.{pathlib.Path(module_path).stem}', module_path, typed_dict_path
             )
             f.write(f'from {module_name} import {alias}\n')
 
@@ -222,10 +209,9 @@ def types() -> None:
             f'from {c(meta_name, color="blue")} in {c(relcwd(types_path), color="blue")}'
         )
 
-        typed_dict_path = os.path.join(
-            types_path,
-            f'{to_snake_case(meta.__name__)}.py'
-        ).replace('_meta', '_dict')
+        typed_dict_path = os.path.join(types_path, f'{to_snake_case(meta.__name__)}.py').replace(
+            '_meta', '_dict'
+        )
 
         module = sys.modules[meta.__module__]
         module_path = str(module.__file__)
@@ -242,14 +228,12 @@ def types() -> None:
             f'    ⚬ {c("$", color="yellow")} {c("poetry", color="yellow", attrs=["bold"])} '
             f'run ruff '
             f'{c("--fix", attrs=["dark"])}\n'
-
-
         )
         subprocess.run(command, check=True, capture_output=True)  # noqa: S603
 
     print(
         f'\n🐀 ⇝  {c("`TypeDict`", attrs=["bold"])} '
-        f'generation {c("completed", color="green")}\n'
+        f'generation {c("completed", color="green")}\n',
     )
 
 

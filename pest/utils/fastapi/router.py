@@ -31,6 +31,7 @@ class PestRouter(APIRouter):
     class avoids that behavior and for each route that is added, it adds an alternative
     route with or without /, as appropriate.
     """
+
     routes: list[APIRoute]
     controller: type['Controller']
 
@@ -57,16 +58,14 @@ class PestRouter(APIRouter):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Union[type[Response], DefaultPlaceholder] = Default(
-            JSONResponse
-        ),
+        response_class: Union[type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,
         route_class_override: Optional[type[APIRoute]] = None,
         callbacks: Optional[List[BaseRoute]] = None,
         openapi_extra: Optional[Dict[str, Any]] = None,
-        generate_unique_id_function: Union[
-            Callable[[APIRoute], str], DefaultPlaceholder
-        ] = Default(generate_unique_id),
+        generate_unique_id_function: Union[Callable[[APIRoute], str], DefaultPlaceholder] = Default(
+            generate_unique_id
+        ),
         **kwargs: Any,
     ) -> None:
         """

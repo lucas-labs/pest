@@ -59,7 +59,9 @@ class PestApplication(FastAPI):
         self.__pest_module__ = module
 
         self.user_middleware: List[Middleware] = (
-            [] if middleware is None else [
+            []
+            if middleware is None
+            else [
                 middleware
                 if isinstance(middleware, Middleware)
                 else Middleware(PestBaseHTTPMiddleware, dispatch=middleware, parent_module=module)
@@ -67,19 +69,19 @@ class PestApplication(FastAPI):
             ]
         )
 
-        self.add_exception_handlers([
-            (HTTPException, handle.http),
-            (ValidationError, handle.request_validation),
-            (RequestValidationError, handle.request_validation),
-            (WebSocketRequestValidationError, handle.websocket_request_validation),
-
-            # for everything else, there's Mastercard (or was it Bancard? 🤔)
-            (Exception, handle.the_rest),
-        ])
+        self.add_exception_handlers(
+            [
+                (HTTPException, handle.http),
+                (ValidationError, handle.request_validation),
+                (RequestValidationError, handle.request_validation),
+                (WebSocketRequestValidationError, handle.websocket_request_validation),
+                # for everything else, there's Mastercard (or was it Bancard? 🤔)
+                (Exception, handle.the_rest),
+            ]
+        )
 
     def add_exception_handlers(
-        self,
-        handlers: list[tuple[int | type[Exception], Callable]]
+        self, handlers: list[tuple[int | type[Exception], Callable]]
     ) -> None:  # pragma: no cover
         for error, handler in handlers:
             self.add_exception_handler(error, handler)
@@ -116,9 +118,7 @@ class PestApplication(FastAPI):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Union[Type[Response], DefaultPlaceholder] = Default(
-            JSONResponse
-        ),
+        response_class: Union[Type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,
         openapi_extra: Optional[Dict[str, Any]] = None,
         generate_unique_id_function: Callable[[routing.APIRoute], str] = Default(
@@ -253,11 +253,13 @@ class PestApplication(FastAPI):
             else:
                 exception_handlers[key] = value
 
-        di_scope_mw = [Middleware(
-            PestBaseHTTPMiddleware,
-            dispatch=di_scope_middleware,
-            parent_module=root_module(self)
-        )]
+        di_scope_mw = [
+            Middleware(
+                PestBaseHTTPMiddleware,
+                dispatch=di_scope_middleware,
+                parent_module=root_module(self),
+            )
+        ]
 
         middleware = (
             [Middleware(ServerErrorMiddleware, handler=error_handler, debug=debug)]

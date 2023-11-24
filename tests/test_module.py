@@ -25,6 +25,7 @@ from .cfg.pest_primitives import (
 
 def test_module_inheritance():
     """🐀 modules :: @module :: should make the decorated class inherit from Module"""
+
     @module()
     class TestModule:
         pass
@@ -35,6 +36,7 @@ def test_module_inheritance():
 
 def test_module_meta():
     """🐀 modules :: @module :: should add metadata to the decorated class"""
+
     class FakeProvider:
         pass
 

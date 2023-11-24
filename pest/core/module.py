@@ -28,7 +28,7 @@ def parent_of(module: 'Module') -> Optional['Module']:
         raise PestException(
             f'{module.__name__} is not a module.',
             hint=f'decorate `{module.__name__}` with the `@module` decorator '
-            '(or one of its aliases)'
+            '(or one of its aliases)',
         )
 
     return module.__parent_module__
@@ -40,7 +40,7 @@ def contained_in(module: 'Module') -> list[tuple[InjectionToken, Any]]:
         raise PestException(
             f'{module.__name__} is not a module.',
             hint=f'decorate `{module.__name__}` with the `@module` decorator '
-            '(or one of its aliases)'
+            '(or one of its aliases)',
         )
 
     return list(module.container)
@@ -57,7 +57,9 @@ def setup_module(
     if not issubclass(clazz, Module):
         raise PestException(
             f'{clazz.__name__} is not a module.',
-            hint=f'decorate `{clazz.__name__}` with the `@module` decorator (or one of its aliases)'
+            hint=(
+                f'decorate `{clazz.__name__}` with the `@module` decorator (or one of its aliases)'
+            ),
         )
 
     if parent_clazz is not None and not isinstance(parent_clazz, Module):
@@ -66,7 +68,7 @@ def setup_module(
             hint=(
                 f'decorate `{parent_clazz.__name__}` with the `@module` '
                 'decorator (or one of its aliases)'
-            )
+            ),
         )
 
     module = clazz()
@@ -134,16 +136,11 @@ class Module(PestPrimitive):
         # or globally (in the root module)
         if parent is not None:
             for provider, _ in contained_in(parent):
-                def resolve_from_parent() -> Any:
-                    return parent.get(cast(
-                        InjectionToken,
-                        provider
-                    ))
 
-                self.register(FactoryProvider(
-                    provide=provider,
-                    use_factory=resolve_from_parent
-                ))
+                def resolve_from_parent() -> Any:
+                    return parent.get(cast(InjectionToken, provider))
+
+                self.register(FactoryProvider(provide=provider, use_factory=resolve_from_parent))
 
         # setup child modules
         for child in meta.imports if meta.imports else []:
@@ -153,9 +150,7 @@ class Module(PestPrimitive):
         # register providers exported by child modules
         for imported_module in self.imports:
             for exported_provider in imported_module.exports:
-                self.__imported__providers__[
-                    exported_provider
-                ] = imported_module
+                self.__imported__providers__[exported_provider] = imported_module
 
         # we're done
         self.__class_status__ = Status.READY
@@ -166,13 +161,13 @@ class Module(PestPrimitive):
                 self.container.bind_types(
                     provide,
                     use_class,
-                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT
+                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT,
                 )
             case FactoryProvider(provide, use_factory, scope):
                 self.container.register_factory(
                     factory=use_factory,
                     return_type=provide,
-                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT
+                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT,
                 )
             case ValueProvider(provide, use_value):
                 self.container.add_instance(
@@ -180,14 +175,9 @@ class Module(PestPrimitive):
                     instance=use_value,
                 )
             case ExistingProvider(provide, use_existing):
-                self.container.add_alias(
-                    name=provide,
-                    desired_type=use_existing
-                )
+                self.container.add_alias(name=provide, desired_type=use_existing)
             case _:
-                self.container.add_transient(
-                    provider
-                )
+                self.container.add_transient(provider)
 
     def can_provide(self, token: InjectionToken) -> bool:
         if token in self.__imported__providers__ or token in self.container:
@@ -201,9 +191,7 @@ class Module(PestPrimitive):
         return self.container.resolve(token, scope=scope)
 
     def __get_from_imported(
-        self,
-        token: InjectionToken[T],
-        scope: ActivationScope | None = None
+        self, token: InjectionToken[T], scope: ActivationScope | None = None
     ) -> T:
         return self.__imported__providers__[token].get(token, scope=scope)
 

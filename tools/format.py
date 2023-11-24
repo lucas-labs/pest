@@ -10,30 +10,18 @@ ERR = 1
 OKI = 0
 
 
-def check() -> int:
+def check() -> None:
     """runs black on check mode and returns 0 if no changes would be made, 1 otherwise"""
     args = ['--check', '.']
     print(f'\n{c("$ ", color="green")}{c("black", color="blue")} {" ".join(args)}\n')
-
-    try:
-        black.main(args)
-    except SystemExit:
-        return ERR
-    else:
-        return OKI
+    black.main(args)
 
 
-def fix() -> int:
+def fix() -> None:
     """runs black on fix mode and returns 0 if no changes were made, 1 otherwise"""
     args = ['.']
     print(f'\n{c("$ ", color="green")}{c("black", color="blue")} {" ".join(args)}\n')
-
-    try:
-        black.main(args)
-    except SystemExit:
-        return ERR
-    else:
-        return OKI
+    black.main(args)
 
 
 def lint_check() -> int:

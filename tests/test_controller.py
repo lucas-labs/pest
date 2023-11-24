@@ -1,5 +1,3 @@
-
-
 from fastapi.routing import APIRoute
 
 from pest.core.common import primitive_type, status
@@ -16,6 +14,7 @@ from pest.utils.fastapi.router import PestRouter
 
 def test_controller_inheritance():
     """🐀 controllers :: @controller :: should make the decorated class inherit from Controller"""
+
     @controller('/')
     class FooController:
         pass
@@ -26,6 +25,7 @@ def test_controller_inheritance():
 
 def test_controller_meta():
     """🐀 controllers :: @controller :: should add metadata to the decorated class"""
+
     def cb() -> None:
         pass
 
@@ -55,7 +55,8 @@ def test_controller_meta():
 
 
 def test_controller_setup():
-    """🐀 controllers :: __setup_controller_class__ :: should setup the controller's router"""''
+    """🐀 controllers :: __setup_controller_class__ :: should setup the controller's router""" ''
+
     @controller('/foo')
     class FooController:
         pass
@@ -71,6 +72,7 @@ def test_controller_setup():
 
 def test_controller_handlers_setup():
     """🐀 controllers :: __setup_controller_class__ :: should setup the controller's handlers"""
+
     @controller('/foo')
     class FooController:
         @get('/bar')

@@ -72,7 +72,6 @@ async def the_rest(request: Request, exc: Exception) -> Response:
     stat = http_status(HTTPStatusEnum.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return JSONResponse(
-        status_code=stat.code, content=dump_model(
-            ExceptionResponse(code=stat.code, error=stat.phrase)
-        )
+        status_code=stat.code,
+        content=dump_model(ExceptionResponse(code=stat.code, error=stat.phrase)),
     )

@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from fastapi import Request, Response
@@ -87,6 +86,7 @@ def test_fastapi_handlers(app_n_client: tuple[PestApplication, TestClient]) -> N
 
 def test_pest_functional_middleware_cb() -> None:
     """🐀 app :: middleware :: should execute middleware on each reaquest"""
+
     async def pest_middleware(request: Request, call_next: CallNext) -> Response:
         response = await call_next(request)
         response.headers['X-Process-Time'] = datetime.now().isoformat()
@@ -137,6 +137,7 @@ def test_pest_functional_middleware_cb_with_di():
 
 def test_pest_class_based_middleware_cb() -> None:
     """🐀 app :: middleware :: should execute class based middleware on each reaquest"""
+
     class MiddlewareCallback(PestMiddlwareCallback):
         async def __call__(self, request: Request, call_next: CallNext) -> Response:
             response = await call_next(request)
@@ -159,6 +160,7 @@ def test_pest_class_based_middleware_cb() -> None:
 
 def test_pest_class_based_middleware_with_di() -> None:
     """🐀 app :: middleware :: should allow injection into class middlewares"""
+
     class MiddlewareCallback(PestMiddlwareCallback):
         id_gen: IdGenerator  # 💉 automatically injected
 

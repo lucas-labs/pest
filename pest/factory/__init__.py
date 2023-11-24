@@ -11,6 +11,7 @@ from .app_creator import make_app as make_app
 
 class Pest:
     """🐀 ⇝ the main class of the framework, used to create and initialize a pest application"""
+
     @classmethod
     def create(
         cls,
@@ -20,7 +21,7 @@ class Pest:
         middleware: MiddlewareDef = [],
         prefix: str = '',
         cors: CorsOptions | None = None,
-        **fastapi_params: Unpack[FastAPIParams]
+        **fastapi_params: Unpack[FastAPIParams],
     ) -> PestApplication:
         """
         🐀 ⇝ creates and initializes a pest application

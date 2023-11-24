@@ -1,4 +1,3 @@
-
 from inspect import getmembers, isfunction
 from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
@@ -97,7 +96,7 @@ class Controller(PestPrimitive):
         return r
 
     @classmethod
-    def __routes__(cls, ) -> list[APIRoute]:
+    def __routes__(cls) -> list[APIRoute]:
         """makes routes for the controller"""
 
         routes = []

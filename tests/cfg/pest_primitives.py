@@ -36,12 +36,7 @@ class FooController:
     bar: ProviderBar
 
 
-@module(
-    imports=[Mod],
-    providers=[ProviderBaz],
-    exports=[ProviderBaz],
-    controllers=[FooController]
-)
+@module(imports=[Mod], providers=[ProviderBaz], exports=[ProviderBaz], controllers=[FooController])
 class FooModule:
     pass
 
@@ -54,14 +49,6 @@ class ModuleWithController:
     pass
 
 
-@module(
-    providers=[
-        ClassProvider(
-            provide=ProviderFoo,
-            use_class=ProviderFoo,
-            scope=Scope.SCOPED
-        )
-    ]
-)
+@module(providers=[ClassProvider(provide=ProviderFoo, use_class=ProviderFoo, scope=Scope.SCOPED)])
 class ScopeTestModule:
     pass

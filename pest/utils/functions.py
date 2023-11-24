@@ -69,8 +69,4 @@ def model_schema(model: type[BaseModel]) -> dict[str, Any]:
     calls to it will be replaced by `model.model_json_schema()`.
     """
 
-    return (
-        model.model_json_schema()
-        if hasattr(model, 'model_json_schema')
-        else model.schema()
-    )
+    return model.model_json_schema() if hasattr(model, 'model_json_schema') else model.schema()

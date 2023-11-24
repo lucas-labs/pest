@@ -1,4 +1,3 @@
-
 from typing import Annotated, TypeAlias, cast
 
 from fastapi import Path
@@ -20,10 +19,7 @@ class TodoController:
     @get('/')
     def get_all_todos(self) -> list[ReadTodoModel]:
         # logger.info('Getting all todos')
-        return cast(
-            list[ReadTodoModel],
-            self.todos.get_all()
-        )
+        return cast(list[ReadTodoModel], self.todos.get_all())
 
     @get('/{id}', name='OpenAPI Name Change')
     def get_todo_by_id(self, id: IdPathParam) -> TodoModel:

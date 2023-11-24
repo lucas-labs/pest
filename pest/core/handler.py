@@ -1,4 +1,3 @@
-
 from dataclasses import asdict
 from inspect import Parameter, signature
 from typing import TYPE_CHECKING, Any, Callable, TypeAlias
@@ -20,13 +19,14 @@ HandlerTuple: TypeAlias = tuple[HandlerFn, HandlerMeta]
 def setup_handler(cls: type['Controller'], handler: HandlerTuple) -> APIRoute:
     """🐀 ⇝ sets up a request handler"""
     from ..decorators.dicts.handler_dict import HandlerMetaDict
+
     handler_fn, handler_meta = handler
     meta_dict = clean_dict(asdict(handler_meta), HandlerMetaDict)
     route = APIRoute(
         endpoint=handler_fn,
         path=handler_meta.path,
         methods=handler_meta.methods,
-        **meta_dict
+        **meta_dict,
     )
     _patch_route_signature(cls, route)
 
@@ -78,6 +78,7 @@ class PestControllerInjector:
     async def __call__(self, request: Request) -> Any:
         """🐀 ⇝ returns the `controller` to be injected 💉"""
         from .controller import module_of
+
         scope = scope_from(request)
         module = module_of(self.token)
         controller = module.get(self.token, scope)

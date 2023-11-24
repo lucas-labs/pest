@@ -19,7 +19,7 @@ def controller(
             'prefix': prefix,
             **options,
         },
-        base=Controller
+        base=Controller,
     )
 
 

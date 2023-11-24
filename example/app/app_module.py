@@ -9,10 +9,7 @@ from .modules.todo.module import TodoModule
     imports=[TodoModule],
     providers=[
         # singleton
-        ValueProvider(
-            provide=TodoRepo,
-            use_value=TodoRepo()
-        )
+        ValueProvider(provide=TodoRepo, use_value=TodoRepo())
     ],
 )
 class AppModule:
