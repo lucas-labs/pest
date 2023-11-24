@@ -1,12 +1,12 @@
 {
     "files.exclude": {
         // 📙 sub-libs
-        "tools": true,
+        // "tools": true,
 
         // ⚙️ config
-        "pyproject.toml": true,
+        // "pyproject.toml": true,
         "**/**/*.code-workspace": true,
-        "poetry.lock": true,
+        // "poetry.lock": true,
         "poetry.toml": true,
 
         // 🧼 linters & styles
@@ -15,7 +15,7 @@
         ".env": true,
 
         // 🧪 tests
-        "tests": true,
+        // "tests": true,
         "htmlcov": true,
         "coverage": true,
         ".coverage": true,

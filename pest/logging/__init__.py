@@ -2,7 +2,13 @@ import logging
 from datetime import time, timedelta
 from enum import Enum
 from multiprocessing.context import BaseContext
-from typing import TYPE_CHECKING, TypedDict, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    TextIO,
+    TypedDict,
+    Union,
+)
 
 LOGGER_NAME = 'pest'
 
@@ -13,9 +19,11 @@ if TYPE_CHECKING:
             FilterDict,
             FilterFunction,
             FormatFunction,
+            Message,
             PathLikeStr,
             RetentionFunction,
             RotationFunction,
+            Writable,
         )
     except ImportError:
         pass
@@ -37,7 +45,9 @@ log.setLevel(LogLevel.DEBUG)
 
 class SinkOptions(TypedDict, total=False):
     """🐀 ⇝ config options for loguru sinks"""
-    sink: Union[str, 'PathLikeStr']
+    sink: Union[
+        str, 'PathLikeStr', TextIO, 'Writable', Callable[['Message'], None], logging.Handler
+    ]
     level: str | int
     format: Union[str, 'FormatFunction']
     filter: Union[str, 'FilterFunction', 'FilterDict']

@@ -35,7 +35,7 @@ def parent_of(module: 'Module') -> Optional['Module']:
 
 
 def contained_in(module: 'Module') -> list[tuple[InjectionToken, Any]]:
-    """returns the child modules of a given module"""
+    """returns the providers contained in a given module"""
     if not isinstance(module, Module):
         raise PestException(
             f'{module.__name__} is not a module.',

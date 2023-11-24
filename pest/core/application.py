@@ -62,7 +62,7 @@ class PestApplication(FastAPI):
             [] if middleware is None else [
                 middleware
                 if isinstance(middleware, Middleware)
-                else Middleware(PestBaseHTTPMiddleware, dispatch=middleware, provideFn=self.resolve)
+                else Middleware(PestBaseHTTPMiddleware, dispatch=middleware, parent_module=module)
                 for middleware in middleware
             ]
         )
@@ -221,7 +221,9 @@ class PestApplication(FastAPI):
         """
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
-            self.add_middleware(PestBaseHTTPMiddleware, dispatch=func, provideFn=self.resolve)
+            self.add_middleware(
+                PestBaseHTTPMiddleware, dispatch=func, parent_module=root_module(self)
+            )
             return func
 
         return decorator
@@ -251,9 +253,11 @@ class PestApplication(FastAPI):
             else:
                 exception_handlers[key] = value
 
-        di_scope_mw = [
-            Middleware(PestBaseHTTPMiddleware, dispatch=di_scope_middleware, provideFn=self.resolve)
-        ]
+        di_scope_mw = [Middleware(
+            PestBaseHTTPMiddleware,
+            dispatch=di_scope_middleware,
+            parent_module=root_module(self)
+        )]
 
         middleware = (
             [Middleware(ServerErrorMiddleware, handler=error_handler, debug=debug)]

@@ -71,12 +71,12 @@ class PestControllerInjector:
         """🐀 ⇝ initializes a new injector
 
         Args:
-            token (InjectionToken): the token to be injected
+            token (InjectionToken): the token to be injected 💉
         """
         self.token = token
 
     async def __call__(self, request: Request) -> Any:
-        """🐀 ⇝ returns the controller to be injected"""
+        """🐀 ⇝ returns the `controller` to be injected 💉"""
         from .controller import module_of
         scope = scope_from(request)
         module = module_of(self.token)

@@ -2,9 +2,10 @@ from typing import Sequence, TypeAlias, TypedDict
 
 from starlette.middleware import Middleware as StarletteMiddleware
 
-from .base import PestMwDispatcher
+from .base import PestMiddlwareCallback
 
-MiddlewareDef: TypeAlias = Sequence[StarletteMiddleware | PestMwDispatcher]
+MiddlewareDef: TypeAlias = Sequence[StarletteMiddleware |
+                                    type[PestMiddlwareCallback] | PestMiddlwareCallback]
 
 
 class CorsOptions(TypedDict, total=False):

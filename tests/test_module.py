@@ -1,13 +1,15 @@
 from typing import cast
 
+from pytest import raises
 from rodi import Container
 
 from pest.core.common import status
 
 # aliased porque setup_module es un builtin de pytest
-from pest.core.module import Status
+from pest.core.module import Status, parent_of
 from pest.core.module import setup_module as _setup_module
 from pest.decorators.module import Module, module
+from pest.exceptions.base.pest import PestException
 from pest.metadata.meta import META_KEY
 from pest.metadata.types._meta import PestType
 
@@ -189,6 +191,26 @@ def test_module_di_service_exports(parent_mod: Module):
     bar_from_parent = parent_mod.get(ProviderBar)
     assert isinstance(bar_from_parent, ProviderBar)
 
-    # TODO: when we have scopes: check children services are the same
-    #       for now we skip this one, since rodi is working as transient scope
-    # assert bar_from_child is bar_from_parent
+
+def test_parent_of_fn(parent_mod: Module):
+    """🐀 modules :: parent_of :: should return the parent of the module"""
+
+    child = parent_mod.imports[0]
+    assert parent_of(child) == parent_mod
+
+
+def test_parent_of_fn_failing(parent_mod: Module):
+    """🐀 modules :: parent_of :: should raise PestException if not a module"""
+
+    class NotAModule:
+        pass
+
+    with raises(PestException) as exc_info:
+        parent_of(NotAModule)  # type: ignore
+
+    exc = exc_info.value
+    assert isinstance(exc, PestException)
+    str_ex = str(exc)
+    assert 'NotAModule is not a module' in str_ex
+    # assert has a hint
+    assert '🐀 Hint ⇝' in str_ex

@@ -32,7 +32,7 @@ class ProviderBase():
 class ClassProvider(ProviderBase):
     """🐀 ⇝ defines a `class` type provider"""
     use_class: Class
-    '''🐀 ⇝ type (class) of provider (type of the instance to be injected)'''
+    '''🐀 ⇝ type (class) of provider (type of the instance to be injected 💉)'''
     scope: Scope | None = None
     '''🐀 ⇝ scope of the provider'''''
 
@@ -41,7 +41,7 @@ class ClassProvider(ProviderBase):
 class ValueProvider(ProviderBase, Generic[T]):
     """🐀 ⇝ defines a `value` (singleton) type provider"""
     use_value: T
-    '''🐀 ⇝ instance to be injected'''
+    '''🐀 ⇝ instance to be injected 💉'''
 
 
 @dataclass

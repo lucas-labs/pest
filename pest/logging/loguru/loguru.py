@@ -176,4 +176,4 @@ class Loguru:
 
         for sink in sinks:
             set_if_none(cast(dict, sink), 'format', format_record)
-            loguru_logger.add(**sink)
+            loguru_logger.add(**sink)  # type: ignore
