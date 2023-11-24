@@ -29,7 +29,7 @@ def fix() -> int:
     print(f'\n{c("$ ", color="green")}{c("black", color="blue")} {" ".join(args)}\n')
 
     try:
-        black.main()
+        black.main(args)
     except SystemExit:
         return ERR
     else:
