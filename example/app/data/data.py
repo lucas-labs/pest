@@ -25,7 +25,7 @@ default_todos = [
         id=4,
         title='et porro tempora',
         done=True,
-    )
+    ),
 ]
 
 

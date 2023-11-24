@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 class LogLevel(int, Enum):
     """🐀 ⇝ logging levels"""
+
     FATAL = 50
     ERROR = 40
     WARN = 30
@@ -45,6 +46,7 @@ log.setLevel(LogLevel.DEBUG)
 
 class SinkOptions(TypedDict, total=False):
     """🐀 ⇝ config options for loguru sinks"""
+
     sink: Union[
         str, 'PathLikeStr', TextIO, 'Writable', Callable[['Message'], None], logging.Handler
     ]
@@ -69,7 +71,8 @@ class SinkOptions(TypedDict, total=False):
 
 
 class LoggingOptions(TypedDict, total=False):
-    """🐀 ⇝ config options for loguru """
+    """🐀 ⇝ config options for loguru"""
+
     intercept: list[str | tuple[str, LogLevel]]
     '''list of built-in loggers to intercept using `loguru`'''
     shush: list[str]

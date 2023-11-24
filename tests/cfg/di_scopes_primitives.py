@@ -46,20 +46,12 @@ class Controller:
     def get_id(self) -> list[int]:
         # they all should have the same id for the same request
         # but different ids for different requests
-        return [
-            self.dependent.get_scoped_id(),
-            self.scoped.get_id(),
-            id(self.scoped)
-        ]
+        return [self.dependent.get_scoped_id(), self.scoped.get_id(), id(self.scoped)]
 
     @get('/singleton')
     def get_singleton_id(self) -> list[int]:
         # they all should have the same id across requests
-        return [
-            self.dependent.get_singleton_id(),
-            self.singleton.get_id(),
-            id(self.singleton)
-        ]
+        return [self.dependent.get_singleton_id(), self.singleton.get_id(), id(self.singleton)]
 
     @get('/transient')
     def get_transient_id(self) -> list[int]:
@@ -72,24 +64,12 @@ class Controller:
 
 @module(
     providers=[
-        ClassProvider(
-            provide=Scoped,
-            use_class=Scoped,
-            scope=Scope.SCOPED
-        ),
-        ClassProvider(
-            provide=Singleton,
-            use_class=Singleton,
-            scope=Scope.SINGLETON
-        ),
-        ClassProvider(
-            provide=Transient,
-            use_class=Transient,
-            scope=Scope.TRANSIENT
-        ),
-        Dependent
+        ClassProvider(provide=Scoped, use_class=Scoped, scope=Scope.SCOPED),
+        ClassProvider(provide=Singleton, use_class=Singleton, scope=Scope.SINGLETON),
+        ClassProvider(provide=Transient, use_class=Transient, scope=Scope.TRANSIENT),
+        Dependent,
     ],
-    controllers=[Controller]
+    controllers=[Controller],
 )
-class DIScopesModule():
+class DIScopesModule:
     pass

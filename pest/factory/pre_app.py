@@ -12,4 +12,5 @@ def __setup_logging(logging: LoggingOptions | None) -> None:
     if logging is not None:
         # loguru needs to be installed in order to be able to import this
         from ..logging.loguru import Loguru
+
         Loguru.setup(**logging)

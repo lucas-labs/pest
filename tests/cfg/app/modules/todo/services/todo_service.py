@@ -1,5 +1,3 @@
-
-
 import fastapi
 
 from ....data.data import TodoRepo

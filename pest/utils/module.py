@@ -31,17 +31,13 @@ def as_tree(
         providers = getattr(obj, 'providers', [])
         for i, provider in enumerate(providers):
             provider_name = _get_provider_name(provider)
-            result += as_tree(
-                ('provider', provider_name), prefix, i == len(providers) - 1
-            )
+            result += as_tree(('provider', provider_name), prefix, i == len(providers) - 1)
 
     if with_controllers:
         controllers = getattr(obj, 'controllers', [])
         for i, controller in enumerate(controllers):
             controller_name = controller.__name__
-            result += as_tree(
-                ('controller', controller_name), prefix, i == len(controllers) - 1
-            )
+            result += as_tree(('controller', controller_name), prefix, i == len(controllers) - 1)
 
     imports = getattr(obj, 'imports', [])
     for i, sub_module in enumerate(imports):

@@ -1,5 +1,3 @@
-
-
 import os
 import shutil
 from subprocess import run
@@ -11,10 +9,7 @@ from pest.utils.colorize import c
 
 def get_venv_path() -> str:
     command = ['poetry', 'env', 'info', '-p']
-    return (
-        run(command, capture_output=True)  # noqa: S603
-        .stdout.decode('utf-8').strip()
-    )
+    return run(command, capture_output=True).stdout.decode('utf-8').strip()  # noqa: S603
 
 
 def get_patches_paths() -> tuple[str, str]:
@@ -78,7 +73,7 @@ def get_paths(patch: Patch) -> dict:
         'replace_dir': replace_dir,
         'original_file_name': original_file_name,
         'original_copy_path': original_copy_path,
-        'patch_file_path': patch_file_path
+        'patch_file_path': patch_file_path,
     }
 
 
@@ -92,7 +87,8 @@ def make_patches() -> int:
 
         # backup original
         print(
-            c(f'Copying {paths["original_path"]} to {paths["original_copy_path"]}', color='green'))
+            c(f'Copying {paths["original_path"]} to {paths["original_copy_path"]}', color='green')
+        )
         shutil.copyfile(paths['original_path'], paths['original_copy_path'])
 
         # make diff

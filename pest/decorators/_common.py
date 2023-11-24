@@ -1,4 +1,3 @@
-
 from typing import Any, Callable, Mapping, TypeVar
 
 from dacite import Config, from_dict
@@ -25,6 +24,7 @@ def singleton(cls: type[T]) -> type[T]:
     print(foo is bar)  # True
     ```
     """
+
     def constructor(cls: Any, *args: Any) -> T:
         instance = getattr(cls, '__instance__', None)
         if instance is None:
@@ -39,15 +39,11 @@ def singleton(cls: type[T]) -> type[T]:
 make_singleton = singleton
 
 
-def _inject_class(
-    base: type[T]
-) -> Callable[..., type[T]]:
-    return lambda cls: type(cls.__name__, (base,)+cls.__bases__, dict(cls.__dict__))
+def _inject_class(base: type[T]) -> Callable[..., type[T]]:
+    return lambda cls: type(cls.__name__, (base,) + cls.__bases__, dict(cls.__dict__))
 
 
-def mixin(
-    base: type[T]
-) -> Callable[..., type[T]]:
+def mixin(base: type[T]) -> Callable[..., type[T]]:
     """
     Utility decorator to inject a class as a mixin and combine it with the
     decorated class.
@@ -58,9 +54,7 @@ def mixin(
     return _inject_class(base=base)
 
 
-def use_base(
-    base: type
-) -> Callable[[T], Callable[..., T]]:
+def use_base(base: type) -> Callable[[T], Callable[..., T]]:
     """
     Utility decorator to inject a class as a mixin and combine it with the
     decorated class.
@@ -118,4 +112,5 @@ def compose_decorators(*decs: Callable[..., Any]) -> Callable[..., Any]:
         for dec in reversed(decs):
             f = dec(f)
         return f
+
     return deco

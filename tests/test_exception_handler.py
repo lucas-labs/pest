@@ -37,8 +37,4 @@ def test_request_scoped_provider(app: tuple[PestApplication, TestClient]) -> Non
     result = client.get('/app/not-found')
     # expect 404 error code
     assert result.status_code == 404
-    assert result.json() == {
-        'code': 404,
-        'error': 'Not Found',
-        'message': 'Not Found'
-    }
+    assert result.json() == {'code': 404, 'error': 'Not Found', 'message': 'Not Found'}

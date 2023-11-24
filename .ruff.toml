@@ -18,6 +18,12 @@ extend-exclude = [
     ".patches"
 ]
 
+
+# [format]
+# preserve is not supported yet, but there's a PR in the works
+# quote-style = "preservev"
+
+
 [flake8-quotes]
 docstring-quotes = "double"
 inline-quotes = "single"
@@ -26,7 +32,6 @@ multiline-quotes = "single"
 
 [flake8-annotations]
 mypy-init-return = true
-
 
 
 [extend-per-file-ignores]

@@ -15,13 +15,7 @@ class IdGenerator:
 @module(
     imports=[TodoModule],
     controllers=[],
-    providers=[
-        IdGenerator,
-        ValueProvider(
-            provide=TodoRepo,
-            use_value=TodoRepo()
-        )
-    ],
+    providers=[IdGenerator, ValueProvider(provide=TodoRepo, use_value=TodoRepo())],
 )
 class AppModule:
     pass

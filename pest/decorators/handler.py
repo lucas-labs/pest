@@ -25,9 +25,7 @@ class HttpMethod(str, Enum):
 
 
 def __make(
-    path: str,
-    method: HttpMethod,
-    **options: Unpack[HandlerMetaDict]
+    path: str, method: HttpMethod, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """utility function to create a handler decorator"""
     return meta_decorator(
@@ -36,69 +34,61 @@ def __make(
             'methods': [method],
             'path': path,
             **options,
-        }
+        },
     )
 
 
 def get(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `GET` request handler"""
     return __make(path, HttpMethod.GET, **options)
 
 
 def post(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `POST` request handler"""
     return __make(path, HttpMethod.POST, **options)
 
 
 def put(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `PUT` request handler"""
     return __make(path, HttpMethod.PUT, **options)
 
 
 def delete(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `DELETE` request handler"""
     return __make(path, HttpMethod.DELETE, **options)
 
 
 def patch(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `PATCH` request handler"""
     return __make(path, HttpMethod.PATCH, **options)
 
 
 def options(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `OPTIONS` request handler"""
     return __make(path, HttpMethod.OPTIONS, **options)
 
 
 def head(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `HEAD` request handler"""
     return __make(path, HttpMethod.HEAD, **options)
 
 
 def trace(
-    path: str,
-    **options: Unpack[HandlerMetaDict]
+    path: str, **options: Unpack[HandlerMetaDict]
 ) -> Callable[[DecoratedCallable], DecoratedCallable]:
     """🐀 ⇝ marks a function as a `TRACE` request handler"""
     return __make(path, HttpMethod.TRACE, **options)

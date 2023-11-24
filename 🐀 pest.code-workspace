@@ -10,6 +10,6 @@
 			"--verbose",
 			"--no-header",
 			"--import-mode=importlib",
-		],
+		]
 	}
 }

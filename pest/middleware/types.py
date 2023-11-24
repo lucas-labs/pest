@@ -4,8 +4,9 @@ from starlette.middleware import Middleware as StarletteMiddleware
 
 from .base import PestMiddlwareCallback
 
-MiddlewareDef: TypeAlias = Sequence[StarletteMiddleware |
-                                    type[PestMiddlwareCallback] | PestMiddlwareCallback]
+MiddlewareDef: TypeAlias = Sequence[
+    StarletteMiddleware | type[PestMiddlwareCallback] | PestMiddlwareCallback
+]
 
 
 class CorsOptions(TypedDict, total=False):
@@ -55,7 +56,9 @@ class CorsOptions(TypedDict, total=False):
 
 
 DEFAULT_CORS_OPTIONS: CorsOptions = {
-    'allow_methods': ['GET',],
+    'allow_methods': [
+        'GET',
+    ],
     'allow_credentials': False,
     'max_age': 600,
 }

@@ -9,11 +9,7 @@ from ._meta import Meta, PestType
 
 @dataclass
 class ControllerMeta(Meta):
-    meta_type: PestType = field(
-        default=PestType.CONTROLLER,
-        init=False,
-        metadata={'expose': False}
-    )
+    meta_type: PestType = field(default=PestType.CONTROLLER, init=False, metadata={'expose': False})
     prefix: str = field(metadata={'expose': False})
     tags: list[str | Enum] | None
     redirect_slashes: bool | None

@@ -1,4 +1,3 @@
-
 from fastapi import Request, Response
 from rodi import ActivationScope
 from starlette.middleware.base import RequestResponseEndpoint

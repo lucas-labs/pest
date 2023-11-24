@@ -21,7 +21,7 @@ def get_meta(
     raise_error: bool = True,
     clean: bool = False,
     keep: list[str] | None = None,
-    drop: list[str] | None = None
+    drop: list[str] | None = None,
 ) -> DataType:
     """🐀 ⇝ get pest `metadata` from a `callable`
     #### Params
@@ -58,11 +58,7 @@ def get_meta(
 
 
 def get_meta_value(
-    callable: Callable[..., Any],
-    key: str,
-    default: Any = None,
-    *,
-    type: type[GenericValue] = Any
+    callable: Callable[..., Any], key: str, default: Any = None, *, type: type[GenericValue] = Any
 ) -> GenericValue:
     """🐀 ⇝ get pest metadata `value` from a `callable` by `key`"""
 
@@ -71,9 +67,7 @@ def get_meta_value(
 
 
 def inject_metadata(
-    callable: Callable[..., Any],
-    metadata: Meta | None = None,
-    **kwargs: Any
+    callable: Callable[..., Any], metadata: Meta | None = None, **kwargs: Any
 ) -> None:
     """🐀 ⇝ initialize pest `metadata` for a `callable`
 

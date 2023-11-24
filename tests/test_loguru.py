@@ -1,5 +1,3 @@
-
-
 import logging
 from typing import Generator
 
@@ -30,9 +28,11 @@ def cap_sink(caplog: LogCaptureFixture):
 def loguru_cap(caplog: LogCaptureFixture) -> Generator[LogCaptureFixture, None, None]:
     Loguru.setup(
         intercept=['pest*'],
-        sinks=[{
-            'sink': caplog.handler,
-        }]
+        sinks=[
+            {
+                'sink': caplog.handler,
+            }
+        ],
     )
     yield caplog
     logger.remove()
@@ -42,9 +42,11 @@ def loguru_cap(caplog: LogCaptureFixture) -> Generator[LogCaptureFixture, None, 
 def loguru_cap_shush(caplog: LogCaptureFixture) -> Generator[LogCaptureFixture, None, None]:
     Loguru.setup(
         shush=['pest'],
-        sinks=[{
-            'sink': caplog.handler,
-        }]
+        sinks=[
+            {
+                'sink': caplog.handler,
+            }
+        ],
     )
     yield caplog
     logger.remove()

@@ -1,4 +1,3 @@
-
 from typing import cast
 
 from pest.decorators.controller import controller
@@ -14,10 +13,7 @@ class TodoController:
 
     @get('/')
     def get_all_todos(self) -> list[ReadTodoModel]:
-        return cast(
-            list[ReadTodoModel],
-            self.todos.get_all()
-        )
+        return cast(list[ReadTodoModel], self.todos.get_all())
 
     @get('/{id}')
     def get_todo_by_id(self, id: int) -> TodoModel:

@@ -1,4 +1,3 @@
-
 from inspect import Signature, isclass, isfunction
 from typing import (
     Any,
@@ -39,11 +38,7 @@ class PestMiddlwareCallback(Protocol):
 
 @runtime_checkable
 class PestMiddleware(Protocol):
-    async def use(
-        self,
-        request: Request,
-        call_next: CallNext
-    ) -> Response:
+    async def use(self, request: Request, call_next: CallNext) -> Response:
         ...
 
     @final
@@ -62,10 +57,7 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
     """
 
     def __init__(
-        self,
-        app: ASGIApp,
-        parent_module: Module,
-        dispatch: PestMiddlwareCallback
+        self, app: ASGIApp, parent_module: Module, dispatch: PestMiddlwareCallback
     ) -> None:
         self.parent_module = parent_module
         super().__init__(app, dispatch=self.__dispatch_fn(dispatch))
@@ -83,9 +75,7 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
             scope = scope_from(request)
             dispatch_fn = cast(
                 PestMiddlwareCallback,
-                dispatch
-                if not isclass(dispatch)
-                else self.parent_module.get(dispatch, scope)
+                dispatch if not isclass(dispatch) else self.parent_module.get(dispatch, scope),
             )
 
             args, kwargs = self.__resolve_dispatcher_args(dispatch_fn, scope)
@@ -126,11 +116,15 @@ def _is_class_pest_mw_callback(obj: Any) -> TypeGuard[type[PestMiddlwareCallback
     return _is_pest_mw_callback(obj) and isclass(obj)
 
 
-def _is_pest_mw_callback(obj: Any) -> TypeGuard[PestMiddlwareCallback | type[PestMiddlwareCallback]]:
+def _is_pest_mw_callback(
+    obj: Any,
+) -> TypeGuard[PestMiddlwareCallback | type[PestMiddlwareCallback]]:
     """checks if an object respects the pest middleware callback protocol"""
     respects_protocol = (
-        isclass(obj) and issubclass(obj, PestMiddlwareCallback) or
-        callable(obj) and isinstance(obj, PestMiddlwareCallback)
+        isclass(obj)
+        and issubclass(obj, PestMiddlwareCallback)
+        or callable(obj)
+        and isinstance(obj, PestMiddlwareCallback)
     )
 
     if not respects_protocol:

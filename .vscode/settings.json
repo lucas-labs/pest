@@ -40,11 +40,10 @@
             "source.fixAll": true,
             "source.organizeImports": true
         },
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "autopep8.args": [
-        "--max-line-length=100",
-        // "--ignore E402"
-    ],
+
+    "black-formatter.importStrategy": "fromEnvironment",
 
     "evenBetterToml.schema.associations": {
         "\\.?coco(\\.yml|\\.yaml|rc)$": "https://gist.githubusercontent.com/lucas-labs/0cb798e4b6c7fc720c7111c40d215c21/raw/cb068efd7d73794e738a5240a80f0cb729883553/coco-schema.json"
@@ -56,6 +55,7 @@
         "--no-header",
         "--import-mode=importlib",
     ],
+    
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.analysis.typeCheckingMode": "basic",

@@ -1,8 +1,6 @@
 import logging
 
-pytest_plugins = [
-    'tools.testing.plugin'
-]
+pytest_plugins = ['tools.testing.plugin']
 
 
 def pytest_configure() -> None:

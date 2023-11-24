@@ -39,10 +39,7 @@ def load_class(module_name: str, class_name: str) -> str:
         if hasattr(module_class, '__doc__') and module_class.__doc__:
             text = module_class.__doc__
 
-    CLASS_CACHE[key] = {
-        'name': text,
-        'class': module_class
-    }
+    CLASS_CACHE[key] = {'name': text, 'class': module_class}
     return text
 
 
@@ -78,10 +75,7 @@ def load_func(module_name: str, class_name: str, func_name: str) -> str:
         text = text.strip().replace('\n', ' ')
         text = re.sub(' +', ' ', text)
 
-    FUNC_CACHE[key] = {
-        'name': text,
-        'func': module_func
-    }
+    FUNC_CACHE[key] = {'name': text, 'func': module_func}
     return text
 
 

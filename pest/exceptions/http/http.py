@@ -9,6 +9,7 @@ from .status import http_status
 
 class ExceptionResponse(BaseModel):
     """Error response model"""
+
     code: int = Field(..., description='HTTP status code')
     error: str | None = Field(default=None, description='HTTP status phrase')
     message: list[str] | str | None = Field(default=None, description='Error message')
@@ -33,11 +34,9 @@ class PestHTTPException(HTTPException):
     def __dict__(self) -> dict[str, Any]:
         status = http_status(self.status_code)
 
-        return dump_model(ExceptionResponse(
-            code=status.code,
-            error=status.phrase,
-            message=self.detail
-        ))
+        return dump_model(
+            ExceptionResponse(code=status.code, error=status.phrase, message=self.detail)
+        )
 
 
 # region: HTTP 4xx errors
@@ -371,6 +370,8 @@ class UnprocessableEntityException(PestHTTPException):
             detail=detail,
             headers=headers,
         )
+
+
 # endregion
 
 
@@ -502,4 +503,6 @@ class HttpVersionNotSupportedException(PestHTTPException):
             detail=detail,
             headers=headers,
         )
+
+
 # endregion
