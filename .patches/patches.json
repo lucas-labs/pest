@@ -1,8 +1,0 @@
-{
-    "patches": [
-        {
-            "original": "rodi/__init__.py",
-            "replace": "rodi/__init__.py"
-        }
-    ]
-}

@@ -1,3 +1,45 @@
+"""### 🐀 ⇝ patch tool
+This tool is used to patch files in the venv so that we don't need to wait for a new release of
+a library to fix a bug or add a feature while we're developing.
+
+It lets us keep our changes in a separate directory that can be commited to github, keeping the
+modifications and the original files in the repository, so that we can easily reapply them when
+we update the library or roll back to the original version.
+
+#### Sure, but how it works?
+
+First, create a patch configuration file in the patch directory. This file should be a JSON file
+like this:
+
+```json
+{
+    "patches": [
+        {
+            "original": "rodi/__init__.py",
+            "replace": "rodi/__init__.py"
+        }
+    ]
+}
+```
+
+This file should be named `patches.json` and should be in the `.patches` directory in the root
+of the project. Each file in the `patches` list should have an `original` and a `replace` key.
+
+Then:
+1. Create your replacement file in the patch directory. In the example above, the replacement
+    file would be `./.patches/rodi/__init__.py`.
+2. Make your changes to the replacement file.
+3. Run `make_patches` function to create the patch files. This will create a backup of the
+    original file in `./.patches/rodi/__init__.py.original` and a patch file in
+    `./.patches/rodi/__init__.py.original.patch`.
+4. Make sure the .patch file looks reasonable.
+5. Run `apply_patches` function to apply the patches. This will apply the .patch file to the
+    original file.
+
+Done! You can now use your patched library.
+"""
+
+
 import os
 import shutil
 from subprocess import run
