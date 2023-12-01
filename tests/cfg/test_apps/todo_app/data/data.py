@@ -1,6 +1,6 @@
 from typing import List
 
-from tests.cfg.app.modules.todo.models.todo import TodoCreate, TodoModel
+from ..modules.todo.models.todo import TodoCreate, TodoModel
 
 default_todos = [
     TodoModel(

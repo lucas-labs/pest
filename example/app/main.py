@@ -8,8 +8,8 @@ from starlette.middleware.base import RequestResponseEndpoint
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from pest import Pest
+from pest.di import inject
 from pest.logging import LogLevel
-from pest.middleware.base import inject
 
 from .app_module import AppModule
 from .data.data import TodoRepo

@@ -61,9 +61,7 @@ def __patch_open_api(app: PestApplication) -> None:
                     schemas.pop('ValidationError')
                 if schemas.get('HTTPValidationError'):
                     schemas.pop('HTTPValidationError')
-
-            # add ExceptionResponse
-            if not schemas.get('ExceptionResponse'):
-                schemas['ExceptionResponse'] = model_schema(ExceptionResponse)
+                if not schemas.get('ExceptionResponse'):
+                    schemas['ExceptionResponse'] = model_schema(ExceptionResponse)
 
         app.openapi_schema = openapi_schema

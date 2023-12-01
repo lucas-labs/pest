@@ -32,9 +32,12 @@ class Pest:
         - prefix: the prefix for the application's routes
         """
         name = getset(cast(dict, fastapi_params), 'title', 'pest 🐀')
-        log.info(f'Initializing {name}')
 
         pre_app.setup(logging=logging)
+        log.info(f'Initializing {name}')
+
         app = make_app(fastapi_params, root_module, prefix=prefix, middleware=middleware)
         app = post_app.setup(app, cors=cors)
+
+        log.debug(f'{name} initialized: \n{app}')
         return app

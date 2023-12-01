@@ -37,10 +37,9 @@ mypy-init-return = true
 [extend-per-file-ignores]
 # ignore in tests:
 #    S101 (use of assert)
-#    ANN201 (missing type annotation)
+#    ANN001 (missing function argument type annotation)
+#    ANN201 (missing return type annotation )
 #    E701 (multiple statements on one line)
 #    F401 (unused import)
-"**/**/test/*.py" =  ["S101", "ANN201", "E701"]
-"**/**/tests/*.py" = ["S101", "ANN201", "E701"]
-"**/**/test_*.py" =  ["S101", "ANN201", "E701"]
-# "__init__.py" = ["F401"]
+"**/**/test/**" =  ["S101", "ANN001", "ANN201", "E701"]
+"**/**/test_*.py" =  ["S101", "ANN001", "ANN201", "E701"]
