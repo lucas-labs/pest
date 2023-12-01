@@ -12,8 +12,8 @@ def test_request_scoped_provider(di_app_n_client: tuple[PestApplication, TestCli
 
     # ids comming from a user defined header inside a middleware with an
     # injected scoped service
-    r1_head = int(r1.headers['Scoped-Id'])
-    r2_head = int(r2.headers['Scoped-Id'])
+    r1_head = r1.headers['Scoped-Id']
+    r2_head = r2.headers['Scoped-Id']
 
     r1_ids = list(r1.json()) + [r1_head]
     r2_ids = list(r2.json()) + [r2_head]
@@ -38,8 +38,8 @@ def test_singletons_doent_change(di_app_n_client: tuple[PestApplication, TestCli
 
     # ids comming from a user defined header inside a middleware with an
     # injected scoped service
-    r1_head = int(r1.headers['Singleton-Id'])
-    r2_head = int(r2.headers['Singleton-Id'])
+    r1_head = r1.headers['Singleton-Id']
+    r2_head = r2.headers['Singleton-Id']
 
     r1_ids = list(r1.json()) + [r1_head]
     r2_ids = list(r2.json()) + [r2_head]
@@ -62,8 +62,8 @@ def test_transient_always_new_instance(di_app_n_client: tuple[PestApplication, T
 
     # ids comming from a user defined header inside a middleware with an
     # injected scoped service
-    r1_head = int(r1.headers['Transient-Id'])
-    r2_head = int(r2.headers['Transient-Id'])
+    r1_head = r1.headers['Transient-Id']
+    r2_head = r2.headers['Transient-Id']
 
     r1_ids = list(r1.json()) + [r1_head]
     r2_ids = list(r2.json()) + [r2_head]

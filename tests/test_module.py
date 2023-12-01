@@ -13,7 +13,7 @@ from pest.exceptions.base.pest import PestException
 from pest.metadata.meta import META_KEY
 from pest.metadata.types._meta import PestType
 
-from .cfg.pest_primitives import (
+from .cfg.test_modules.pest_primitives import (
     FooController,
     Mod,
     ParentMod,

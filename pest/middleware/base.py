@@ -106,11 +106,6 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
         return tuple(args), kwargs
 
 
-def inject() -> Any:
-    """🐀 ⇝ placeholder to indicate that a parameter should be injected 💉"""
-    ...
-
-
 def _is_class_pest_mw_callback(obj: Any) -> TypeGuard[type[PestMiddlwareCallback]]:
     """checks if an object is a **class** that respects the pest middleware callback protocol"""
     return _is_pest_mw_callback(obj) and isclass(obj)

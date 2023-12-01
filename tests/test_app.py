@@ -2,17 +2,18 @@ from datetime import datetime
 
 from fastapi import Request, Response
 from fastapi.testclient import TestClient
+from pytest import raises
 
-from pest.core.application import PestApplication
+from pest.di import inject
 from pest.factory import Pest
-from pest.middleware.base import CallNext, PestMiddleware, PestMiddlwareCallback, inject
+from pest.middleware.base import CallNext, PestMiddleware, PestMiddlwareCallback
 
-from .cfg.app.app_module import AppModule, IdGenerator
-from .cfg.app.data.data import TodoRepo
-from .cfg.app.modules.todo.services.todo_service import TodoService
+from .cfg.test_apps.todo_app.app_module import AppModule, IdGenerator
+from .cfg.test_apps.todo_app.data.data import TodoRepo
+from .cfg.test_apps.todo_app.modules.todo.services.todo_service import TodoService
 
 
-def test_global_app_provider(app_n_client: tuple[PestApplication, TestClient]) -> None:
+def test_global_app_provider(app_n_client) -> None:
     """🐀 app :: providers :: should add metadata to the decorated class"""
     app, _ = app_n_client
 
@@ -28,7 +29,7 @@ def test_global_app_provider(app_n_client: tuple[PestApplication, TestClient]) -
     assert isinstance(service, TodoService)
 
 
-def test_fastapi_handlers(app_n_client: tuple[PestApplication, TestClient]) -> None:
+def test_fastapi_handlers(app_n_client) -> None:
     """🐀 app :: handlers :: should respond http requests"""
     _, client = app_n_client
 
@@ -108,7 +109,7 @@ def test_pest_functional_middleware_cb() -> None:
 
 def test_pest_functional_middleware_cb_with_di():
     """🐀 app :: middleware ::
-    should allow injection into functional middlewares as function parameters
+    should allow injection into functional middlewares as handler parameters
     """
 
     # = inject() is a dummy method, necessary for injecting dependencies into
@@ -235,3 +236,292 @@ def test_pest_class_middleware_with_di() -> None:
     id_2 = response.headers['X-Request-Id']
 
     assert id_1 != id_2
+
+
+def test_app_params_path_as_var(fastapi_params_app):
+    """🐀 app :: params :: should allow using path params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/path/as_var/1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_params_path_as_typed_var(fastapi_params_app):
+    """🐀 app :: params :: should allow using typed path params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/path/as_typed_var/1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_params_predefine_value(fastapi_params_app):
+    """🐀 app :: params :: should allow using predefine values"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/path/predefine_value/foo')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_params_annotated(fastapi_params_app):
+    """🐀 app :: params :: should allow using annotated params"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/path/annotated/1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_params_annotated_validation_error(fastapi_params_app):
+    """🐀 app :: params :: should raise validation error when annotated params are invalid"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/path/annotated/0')
+    assert response.status_code == 400
+
+    response_body: dict = response.json()
+    assert response_body.get('message', None) is not None
+    message = response_body['message']
+
+    assert 'should be greater than 0' in message[0]
+
+
+def test_app_query_params_as_var(fastapi_params_app):
+    """🐀 app :: query params :: should allow using query params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/query/as_var?id=1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_query_params_as_typed_var(fastapi_params_app):
+    """🐀 app :: query params :: should allow using typed query params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/query/as_typed_var?id=1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_query_params_optional(fastapi_params_app):
+    """🐀 app :: query params :: should allow using optional query params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/query/optional')
+    assert response.status_code == 200
+    assert response.json() == {'message': 'id is not provided'}
+
+    response = client.get('/query/optional?id=1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_query_params_annotated(fastapi_params_app):
+    """🐀 app :: query params :: should allow using annotated query params as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/query/annotated?id=1')
+    assert response.status_code == 200
+    assert response.json() == {'name': 'foo', 'job': 'dev'}
+
+
+def test_app_query_params_annotated_validation_error(fastapi_params_app):
+    """🐀 app :: query params ::
+    should raise validation error when annotated query params are invalid
+    """
+
+    _, client = fastapi_params_app
+
+    response = client.get('/query/annotated?id=0')
+    assert response.status_code == 400
+
+    response_body: dict = response.json()
+    assert response_body.get('message', None) is not None
+    message = response_body['message']
+
+    assert 'should be greater than 0' in message[0]
+
+
+def test_app_body(fastapi_params_app):
+    """🐀 app :: body :: should allow using body as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/as_typed_var', json={'id': '3', 'name': 'qux', 'job': 'dev'})
+    assert response.status_code == 200
+    assert response.json() == {'id': 3, 'name': 'qux', 'job': 'dev'}
+
+
+def test_app_body_validation_error(fastapi_params_app):
+    """🐀 app :: body :: should raise validation error when body is invalid"""
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/as_typed_var', json={'id': '0', 'name': 'qux', 'job': 'dev'})
+    assert response.status_code == 400
+
+    response_body: dict = response.json()
+    assert response_body.get('message', None) is not None
+    message = response_body['message']
+
+    assert 'should be greater than 0' in message[0]
+
+
+def test_app_body_optional(fastapi_params_app):
+    """🐀 app :: body :: should not fail for optional body fields"""
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/as_typed_var', json={'id': '3', 'name': 'qux'})
+    assert response.status_code == 200
+    assert response.json() == {'id': 3, 'name': 'qux', 'job': None}
+
+
+def test_app_body_annotated(fastapi_params_app):
+    """🐀 app :: body :: should allow using annotated body as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/annotated', json={'id': '3', 'name': 'qux', 'job': 'dev'})
+    assert response.status_code == 200
+    assert response.json() == {'id': 3, 'name': 'qux', 'job': 'dev'}
+
+
+def test_app_body_annotated_validation_error(fastapi_params_app):
+    """🐀 app :: body ::
+    should raise validation error when annotated body is invalid
+    """
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/annotated', json={'id': '0', 'name': 'qux', 'job': 'dev'})
+    assert response.status_code == 400
+
+    response_body: dict = response.json()
+    assert response_body.get('message', None) is not None
+    message = response_body['message']
+
+    assert 'should be greater than 0' in message[0]
+
+
+def test_app_body_fields_annotated(fastapi_params_app):
+    """🐀 app :: body ::
+    should allow using annotated body fields as handler parameters
+    """
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/body_fields', json={'id': '3', 'name': 'qux'})
+    assert response.status_code == 200
+    assert response.json() == {'id': 3, 'name': 'qux'}
+
+
+def test_app_body_fields_validation_error(fastapi_params_app):
+    """🐀 app :: body ::
+    should raise validation error when annotated body fields are invalid
+    """
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/body_fields', json={'id': '0', 'name': 'qux'})
+    assert response.status_code == 400
+
+    response_body: dict = response.json()
+    assert response_body.get('message', None) is not None
+    message = response_body['message']
+
+    assert 'should be greater than 0' in message[0]
+
+
+def test_app_body_fields_optional(fastapi_params_app):
+    """🐀 app :: body ::
+    should not fail for optional annotated body fields
+    """
+
+    _, client = fastapi_params_app
+
+    response = client.post('/body/body_fields', json={'id': '3'})
+    assert response.status_code == 200
+    assert response.json() == {'id': 3, 'name': None}
+
+
+def test_app_request(fastapi_params_app):
+    """🐀 app :: request :: should allow using raw request as handler parameters"""
+
+    _, client = fastapi_params_app
+
+    response = client.get('/request/ping', headers={'X-Client': 'pinger'})
+    assert response.status_code == 200
+    assert response.json() == {'pong_to': 'pinger'}
+    assert response.headers['X-Server'] == 'ponger'
+
+
+def test_app_dependencies(fastapi_dependencies_app):
+    """🐀 app :: dependencies ::
+    should allow using fastapi dependencies as handler parameters
+    """
+
+    _, client = fastapi_dependencies_app
+
+    response = client.get('/users', headers={'Authorization': 'Bearer admin'})
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body == [{'email': 'qwert@fake.com'}, {'email': 'asdfg@hjkl.com'}]
+
+
+def test_app_dependencies_exception(fastapi_dependencies_app):
+    """🐀 app :: dependencies ::
+    should return valid error response when fastapi dependencies raise exceptions
+    """
+
+    _, client = fastapi_dependencies_app
+
+    response = client.get('/users')
+    assert response.status_code == 401
+    body = response.json()
+
+    assert body == {
+        'code': 401,
+        'error': 'Unauthorized',
+        'message': 'Not authenticated',
+    }
+
+
+def test_app_request_access_on_dependencies(fastapi_dependencies_app):
+    """🐀 app :: dependencies :: should allow using request and response in dependency functions"""
+
+    _, client = fastapi_dependencies_app
+
+    response = client.get('/users/me', headers={'Authorization': 'Bearer admin'})
+    assert response.status_code == 200
+    assert response.headers['X-User-Id'] == '1'
+    body = response.json()
+
+    assert body == {
+        'email': 'foo@bar.com',
+        'roles': ['admin'],
+    }
+
+
+def test_app_request_dependency_exception(fastapi_dependencies_app):
+    """🐀 app :: dependencies :: should return valid error response when server Exception"""
+
+    _, client = fastapi_dependencies_app
+
+    with raises(Exception) as excinfo:
+        client.get('/users/me', headers={'Authorization': 'Bearer invalid'})
+
+    assert excinfo.value.args[0] == 'Invalid token'

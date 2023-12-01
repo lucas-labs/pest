@@ -82,7 +82,7 @@ class PestApplication(FastAPI):
 
     def add_exception_handlers(
         self, handlers: list[tuple[int | type[Exception], Callable]]
-    ) -> None:  # pragma: no cover
+    ) -> None:
         for error, handler in handlers:
             self.add_exception_handler(error, handler)
 
