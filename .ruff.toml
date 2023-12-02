@@ -21,6 +21,7 @@ extend-exclude = [
 
 # [format]
 # preserve is not supported yet, but there's a PR in the works
+# https://github.com/astral-sh/ruff/pull/8822
 # quote-style = "preservev"
 
 

@@ -10,6 +10,9 @@
 			"--verbose",
 			"--no-header",
 			"--import-mode=importlib",
-		]
+		],
+		"yaml.schemas": {
+			"https://taskfile.dev/schema.json": "file:///d%3A/users/lucas/Desktop/dev/python/pest/taskfile.yml"
+		}
 	}
 }
