@@ -21,7 +21,7 @@
         ".coverage": true,
 
         // 🗑️
-        // ".patches": true,
+        ".task": true, // task-go
         ".venv": true,
         ".vscode": true,
         ".ruff_cache": true,
@@ -29,7 +29,7 @@
         ".git": true,
         ".gitignore": true,
         ".pytest_cache": true,
-        // ".github": true,
+        ".github": true,
 
         // 📝 docs
         // "**/**/README.md": true

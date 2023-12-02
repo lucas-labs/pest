@@ -1,0 +1,44 @@
+version: '3'
+
+silent: false
+
+vars:
+  TOOL: "poetry run python -m tools.exec -t"
+
+tasks:
+  gen:types:
+    desc: 🧙‍♂️ generate typed dict automatically
+    cmds:
+      - "{{.TOOL}} generator:types"
+    sources:
+      - pest/metadata/types/*.py
+    generates:
+      - pest/decorators/dicts/*.py
+
+  fmt:check:
+    aliases: [fmt]
+    desc: check code format issues
+    cmds:
+      - poetry run black --check .
+
+  fmt:fix:
+    desc: fix code format issues
+    cmds:
+      - poetry run black . 
+
+  lint:check:
+    aliases: [lint]
+    desc: check code lint issues
+    cmds:
+      - poetry run ruff check .
+
+  lint:fix:
+    desc: fix code lint issues
+    cmds:
+      - poetry run ruff check . --fix
+
+  test:
+    aliases: [t]
+    desc: 🧪 run tests 
+    cmds:
+      - poetry run pytest

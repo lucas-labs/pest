@@ -1,4 +1,5 @@
 import ast
+import io
 import os
 import pathlib
 import subprocess
@@ -13,6 +14,9 @@ from pest.utils.colorize import c
 metas = [ModuleMeta, HandlerMeta, ControllerMeta]
 
 types_path = os.path.join(os.getcwd(), 'pest', 'decorators', 'dicts')
+
+if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 
 def to_snake_case(name: str) -> str:
