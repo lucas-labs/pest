@@ -13,3 +13,4 @@ class PestType(str, Enum):
 @dataclass
 class Meta(Protocol):
     meta_type: PestType
+    '''🐀 ⇝ type of the metadata'''
