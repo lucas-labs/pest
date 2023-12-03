@@ -73,7 +73,15 @@ class ExistingProvider(ProviderBase, Generic[T]):
 @dataclass
 class ModuleMeta(Meta):
     meta_type: PestType = field(default=PestType.MODULE, init=False, metadata={'expose': False})
+
     imports: list[type] | None
+    '''🐀 ⇝ list of modules to be imported'''
+
     providers: list[Provider] | None
+    '''🐀 ⇝ list of providers to be registered'''
+
     exports: list[InjectionToken] | None
+    '''🐀 ⇝ list of providers to be exported'''
+
     controllers: list[type[Controller]] | None
+    '''🐀 ⇝ list of controllers to be registered'''
