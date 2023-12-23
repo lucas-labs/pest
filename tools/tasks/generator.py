@@ -5,6 +5,7 @@ import pathlib
 import subprocess
 import sys
 from inspect import getsource
+from typing import List, Tuple
 
 from pest.metadata.types.controller_meta import ControllerMeta
 from pest.metadata.types.handler_meta import HandlerMeta
@@ -24,7 +25,7 @@ def to_snake_case(name: str) -> str:
     return ''.join(['_' + char.lower() if char.isupper() else char for char in name]).lstrip('_')
 
 
-def extract_imports(code: str) -> list[tuple[str, list[str]]]:
+def extract_imports(code: str) -> List[Tuple[str, List[str]]]:
     tree = ast.parse(code)
     imports = []
 
@@ -66,10 +67,10 @@ def fix_rel_import(import_line: str, module_path: str, destination: str) -> str:
     return f"{'.'.join(relative_parts)}"
 
 
-def extract_class_vars(code: str, class_name: str) -> list[tuple[str, str, str | None]]:
+def extract_class_vars(code: str, class_name: str) -> List[Tuple[str, str, str | None]]:
     class ClassVisitor(ast.NodeVisitor):
         def __init__(self) -> None:
-            self.variables: list[tuple[str, str, str | None]] = []
+            self.variables: List[Tuple[str, str, str | None]] = []
 
         def _should_expose(self, item: ast.AnnAssign | ast.Assign) -> bool:
             value = item.value
@@ -134,7 +135,7 @@ def extract_class_vars(code: str, class_name: str) -> list[tuple[str, str, str |
     return visitor.variables
 
 
-def extract_type_aliases(code: str) -> list[str]:
+def extract_type_aliases(code: str) -> List[str]:
     type_aliases = []
 
     def visit_node(node: ast.AST) -> None:

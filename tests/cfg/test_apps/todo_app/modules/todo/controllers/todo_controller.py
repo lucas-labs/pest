@@ -1,4 +1,4 @@
-from typing import cast
+from typing import List, cast
 
 from pest.decorators.controller import controller
 from pest.decorators.handler import delete, get, patch, post
@@ -12,8 +12,8 @@ class TodoController:
     todos: TodoService
 
     @get('/')
-    def get_all_todos(self) -> list[ReadTodoModel]:
-        return cast(list[ReadTodoModel], self.todos.get_all())
+    def get_all_todos(self) -> List[ReadTodoModel]:
+        return cast(List[ReadTodoModel], self.todos.get_all())
 
     @get('/{id}')
     def get_todo_by_id(self, id: int) -> TodoModel:

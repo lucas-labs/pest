@@ -1,4 +1,9 @@
-from typing import Annotated
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
+
+
 from uuid import uuid4
 
 from pest.decorators.controller import controller
@@ -16,12 +21,7 @@ class Service:
 
 
 @controller('')
-class UsersController:
-    @get('/annotated')
-    def annotated(self, svc: Annotated[Service, injected]):
-        assert isinstance(svc, Service)
-        return {'id': svc.who_am_i()}
-
+class FooController:
     @get('/assigned')
     def assigned(self, svc: Service = injected(Service)):
         assert isinstance(svc, Service)
@@ -39,6 +39,19 @@ class UsersController:
         return {'id': uuid4()}
 
 
-@module(controllers=[UsersController], providers=[Service])
+@controller('')
+class FooController39plus:
+    @get('/annotated')
+    def annotated(self, svc: Annotated[Service, injected]):
+        assert isinstance(svc, Service)
+        return {'id': svc.who_am_i()}
+
+
+@module(controllers=[FooController], providers=[Service])
 class RodiDependenciesModule:
+    pass
+
+
+@module(controllers=[FooController39plus], providers=[Service])
+class RodiDependenciesModule39plus:
     pass

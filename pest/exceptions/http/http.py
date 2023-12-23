@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException
@@ -11,8 +11,8 @@ class ExceptionResponse(BaseModel):
     """Error response model"""
 
     code: int = Field(..., description='HTTP status code')
-    error: str | None = Field(default=None, description='HTTP status phrase')
-    message: list[str] | str | None = Field(default=None, description='Error message')
+    error: Union[str, None] = Field(default=None, description='HTTP status phrase')
+    message: Union[List[str], str, None] = Field(default=None, description='Error message')
 
 
 class PestHTTPException(HTTPException):
@@ -22,7 +22,7 @@ class PestHTTPException(HTTPException):
         self,
         status_code: int,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         super().__init__(
             status_code=status_code,
@@ -31,7 +31,7 @@ class PestHTTPException(HTTPException):
         )
 
     @property
-    def __dict__(self) -> dict[str, Any]:
+    def __dict__(self) -> Dict[str, Any]:
         status = http_status(self.status_code)
 
         return dump_model(
@@ -53,7 +53,7 @@ class BadRequestException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `400` Bad Request"""
         super().__init__(
@@ -76,7 +76,7 @@ class UnauthorizedException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `401` Unauthorized"""
         super().__init__(
@@ -99,7 +99,7 @@ class ForbiddenException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `403` Forbidden"""
         super().__init__(
@@ -120,7 +120,7 @@ class NotFoundException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `404` Not Found"""
         super().__init__(
@@ -142,7 +142,7 @@ class MethodNotAllowedException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `405` Method Not Allowed"""
         super().__init__(
@@ -164,7 +164,7 @@ class NotAcceptableException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `406` Not Acceptable"""
         super().__init__(
@@ -185,8 +185,8 @@ class ProxyAuthenticationRequiredException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
-        headers_: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
+        headers_: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `407` Proxy Authentication Required"""
         super().__init__(
@@ -208,7 +208,7 @@ class RequestTimeoutException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `408` Request Timeout"""
         super().__init__(
@@ -230,7 +230,7 @@ class ConflictException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `409` Conflict"""
         super().__init__(
@@ -251,7 +251,7 @@ class GoneException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `410` Gone"""
         super().__init__(
@@ -272,7 +272,7 @@ class PreconditionFailedException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `412` Precondition Failed"""
         super().__init__(
@@ -294,7 +294,7 @@ class PayloadTooLargeException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `413` Payload Too Large"""
         super().__init__(
@@ -316,8 +316,8 @@ class UnsupportedMediaTypeException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
-        media_type: str | None = None,
+        headers: Union[Dict[str, Any], None] = None,
+        media_type: Union[str, None] = None,
     ) -> None:
         """🐀 ⇝ `415` Unsupported Media Type"""
         super().__init__(
@@ -341,7 +341,7 @@ class ImATeapotException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `418` I'm a teapot"""
         super().__init__(
@@ -362,7 +362,7 @@ class UnprocessableEntityException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `422` Unprocessable Entity"""
         super().__init__(
@@ -388,7 +388,7 @@ class InternalServerErrorException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `500` Internal Server Error"""
         super().__init__(
@@ -409,7 +409,7 @@ class NotImplementedException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `501` Not Implemented"""
         super().__init__(
@@ -431,7 +431,7 @@ class BadGatewayException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `502` Bad Gateway"""
         super().__init__(
@@ -452,7 +452,7 @@ class ServiceUnavailableException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `503` Service Unavailable"""
         super().__init__(
@@ -474,7 +474,7 @@ class GatewayTimeoutException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `504` Gateway Timeout"""
         super().__init__(
@@ -495,7 +495,7 @@ class HttpVersionNotSupportedException(PestHTTPException):
     def __init__(
         self,
         detail: Any = None,
-        headers: dict[str, Any] | None = None,
+        headers: Union[Dict[str, Any], None] = None,
     ) -> None:
         """🐀 ⇝ `505` HTTP Version Not Supported"""
         super().__init__(

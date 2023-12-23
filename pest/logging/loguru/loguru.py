@@ -4,7 +4,12 @@ import logging as pylogging
 import sys
 from fnmatch import fnmatch
 from pprint import pformat
-from typing import Unpack, cast
+from typing import List, Tuple
+
+try:
+    from typing import Unpack, cast
+except ImportError:
+    from typing_extensions import Unpack, cast
 
 from ...exceptions.base.pest import PestException
 from ...utils.functions import set_if_none
@@ -35,7 +40,7 @@ FORMAT = env(
 
 
 class _InterceptorHandler(pylogging.Handler):
-    def get_exc(self, record: pylogging.LogRecord) -> tuple[str, BaseException] | None:
+    def get_exc(self, record: pylogging.LogRecord) -> Tuple[str, BaseException] | None:
         exc = record.exc_info
         if (
             exc is None
@@ -105,11 +110,11 @@ class Loguru:
 
     @classmethod
     def __config_standard_interception(
-        cls, intercept: list[str | tuple[str, LogLevel]], verbose: bool
+        cls, intercept: List[str | Tuple[str, LogLevel]], verbose: bool
     ) -> None:
         """configures interception of python loggers towards `loguru`"""
         interceptor = _InterceptorHandler()
-        intercepted_loggers: list[tuple[pylogging.Logger, int]] = []
+        intercepted_loggers: List[Tuple[pylogging.Logger, int]] = []
         pylogging.basicConfig(handlers=[pylogging.NullHandler()])
 
         # clear handlers for all loggers in standard library
@@ -151,14 +156,14 @@ class Loguru:
             logger.setLevel(lvl)
 
     @classmethod
-    def __configure_shush(cls, shush: list[str]) -> None:
+    def __configure_shush(cls, shush: List[str]) -> None:
         """disables loggers by name"""
         for logger_name in shush:
             pylogging.getLogger(logger_name).disabled = True
             loguru_logger.disable(logger_name)
 
     @classmethod
-    def __config_sinks(cls, sinks: list[SinkOptions], level: LogLevel, access_log: bool) -> None:
+    def __config_sinks(cls, sinks: List[SinkOptions], level: LogLevel, access_log: bool) -> None:
         """configures loguru sinks (handlers)"""
         loguru_logger.configure(handlers=[])
         loguru_logger.add(

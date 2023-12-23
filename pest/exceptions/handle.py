@@ -1,3 +1,5 @@
+from typing import Union
+
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
 from fastapi.utils import is_body_allowed_for_status_code
@@ -39,7 +41,7 @@ async def http(request: Request, exc: HTTPException) -> Response:
 
 
 async def request_validation(
-    request: Request, exc: ValidationError | RequestValidationError
+    request: Request, exc: Union[ValidationError, RequestValidationError]
 ) -> JSONResponse:
     """handles both `RequestValidationError` (fastapi) and `ValidationError` (pydantic)"""
 

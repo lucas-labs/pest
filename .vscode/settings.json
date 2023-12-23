@@ -6,16 +6,17 @@
         // ⚙️ config
         // "pyproject.toml": true,
         "**/**/*.code-workspace": true,
-        // "poetry.lock": true,
+        "poetry.lock": true,
         "poetry.toml": true,
 
         // 🧼 linters & styles
-        // ".ruff.toml": true,
+        ".ruff.toml": true,
         "coco.yml": true,
         ".env": true,
 
         // 🧪 tests
         // "tests": true,
+        ".nox": true,
         "htmlcov": true,
         "coverage": true,
         ".coverage": true,
@@ -37,8 +38,8 @@
     "[python]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-            "source.fixAll": true,
-            "source.organizeImports": true
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
         },
         "editor.defaultFormatter": "ms-python.black-formatter"
     },

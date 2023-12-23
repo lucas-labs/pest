@@ -1,5 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Callable, Generic, TypeAlias, TypeVar, Union
+from typing import Callable, Generic, List, Type, TypeVar, Union
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 from rodi import ServiceLifeStyle
 
@@ -8,7 +13,7 @@ from ._meta import Meta, PestType
 
 T = TypeVar('T')
 
-InjectionToken: TypeAlias = type | type[T]
+InjectionToken: TypeAlias = Union[type, Type[T]]
 Class: TypeAlias = type
 Factory: TypeAlias = Callable[..., T]
 Scope: TypeAlias = ServiceLifeStyle
@@ -31,7 +36,7 @@ class ClassProvider(ProviderBase):
 
     use_class: Class
     '''🐀 ⇝ type (class) of provider (type of the instance to be injected 💉)'''
-    scope: Scope | None = None
+    scope: Union[Scope, None] = None
     '''🐀 ⇝ scope of the provider''' ''
 
 
@@ -56,7 +61,7 @@ class FactoryProvider(ProviderBase, Generic[T]):
 
     use_factory: Factory[T]
     '''🐀 ⇝ factory function that returns an instance of the provider'''
-    scope: Scope | None = None
+    scope: Union[Scope, None] = None
     '''🐀 ⇝ scope of the provider'''
 
 
@@ -74,14 +79,14 @@ class ExistingProvider(ProviderBase, Generic[T]):
 class ModuleMeta(Meta):
     meta_type: PestType = field(default=PestType.MODULE, init=False, metadata={'expose': False})
 
-    imports: list[type] | None
+    imports: Union[List[type], None]
     '''🐀 ⇝ list of modules to be imported'''
 
-    providers: list[Provider] | None
+    providers: Union[List[Provider], None]
     '''🐀 ⇝ list of providers to be registered'''
 
-    exports: list[InjectionToken] | None
+    exports: Union[List[InjectionToken], None]
     '''🐀 ⇝ list of providers to be exported'''
 
-    controllers: list[type[Controller]] | None
+    controllers: Union[List[Type[Controller]], None]
     '''🐀 ⇝ list of controllers to be registered'''

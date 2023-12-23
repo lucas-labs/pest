@@ -1,8 +1,10 @@
+from typing import Tuple, Union
+
 from .colorize import c
 
 
 def as_tree(
-    obj: object | tuple[str, str],
+    obj: Union[object, Tuple[str, str]],
     prefix: str = '',
     is_last: bool = True,
     with_providers: bool = True,

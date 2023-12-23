@@ -1,30 +1,35 @@
-from typing import Sequence, TypeAlias, TypedDict
+from typing import List, Sequence, Type, TypedDict, Union
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 from starlette.middleware import Middleware as StarletteMiddleware
 
 from .base import PestMiddlwareCallback
 
 MiddlewareDef: TypeAlias = Sequence[
-    StarletteMiddleware | type[PestMiddlwareCallback] | PestMiddlwareCallback
+    Union[StarletteMiddleware, Type[PestMiddlwareCallback], PestMiddlwareCallback]
 ]
 
 
 class CorsOptions(TypedDict, total=False):
-    allow_origins: list[str]
+    allow_origins: List[str]
     '''
     Configures the `Access-Control-Allow-Origin`.
 
     Expects a list of origins that should be allowed to make cross-origin requests, or `"*"`
     to allow all origins.
     '''
-    allow_methods: list[str]
+    allow_methods: List[str]
     '''
     Configures the `Access-Control-Allow-Methods` header.
 
     Expects a list of allowed HTTP methods as strings, e.g. `["GET", "POST", "PUT", "DELETE"]`.
     Defaults to `["GET"]`
     '''
-    allow_headers: list[str]
+    allow_headers: List[str]
     '''
     Configures the `Access-Control-Allow-Headers` header.
 
@@ -41,7 +46,7 @@ class CorsOptions(TypedDict, total=False):
     Same as `allow_origins`, but expects a string that will be compiled to a regular expression
     object in order to match the origin.
     '''
-    expose_headers: list[str]
+    expose_headers: List[str]
     '''
     Configures the `Access-Control-Expose-Headers` header.
 

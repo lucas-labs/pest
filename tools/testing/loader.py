@@ -1,6 +1,7 @@
 import re
 from importlib import import_module
 from types import ModuleType
+from typing import Tuple
 
 import pytest
 
@@ -79,7 +80,7 @@ def load_func(module_name: str, class_name: str, func_name: str) -> str:
     return text
 
 
-def load_test_info(nodeid: str) -> tuple[str, str]:
+def load_test_info(nodeid: str) -> Tuple[str, str]:
     data = nodeid.split('::')
     file_name = data[0]
     class_name = ''

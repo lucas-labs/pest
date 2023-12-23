@@ -42,3 +42,33 @@ tasks:
     desc: 🧪 run tests 
     cmds:
       - poetry run pytest
+
+  test:3.8:
+    desc: 🧪 run tests on python 3.8
+    cmds:
+      - nox --session tests-3.8 --reuse-existing-virtualenvs
+
+  test:3.9:
+    desc: 🧪 run tests on python 3.9
+    cmds:
+      - nox --session tests-3.9 --reuse-existing-virtualenvs
+
+  test:3.10:
+    desc: 🧪 run tests on python 3.10
+    cmds:
+      - nox --session tests-3.10 --reuse-existing-virtualenvs
+  
+  test:3.11:
+    desc: 🧪 run tests on python 3.11
+    cmds:
+      - nox --session tests-3.11 --reuse-existing-virtualenvs
+  
+  test:3.12:
+    desc: 🧪 run tests on python 3.12
+    cmds:
+      - nox --session tests-3.12 --reuse-existing-virtualenvs
+
+  test:all:
+    desc: 🧪 run tests on all python versions
+    cmds:
+      - nox --reuse-existing-virtualenvs

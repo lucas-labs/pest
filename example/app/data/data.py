@@ -47,7 +47,7 @@ class TodoRepo:
         self.todos.append(new_todo)
         return new_todo
 
-    def get_all(self) -> list[TodoModel]:
+    def get_all(self) -> List[TodoModel]:
         return self.todos
 
     def get_by_id(self, id: int) -> TodoModel | None:

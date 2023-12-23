@@ -8,42 +8,41 @@ Do not edit manually.
 """
 
 from enum import Enum
-from typing import Any, Sequence, TypedDict
+from typing import Any, Dict, List, Sequence, Type, TypedDict, Union
 
 from fastapi import Response
 
 
 class HandlerMetaDict(TypedDict, total=False):
-    response_model: Any | None
+    response_model: Union[Any, None]
     '''🐀 ⇝ response model of the handler'''
 
-    response_class: type[Response] | None
+    response_class: Union[Type[Response], None]
     '''🐀 ⇝ response class of the handler'''
 
-    status_code: int | None
+    status_code: Union[int, None]
     '''🐀 ⇝ status code of the handler'''
 
-    response_model_exclude_none: bool | None
+    response_model_exclude_none: Union[bool, None]
     '''🐀 ⇝ exclude none values from the response model'''
 
-    tags: list[str | Enum] | None
+    tags: Union[List[Union[str, Enum]], None]
     '''🐀 ⇝ tags of the handler'''
 
-    dependencies: Sequence[Any] | None
+    dependencies: Union[Sequence[Any], None]
     '''🐀 ⇝ dependencies of the handler'''
 
-    summary: str | None
+    summary: Union[str, None]
     '''🐀 ⇝ summary of the handler'' '''
 
-    description: str | None
+    description: Union[str, None]
     '''🐀 ⇝ description of the handler'''
 
-    deprecated: bool | None
+    deprecated: Union[bool, None]
     '''🐀 ⇝ is the handler deprecated?'''
 
-    name: str | None
+    name: Union[str, None]
     '''🐀 ⇝ name of the handler'''
 
-    responses: dict[int | str, dict[str, Any]] | None
+    responses: Union[Dict[Union[int, str], Dict[str, Any]], None]
     '''🐀 ⇝ responses of the handler'''
-

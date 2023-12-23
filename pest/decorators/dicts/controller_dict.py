@@ -8,25 +8,24 @@ Do not edit manually.
 """
 
 from enum import Enum
-from typing import Any, Callable, Sequence, TypedDict
+from typing import Any, Callable, List, Sequence, TypedDict, Union
 
 
 class ControllerMetaDict(TypedDict, total=False):
-    tags: list[str | Enum] | None
+    tags: Union[List[Union[str, Enum]], None]
     '''🐀 ⇝ tags of the controller'''
 
-    redirect_slashes: bool | None
+    redirect_slashes: Union[bool, None]
     '''🐀 ⇝ redirect slashes?'''
 
-    on_startup: Sequence[Callable[[], Any]] | None
+    on_startup: Union[Sequence[Callable[[], Any]], None]
     '''🐀 ⇝ on startup events'''
 
-    on_shutdown: Sequence[Callable[[], Any]] | None
+    on_shutdown: Union[Sequence[Callable[[], Any]], None]
     '''🐀 ⇝ lifespan of the controller'''
 
-    deprecated: bool | None
+    deprecated: Union[bool, None]
     '''🐀 ⇝ is the controller deprecated?'''
 
-    include_in_schema: bool | None
+    include_in_schema: Union[bool, None]
     '''🐀 ⇝ include in schema?'''
-

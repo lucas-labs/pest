@@ -1,4 +1,4 @@
-from typing import Iterable, Literal
+from typing import Dict, Iterable, Literal, Union
 
 Color = Literal[
     'black',
@@ -49,7 +49,7 @@ Attribute = Literal[
     'concealed',
 ]
 
-ATTRIBUTES: dict[Attribute, int] = {
+ATTRIBUTES: Dict[Attribute, int] = {
     'bold': 1,
     'dark': 2,
     'underline': 4,
@@ -58,7 +58,7 @@ ATTRIBUTES: dict[Attribute, int] = {
     'concealed': 8,
 }
 
-HIGHLIGHTS: dict[Highlight, int] = {
+HIGHLIGHTS: Dict[Highlight, int] = {
     'on_black': 40,
     'on_grey': 40,
     'on_red': 41,
@@ -78,7 +78,7 @@ HIGHLIGHTS: dict[Highlight, int] = {
     'on_white': 107,
 }
 
-COLORS: dict[Color, int] = {
+COLORS: Dict[Color, int] = {
     'black': 30,
     'grey': 30,
     'red': 31,
@@ -103,9 +103,9 @@ RESET = '\033[0m'
 
 def c(
     text: object,
-    color: Color | None = None,
-    on_color: Highlight | None = None,
-    attrs: Iterable[Attribute] | None = None,
+    color: Union[Color, None] = None,
+    on_color: Union[Highlight, None] = None,
+    attrs: Union[Iterable[Attribute], None] = None,
     no_color: bool = False,
 ) -> str:
     result = str(text)

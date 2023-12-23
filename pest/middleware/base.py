@@ -4,12 +4,18 @@ from typing import (
     Callable,
     Optional,
     Protocol,
-    TypeAlias,
-    TypeGuard,
+    Tuple,
+    Type,
+    Union,
     cast,
     final,
     runtime_checkable,
 )
+
+try:
+    from typing import TypeAlias, TypeGuard
+except ImportError:
+    from typing_extensions import TypeAlias, TypeGuard
 
 from rodi import ActivationScope
 from starlette.middleware.base import BaseHTTPMiddleware, DispatchFunction, T
@@ -63,8 +69,8 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
         super().__init__(app, dispatch=self.__dispatch_fn(dispatch))
 
     def __dispatch_fn(
-        self, dispatch: PestMiddlwareCallback | type[PestMiddlwareCallback]
-    ) -> DispatchFunction | None:
+        self, dispatch: Union[PestMiddlwareCallback, Type[PestMiddlwareCallback]]
+    ) -> Union[DispatchFunction, None]:
         if dispatch is None:
             return dispatch
 
@@ -84,8 +90,8 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
         return wrapper
 
     def __resolve_dispatcher_args(
-        self, function: DispatchFunction, scope: ActivationScope | None
-    ) -> tuple[tuple, dict]:
+        self, function: DispatchFunction, scope: Union[ActivationScope, None]
+    ) -> Tuple[tuple, dict]:
         signature = Signature.from_callable(function)
         parameters = signature.parameters
         args = []
@@ -106,14 +112,14 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
         return tuple(args), kwargs
 
 
-def _is_class_pest_mw_callback(obj: Any) -> TypeGuard[type[PestMiddlwareCallback]]:
+def _is_class_pest_mw_callback(obj: Any) -> TypeGuard[Type[PestMiddlwareCallback]]:
     """checks if an object is a **class** that respects the pest middleware callback protocol"""
     return _is_pest_mw_callback(obj) and isclass(obj)
 
 
 def _is_pest_mw_callback(
     obj: Any,
-) -> TypeGuard[PestMiddlwareCallback | type[PestMiddlwareCallback]]:
+) -> TypeGuard[Union[PestMiddlwareCallback, Type[PestMiddlwareCallback]]]:
     """checks if an object respects the pest middleware callback protocol"""
     respects_protocol = (
         isclass(obj)

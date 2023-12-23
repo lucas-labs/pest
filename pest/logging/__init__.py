@@ -5,7 +5,9 @@ from multiprocessing.context import BaseContext
 from typing import (
     TYPE_CHECKING,
     Callable,
+    List,
     TextIO,
+    Tuple,
     TypedDict,
     Union,
 )
@@ -50,7 +52,7 @@ class SinkOptions(TypedDict, total=False):
     sink: Union[
         str, 'PathLikeStr', TextIO, 'Writable', Callable[['Message'], None], logging.Handler
     ]
-    level: str | int
+    level: Union[str, int]
     format: Union[str, 'FormatFunction']
     filter: Union[str, 'FilterFunction', 'FilterDict']
     colorize: bool
@@ -58,7 +60,7 @@ class SinkOptions(TypedDict, total=False):
     backtrace: bool
     diagnose: bool
     enqueue: bool
-    context: str | BaseContext
+    context: Union[str, BaseContext]
     catch: bool
     rotation: Union[str, int, time, timedelta, 'RotationFunction']
     retention: Union[str, int, timedelta, 'RetentionFunction']
@@ -73,16 +75,16 @@ class SinkOptions(TypedDict, total=False):
 class LoggingOptions(TypedDict, total=False):
     """🐀 ⇝ config options for loguru"""
 
-    intercept: list[str | tuple[str, LogLevel]]
+    intercept: List[Union[str, Tuple[str, LogLevel]]]
     '''list of built-in loggers to intercept using `loguru`'''
-    shush: list[str]
+    shush: List[str]
     '''list of built-in loggers to shush using `loguru`'''
     level: LogLevel
     '''default log level for all loggers'''
-    format: str | None
+    format: Union[str, None]
     '''override default log format'''
     access_log: bool
     '''whether to enable access logging'''
     verbose: bool
     '''enables all loggers'''
-    sinks: list[SinkOptions]
+    sinks: List[SinkOptions]

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 
 
 class HTTPStatusEnum(Enum):
@@ -72,7 +73,7 @@ class HttpStatus:
         self.phrase = phrase
 
 
-def http_status(status_code: int | HTTPStatusEnum) -> HttpStatus:
+def http_status(status_code: Union[int, HTTPStatusEnum]) -> HttpStatus:
     if isinstance(status_code, HTTPStatusEnum):
         code = status_code.value[0]
     else:

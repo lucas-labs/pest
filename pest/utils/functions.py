@@ -1,8 +1,8 @@
-from typing import Any, TypedDict, TypeVar, cast
+from typing import Any, Callable, Dict, List, Type, TypeVar, Union, cast
 
 from pydantic import BaseModel
 
-T = TypeVar('T', bound=dict)
+T = TypeVar('T', bound=Dict)
 
 
 def denone(x: T) -> T:
@@ -10,7 +10,7 @@ def denone(x: T) -> T:
     return cast(T, {k: v for k, v in x.items() if v is not None})
 
 
-def clean_dict(d: dict[str, Any], type: type[TypedDict]) -> dict[str, Any]:
+def clean_dict(d: Dict[str, Any], type: Type) -> Dict[str, Any]:
     """
     performs a cleaning operation on a dictionary to:
     1. remove all keys with `None` values
@@ -19,12 +19,12 @@ def clean_dict(d: dict[str, Any], type: type[TypedDict]) -> dict[str, Any]:
     return denone({k: v for k, v in d.items() if k in type.__annotations__})
 
 
-def keep_keys(d: dict[str, Any], keys: list[str]) -> dict[str, Any]:
+def keep_keys(d: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     """keep only the specified keys in a dictionary"""
     return denone({k: v for k, v in d.items() if k in keys})
 
 
-def drop_keys(d: dict[str, Any], keys: list[str]) -> dict[str, Any]:
+def drop_keys(d: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     """drop the specified keys from a dictionary"""
     return denone({k: v for k, v in d.items() if k not in keys})
 
@@ -42,7 +42,7 @@ def set_if_none(d: dict, key: str, value: Any) -> None:
         d[key] = value
 
 
-def dump_model(model: BaseModel) -> dict[str, Any]:
+def dump_model(model: BaseModel) -> Dict[str, Any]:
     """dump a pydantic model to a dict
 
     HACK: this is a temporary function to support the new pydantic's model_dump() function
@@ -59,7 +59,7 @@ def dump_model(model: BaseModel) -> dict[str, Any]:
     )
 
 
-def model_schema(model: type[BaseModel]) -> dict[str, Any]:
+def model_schema(model: Type[BaseModel]) -> Dict[str, Any]:
     """return a pydantic model's schema
 
     HACK: this is a temporary function to support the new pydantic's model_json_schema()
@@ -70,3 +70,15 @@ def model_schema(model: type[BaseModel]) -> dict[str, Any]:
     """
 
     return model.model_json_schema() if hasattr(model, 'model_json_schema') else model.schema()
+
+
+class classproperty:
+    """basic implementation of a class property decorator"""
+
+    def __init__(self, method: Callable) -> None:
+        self.method = method
+
+    def __get__(self, obj: Any, cls: Union[Type, None] = None) -> ...:
+        if cls is None:
+            cls = type(obj)
+        return self.method(cls)

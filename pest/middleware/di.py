@@ -1,3 +1,5 @@
+from typing import Union
+
 from fastapi import Request, Response
 from rodi import ActivationScope
 from starlette.middleware.base import RequestResponseEndpoint
@@ -6,7 +8,7 @@ SCOPE_KEY = '__di_scope__'
 '''🐀 ⇝ the key used to store the di activation scope in a request'''
 
 
-def scope_from(request: Request) -> ActivationScope | None:
+def scope_from(request: Request) -> Union[ActivationScope, None]:
     """obtains the di activation scope from a request"""
     return getattr(request.state, SCOPE_KEY, None)
 

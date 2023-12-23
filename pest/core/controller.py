@@ -1,5 +1,5 @@
 from inspect import getmembers, isfunction
-from typing import TYPE_CHECKING, Any, ClassVar, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, List, Optional
 
 from fastapi.routing import APIRoute
 
@@ -9,6 +9,7 @@ from ..metadata.types._meta import PestType
 from ..metadata.types.controller_meta import ControllerMeta
 from ..metadata.types.handler_meta import HandlerMeta
 from ..utils.fastapi.router import PestRouter
+from ..utils.functions import classproperty
 from .common import PestPrimitive
 from .handler import HandlerTuple, setup_handler
 from .types.status import Status
@@ -38,7 +39,7 @@ def router_of(cls: type) -> PestRouter:
     return cls.__router__
 
 
-def routes_of(cls: type) -> list[APIRoute]:
+def routes_of(cls: type) -> List[APIRoute]:
     """🐀 ⇝ obtains all routes of a `controller`"""
     return router_of(cls).routes
 
@@ -59,8 +60,7 @@ class Controller(PestPrimitive):
     __router__: ClassVar[PestRouter]
     __parent_module__: ClassVar[Optional[Any]]
 
-    @classmethod
-    @property
+    @classproperty
     def __pest_object_type__(cls) -> PestType:
         return PestType.CONTROLLER
 
@@ -96,7 +96,7 @@ class Controller(PestPrimitive):
         return r
 
     @classmethod
-    def __routes__(cls) -> list[APIRoute]:
+    def __routes__(cls) -> List[APIRoute]:
         """makes routes for the controller"""
 
         routes = []
@@ -106,9 +106,9 @@ class Controller(PestPrimitive):
         return routes
 
     @classmethod
-    def __handlers__(cls) -> list[HandlerTuple]:
+    def __handlers__(cls) -> List[HandlerTuple]:
         members = getmembers(cls, lambda m: isfunction(m))
-        handlers: list[HandlerTuple] = []
+        handlers: List[HandlerTuple] = []
 
         for _, method in members:
             meta_type = get_meta_value(method, key='meta_type', type=PestType, default=None)

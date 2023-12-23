@@ -1,8 +1,10 @@
-from collections.abc import Callable
 from enum import Enum
-from typing import (
-    Unpack,
-)
+from typing import Callable
+
+try:
+    from typing import Unpack
+except ImportError:
+    from typing_extensions import Unpack
 
 from fastapi.types import DecoratedCallable
 

@@ -1,4 +1,9 @@
-from typing import Unpack, cast
+try:
+    from typing import Unpack, cast
+except ImportError:
+    from typing_extensions import Unpack, cast
+
+from typing import Union
 
 from ..core.application import PestApplication
 from ..core.types.fastapi_params import FastAPIParams
@@ -17,10 +22,10 @@ class Pest:
         cls,
         root_module: type,
         *,
-        logging: LoggingOptions | None = None,
+        logging: Union[LoggingOptions, None] = None,
         middleware: MiddlewareDef = [],
         prefix: str = '',
-        cors: CorsOptions | None = None,
+        cors: Union[CorsOptions, None] = None,
         **fastapi_params: Unpack[FastAPIParams],
     ) -> PestApplication:
         """

@@ -1,4 +1,4 @@
-from typing import TypeVar, cast
+from typing import Type, TypeVar, Union, cast
 
 T = TypeVar('T')
 
@@ -9,11 +9,11 @@ class _Inject:
     @internal you should not use this class directly, use `inject` instead.
     """
 
-    def __init__(self, token: type | None) -> None:
+    def __init__(self, token: Union[type, None]) -> None:
         self.token = token
 
 
-def inject(token: None | type[T] = None) -> T:
+def inject(token: Union[None, Type[T]] = None) -> T:
     """
     🐀 ⇝ marks a parameter as a dependency to be injected by `pest` 💉
 

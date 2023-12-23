@@ -1,3 +1,5 @@
+from typing import List
+
 import fastapi
 
 from pest.exceptions.http.http import ForbiddenException
@@ -18,7 +20,7 @@ def validate(todo: TodoModel | None) -> TodoModel:
 class TodoService:
     repo: TodoRepo  # <- automatically injected
 
-    def get_all(self) -> list[TodoModel]:
+    def get_all(self) -> List[TodoModel]:
         return self.repo.get_all()
 
     def get(self, id: int) -> TodoModel:

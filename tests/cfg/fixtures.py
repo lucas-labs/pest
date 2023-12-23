@@ -1,4 +1,9 @@
-from typing import TypeAlias, cast
+try:
+    from typing import TypeAlias, cast
+except ImportError:
+    from typing_extensions import TypeAlias, cast
+
+from typing import Tuple
 
 import pytest
 from fastapi import Request, Response
@@ -21,7 +26,7 @@ from .test_modules.pest_primitives import (
     ParentMod,
 )
 
-TestApp: TypeAlias = tuple[PestApplication, TestClient]
+TestApp: TypeAlias = Tuple[PestApplication, TestClient]
 
 
 @pytest.fixture()

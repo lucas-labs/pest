@@ -1,4 +1,5 @@
 import re
+from typing import Union
 
 from ...utils.colorize import c
 
@@ -13,7 +14,7 @@ class PestException(Exception):
     def __init__(
         self,
         *args: object,
-        hint: str | None = None,
+        hint: Union[str, None] = None,
     ):
         if hint is not None:
             hint = f'{c("🐀 Hint ⇝ ", color="light_magenta")} {hint}'

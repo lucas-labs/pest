@@ -1,10 +1,12 @@
+from typing import List, Union
+
 import fastapi
 
 from ....data.data import TodoRepo
 from ..models.todo import TodoCreate, TodoModel
 
 
-def validate(todo: TodoModel | None) -> TodoModel:
+def validate(todo: Union[TodoModel, None]) -> TodoModel:
     if todo is None:
         raise fastapi.HTTPException(
             status_code=404,
@@ -16,7 +18,7 @@ def validate(todo: TodoModel | None) -> TodoModel:
 class TodoService:
     repo: TodoRepo
 
-    def get_all(self) -> list[TodoModel]:
+    def get_all(self) -> List[TodoModel]:
         return self.repo.get_all()
 
     def get(self, id: int) -> TodoModel:

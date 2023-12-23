@@ -44,6 +44,7 @@ Done! You can now use your patched library.
 import os
 import shutil
 from subprocess import run
+from typing import List, Tuple
 
 from pydantic import BaseModel
 
@@ -55,7 +56,7 @@ def get_venv_path() -> str:
     return run(command, capture_output=True).stdout.decode('utf-8').strip()  # noqa: S603
 
 
-def get_patches_paths() -> tuple[str, str]:
+def get_patches_paths() -> Tuple[str, str]:
     possible_paths = ['.patch', '.patches', 'patches', 'patch']
     for path in possible_paths:
         patch_dir = os.path.join(os.getcwd(), path)
@@ -80,7 +81,7 @@ class Patch(BaseModel):
 
 
 class Cfg(BaseModel):
-    patches: list[Patch]
+    patches: List[Patch]
 
 
 venv_path = get_venv_path()

@@ -1,5 +1,10 @@
 from enum import Enum
-from typing import Annotated
+from typing import Union
+
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
 
 from fastapi import Body, Path, Query, Request, Response
 from pydantic import BaseModel, Field
@@ -11,8 +16,8 @@ from pest.decorators.module import module
 
 class BodyParam(BaseModel):
     id: int = Field(gt=0)
-    name: str | None = None
-    job: str | None = None
+    name: Union[str, None] = None
+    job: Union[str, None] = None
 
 
 class Foos(str, Enum):
@@ -67,14 +72,14 @@ class QueryParams:
         return foos[id]
 
     @get('/optional')
-    def optional(self, id: int | None = None):
+    def optional(self, id: Union[int, None] = None):
         if id is None:
             return {'message': 'id is not provided'}
 
         return self.as_typed_var(id)
 
     @get('/annotated')
-    def annotated(self, id: Annotated[int | None, Query(gt=0)]):
+    def annotated(self, id: Annotated[Union[int, None], Query(gt=0)]):
         assert isinstance(id, int)
         assert id > 0
         return foos[id]
@@ -98,7 +103,7 @@ class BodyParams:
 
     @post('/body_fields')
     def body_fields(
-        self, id: Annotated[int, Body(gt=0)], name: Annotated[str | None, Body()] = None
+        self, id: Annotated[int, Body(gt=0)], name: Annotated[Union[str, None], Body()] = None
     ):
         assert isinstance(id, int)
         if name is not None:

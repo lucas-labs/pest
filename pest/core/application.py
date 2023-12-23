@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import (
-    Annotated,
     Any,
     Callable,
     Coroutine,
@@ -8,10 +7,15 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Tuple,
     Type,
     Union,
-    Unpack,
 )
+
+try:
+    from typing import Unpack
+except ImportError:
+    from typing_extensions import Unpack
 
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
@@ -29,7 +33,6 @@ from starlette.middleware.errors import ServerErrorMiddleware
 from starlette.middleware.exceptions import ExceptionMiddleware
 from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
-from typing_extensions import Doc
 
 from pest.logging import log
 from pest.middleware.types import CorsOptions
@@ -81,7 +84,7 @@ class PestApplication(FastAPI):
         )
 
     def add_exception_handlers(
-        self, handlers: list[tuple[int | type[Exception], Callable]]
+        self, handlers: List[Tuple[Union[int, Type[Exception]], Callable]]
     ) -> None:
         for error, handler in handlers:
             self.add_exception_handler(error, handler)
@@ -89,7 +92,7 @@ class PestApplication(FastAPI):
     def __str__(self) -> str:
         return str(root_module(self))
 
-    def resolve(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
+    def resolve(self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None) -> T:
         return root_module(self).get(token, scope)
 
     def can_provide(self, token: InjectionToken[T]) -> bool:
@@ -183,17 +186,7 @@ class PestApplication(FastAPI):
             generate_unique_id_function=generate_unique_id_function,
         )
 
-    def middleware(
-        self,
-        middleware_type: Annotated[
-            str,
-            Doc(
-                '''
-                The type of middleware. Currently only supports `http`.
-                '''
-            ),
-        ],
-    ) -> Callable[[DecoratedCallable], DecoratedCallable]:
+    def middleware(self, middleware_type: str) -> Callable[[DecoratedCallable], DecoratedCallable]:
         """
         Add a middleware to the application.
 

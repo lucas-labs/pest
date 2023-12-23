@@ -1,4 +1,9 @@
-from typing import Callable, TypeVar, Unpack
+from typing import Callable, TypeVar
+
+try:
+    from typing import Unpack
+except ImportError:
+    from typing_extensions import Unpack
 
 from ..core.module import Module
 from ..decorators._common import meta_decorator

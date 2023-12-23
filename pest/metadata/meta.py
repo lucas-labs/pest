@@ -1,5 +1,5 @@
 from dataclasses import asdict, is_dataclass
-from typing import Any, Callable, TypedDict, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Type, TypeVar, Union, cast
 
 from dacite import Config, from_dict
 
@@ -10,18 +10,18 @@ from .types._meta import Meta
 META_KEY = '__pest__'
 
 
-DataType = TypeVar('DataType', bound=Union[dict[str, Any], TypedDict, Meta])
+DataType = TypeVar('DataType', bound=Union[Dict[str, Any], dict, Meta])
 GenericValue = TypeVar('GenericValue')
 
 
 def get_meta(
-    target: Callable[..., Any] | type | object,
+    target: Union[Callable[..., Any], type, object],
     *,
-    type: type[DataType] = dict[str, Any],
+    type: Type[DataType] = Dict[str, Any],
     raise_error: bool = True,
     clean: bool = False,
-    keep: list[str] | None = None,
-    drop: list[str] | None = None,
+    keep: Union[List[str], None] = None,
+    drop: Union[List[str], None] = None,
 ) -> DataType:
     """🐀 ⇝ get pest `metadata` from a `callable`
     #### Params
@@ -58,7 +58,7 @@ def get_meta(
 
 
 def get_meta_value(
-    callable: Callable[..., Any], key: str, default: Any = None, *, type: type[GenericValue] = Any
+    callable: Callable[..., Any], key: str, default: Any = None, *, type: Type[GenericValue] = Any
 ) -> GenericValue:
     """🐀 ⇝ get pest metadata `value` from a `callable` by `key`"""
 
@@ -67,7 +67,7 @@ def get_meta_value(
 
 
 def inject_metadata(
-    callable: Callable[..., Any], metadata: Meta | None = None, **kwargs: Any
+    callable: Callable[..., Any], metadata: Union[Meta, None] = None, **kwargs: Any
 ) -> None:
     """🐀 ⇝ initialize pest `metadata` for a `callable`
 

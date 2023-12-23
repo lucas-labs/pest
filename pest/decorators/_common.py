@@ -1,4 +1,4 @@
-from typing import Any, Callable, Mapping, TypeVar
+from typing import Any, Callable, Mapping, Type, TypeVar, Union
 
 from dacite import Config, from_dict
 
@@ -7,10 +7,10 @@ from ..metadata.types._meta import Meta
 
 T = TypeVar('T')
 K = TypeVar('K')
-Cls = TypeVar('Cls', bound=type[Any])
+Cls = TypeVar('Cls', bound=Type[Any])
 
 
-def singleton(cls: type[T]) -> type[T]:
+def singleton(cls: Type[T]) -> Type[T]:
     """
     makes the decorated class a singleton, ensuring
     that only one instance of the class is ever created.
@@ -39,11 +39,11 @@ def singleton(cls: type[T]) -> type[T]:
 make_singleton = singleton
 
 
-def _inject_class(base: type[T]) -> Callable[..., type[T]]:
+def _inject_class(base: Type[T]) -> Callable[..., Type[T]]:
     return lambda cls: type(cls.__name__, (base,) + cls.__bases__, dict(cls.__dict__))
 
 
-def mixin(base: type[T]) -> Callable[..., type[T]]:
+def mixin(base: Type[T]) -> Callable[..., Type[T]]:
     """
     Utility decorator to inject a class as a mixin and combine it with the
     decorated class.
@@ -66,17 +66,17 @@ def use_base(base: type) -> Callable[[T], Callable[..., T]]:
 
 
 def meta_decorator_mixin(
-    meta_type: type[Meta],
+    meta_type: Type[Meta],
     meta: Mapping[str, Any],
     base: type,
     singleton: bool = False,
-) -> Callable[[Cls], type[Cls]]:
+) -> Callable[[Cls], Type[Cls]]:
     """
     makes a decorator that sets the meta of a class
     and optionally makes it inherit from a base class
     """
 
-    def wrapper(cls: Cls) -> type[Cls]:
+    def wrapper(cls: Cls) -> Type[Cls]:
         if singleton:
             cls = make_singleton(cls)
 
@@ -87,9 +87,9 @@ def meta_decorator_mixin(
 
 
 def meta_decorator(
-    meta_type: type[Meta],
+    meta_type: Type[Meta],
     meta: Mapping[str, Any],
-    base: type | None = None,
+    base: Union[type, None] = None,
     singleton: bool = False,
 ) -> Callable:
     """

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -24,13 +26,13 @@ class AppModule:
 
 
 @pytest.fixture()
-def app() -> tuple[PestApplication, TestClient]:
+def app() -> Tuple[PestApplication, TestClient]:
     app = Pest.create(root_module=AppModule)
     client = TestClient(app)
     return app, client
 
 
-def test_request_scoped_provider(app: tuple[PestApplication, TestClient]) -> None:
+def test_request_scoped_provider(app: Tuple[PestApplication, TestClient]) -> None:
     """🐀 di :: scoped :: should handle PestHttpException"""
     _, client = app
 

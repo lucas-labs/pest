@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar, cast
+from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
 from fastapi import APIRouter
 from rodi import ActivationScope, Container, ServiceLifeStyle
@@ -17,6 +17,7 @@ from ..metadata.types.module_meta import (
     Provider,
     ValueProvider,
 )
+from ..utils.functions import classproperty
 from .common import PestPrimitive
 from .controller import Controller, router_of, setup_controller
 from .types.status import Status
@@ -34,7 +35,7 @@ def parent_of(module: 'Module') -> Optional['Module']:
     return module.__parent_module__
 
 
-def contained_in(module: 'Module') -> list[tuple[InjectionToken, Any]]:
+def contained_in(module: 'Module') -> List[Tuple[InjectionToken, Any]]:
     """returns the providers contained in a given module"""
     if not isinstance(module, Module):
         raise PestException(
@@ -80,20 +81,19 @@ T = TypeVar('T')
 
 
 class Module(PestPrimitive):
-    __imported__providers__: dict[InjectionToken, 'Module']
+    __imported__providers__: Dict[InjectionToken, 'Module']
     __parent_module__: Optional['Module']
-    imports: list['Module']
+    imports: List['Module']
     container: Container
-    providers: list[Any]
-    exports: list[InjectionToken]
-    controllers: list[type[Controller]]
+    providers: List[Any]
+    exports: List[InjectionToken]
+    controllers: List[Type[Controller]]
 
     @property
-    def routers(self) -> list[APIRouter]:
+    def routers(self) -> List[APIRouter]:
         return self.__get_routers()
 
-    @classmethod
-    @property
+    @classproperty
     def __pest_object_type__(cls) -> PestType:
         return PestType.MODULE
 
@@ -156,46 +156,49 @@ class Module(PestPrimitive):
         self.__class_status__ = Status.READY
 
     def register(self, provider: Provider) -> None:
-        match provider:
-            case ClassProvider(provide, use_class, scope):
-                self.container.bind_types(
-                    provide,
-                    use_class,
-                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT,
-                )
-            case FactoryProvider(provide, use_factory, scope):
-                self.container.register_factory(
-                    factory=use_factory,
-                    return_type=provide,
-                    life_style=scope if scope is not None else ServiceLifeStyle.TRANSIENT,
-                )
-            case ValueProvider(provide, use_value):
-                self.container.add_instance(
-                    declared_class=provide,
-                    instance=use_value,
-                )
-            case ExistingProvider(provide, use_existing):
-                self.container.add_alias(name=provide, desired_type=use_existing)
-            case _:
-                self.container.add_transient(provider)
+        if isinstance(provider, ClassProvider):
+            self.container.bind_types(
+                provider.provide,
+                provider.use_class,
+                life_style=provider.scope
+                if provider.scope is not None
+                else ServiceLifeStyle.TRANSIENT,
+            )
+        elif isinstance(provider, FactoryProvider):
+            self.container.register_factory(
+                factory=provider.use_factory,
+                return_type=provider.provide,
+                life_style=provider.scope
+                if provider.scope is not None
+                else ServiceLifeStyle.TRANSIENT,
+            )
+        elif isinstance(provider, ValueProvider):
+            self.container.add_instance(
+                declared_class=provider.provide,
+                instance=provider.use_value,
+            )
+        elif isinstance(provider, ExistingProvider):
+            self.container.add_alias(name=provider.provide, desired_type=provider.use_existing)
+        else:
+            self.container.add_transient(provider)
 
     def can_provide(self, token: InjectionToken) -> bool:
         if token in self.__imported__providers__ or token in self.container:
             return True
         return False
 
-    def get(self, token: InjectionToken[T], scope: ActivationScope | None = None) -> T:
+    def get(self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None) -> T:
         if token in self.__imported__providers__:
             return self.__get_from_imported(token, scope=scope)
 
         return self.container.resolve(token, scope=scope)
 
     def __get_from_imported(
-        self, token: InjectionToken[T], scope: ActivationScope | None = None
+        self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None
     ) -> T:
         return self.__imported__providers__[token].get(token, scope=scope)
 
-    def __get_routers(self) -> list[APIRouter]:
+    def __get_routers(self) -> List[APIRouter]:
         routers = []
         for controller in self.controllers:
             routers += [router_of(controller)]

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pest"
 version = "0.0.1"
-description = "🐀 ⇝ fastapi + rodi + mvc | python library for building modularized API's. Inspired by NestJS."
+description = "🐀 ⇝ pest › fastapi + rodi + mvc | python library for building scalable modular API's. Inspired by NestJS."
 authors = ["lucaslabs <lucas@lucaslabs.tech>"]
 readme = "README.md"
 license = "MIT"
@@ -11,12 +11,14 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
+python = ">=3.8,<4.0"
 dacite = "^1.8.1"
 fastapi = ">0.103, <0.105.0"
 loguru = "^0.7.2"
 pydantic = ">=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0"
-python = ">=3.8"
-rodi = "^2.0.5"
+
+rodi = "2.0.6"
+typing-extensions = "^4.9.0"
 
 [tool.poetry.extras]
 logs = ["loguru"]
@@ -29,6 +31,7 @@ pytest-asyncio = "^0.21.1"
 pytest-cov = "^4.1.0"
 ruff = "^0.1.3"
 uvicorn = "^0.23.2"
+nox-poetry = "^1.0.3"
 
 [build-system]
 requires = ["poetry-core"]

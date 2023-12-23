@@ -1,10 +1,12 @@
+from typing import Union
+
 from ..core.application import PestApplication
 from ..exceptions.http.http import ExceptionResponse
 from ..middleware.types import CorsOptions
 from ..utils.functions import model_schema
 
 
-def setup(app: PestApplication, cors: CorsOptions | None = None) -> PestApplication:
+def setup(app: PestApplication, cors: Union[CorsOptions, None] = None) -> PestApplication:
     """Initializes stuff that needs the app to already exist to be able to setup"""
     __setup_cors(app, cors)
     __patch_open_api(app)
@@ -12,7 +14,7 @@ def setup(app: PestApplication, cors: CorsOptions | None = None) -> PestApplicat
     return app
 
 
-def __setup_cors(app: PestApplication, cors: CorsOptions | None) -> None:
+def __setup_cors(app: PestApplication, cors: Union[CorsOptions, None]) -> None:
     """Sets up CORS"""
     if cors is None:
         return

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from ..modules.todo.models.todo import TodoCreate, TodoModel
 
@@ -51,22 +51,22 @@ class TodoRepo:
         self.todos.append(new_todo)
         return new_todo
 
-    def get_all(self) -> list[TodoModel]:
+    def get_all(self) -> List[TodoModel]:
         return self.todos
 
-    def get_by_id(self, id: int) -> TodoModel | None:
+    def get_by_id(self, id: int) -> Union[TodoModel, None]:
         for todo in self.todos:
             if todo.id == id:
                 return todo
         return None
 
-    def set_done_status(self, id: int, done: bool) -> TodoModel | None:
+    def set_done_status(self, id: int, done: bool) -> Union[TodoModel, None]:
         todo = self.get_by_id(id)
         if todo is not None:
             todo.done = done
         return todo
 
-    def delete_by_id(self, id: int) -> TodoModel | None:
+    def delete_by_id(self, id: int) -> Union[TodoModel, None]:
         todo = self.get_by_id(id)
         if todo is not None:
             self.todos.remove(todo)

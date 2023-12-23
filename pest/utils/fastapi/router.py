@@ -1,12 +1,14 @@
-from collections.abc import Callable, Sequence
 from enum import Enum
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     List,
     Optional,
+    Sequence,
     Set,
+    Type,
     Union,
 )
 
@@ -32,8 +34,8 @@ class PestRouter(APIRouter):
     route with or without /, as appropriate.
     """
 
-    routes: list[APIRoute]
-    controller: type['Controller']
+    routes: List[APIRoute]
+    controller: Type['Controller']
 
     def add_api_route(
         self,
@@ -58,9 +60,9 @@ class PestRouter(APIRouter):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Union[type[Response], DefaultPlaceholder] = Default(JSONResponse),
+        response_class: Union[Type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,
-        route_class_override: Optional[type[APIRoute]] = None,
+        route_class_override: Optional[Type[APIRoute]] = None,
         callbacks: Optional[List[BaseRoute]] = None,
         openapi_extra: Optional[Dict[str, Any]] = None,
         generate_unique_id_function: Union[Callable[[APIRoute], str], DefaultPlaceholder] = Default(

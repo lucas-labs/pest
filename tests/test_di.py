@@ -1,9 +1,11 @@
+from typing import Tuple
+
 from fastapi.testclient import TestClient
 
 from pest.core.application import PestApplication
 
 
-def test_request_scoped_provider(di_app_n_client: tuple[PestApplication, TestClient]) -> None:
+def test_request_scoped_provider(di_app_n_client: Tuple[PestApplication, TestClient]) -> None:
     """🐀 di :: scoped :: scoped services should act as singletons for the lifetime of a request"""
     _, client = di_app_n_client
 
@@ -27,7 +29,7 @@ def test_request_scoped_provider(di_app_n_client: tuple[PestApplication, TestCli
     assert r1_head != r2_head
 
 
-def test_singletons_doent_change(di_app_n_client: tuple[PestApplication, TestClient]) -> None:
+def test_singletons_doent_change(di_app_n_client: Tuple[PestApplication, TestClient]) -> None:
     """🐀 di :: singleton ::
     scoped services should act as singletons for the lifetime of a request
     """
@@ -53,7 +55,7 @@ def test_singletons_doent_change(di_app_n_client: tuple[PestApplication, TestCli
     assert r1_head == r2_head
 
 
-def test_transient_always_new_instance(di_app_n_client: tuple[PestApplication, TestClient]) -> None:
+def test_transient_always_new_instance(di_app_n_client: Tuple[PestApplication, TestClient]) -> None:
     """🐀 di :: transient :: transient services should always return a new instance"""
     _, client = di_app_n_client
 

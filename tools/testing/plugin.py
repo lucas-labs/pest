@@ -119,7 +119,7 @@ def summary_stats(self: TerminalReporter) -> None:
 
 def summary_failures_replacer(self: TerminalReporter) -> None:
     if self.config.option.tbstyle != 'no':
-        reports: list[BaseReport] = self.getreports('failed')
+        reports: List[BaseReport] = self.getreports('failed')
         if not reports:
             return
 
@@ -143,7 +143,7 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
     if not self.reportchars:
         return
 
-    def show_simple(lines: list[str], *, stat: str) -> None:
+    def show_simple(lines: List[str], *, stat: str) -> None:
         failed = self.stats.get(stat, [])
         if not failed:
             return
@@ -153,7 +153,7 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
             line = _get_line_with_reprcrash_message(config, rep, self._tw, {color: True})
             lines.append(line)
 
-    def show_xfailed(lines: list[str]) -> None:
+    def show_xfailed(lines: List[str]) -> None:
         xfailed = self.stats.get('xfailed', [])
         for rep in xfailed:
             verbose_word = rep._get_verbose_word(self.config)
@@ -166,7 +166,7 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
 
             lines.append(line)
 
-    def show_xpassed(lines: list[str]) -> None:
+    def show_xpassed(lines: List[str]) -> None:
         xpassed = self.stats.get('xpassed', [])
         for rep in xpassed:
             verbose_word = rep._get_verbose_word(self.config)
@@ -175,8 +175,8 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
             reason = rep.wasxfail
             lines.append(f'{markup_word} {nodeid} {reason}')
 
-    def show_skipped(lines: list[str]) -> None:
-        skipped: list[CollectReport] = self.stats.get('skipped', [])
+    def show_skipped(lines: List[str]) -> None:
+        skipped: List[CollectReport] = self.stats.get('skipped', [])
         fskips = _folded_skips(self.startpath, skipped) if skipped else []
         if not fskips:
             return
@@ -191,7 +191,7 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
             else:
                 lines.append('%s [%d] %s: %s' % (markup_word, num, fspath, reason))
 
-    REPORTCHAR_ACTIONS: Mapping[str, Callable[[list[str]], None]] = {
+    REPORTCHAR_ACTIONS: Mapping[str, Callable[[List[str]], None]] = {
         'x': show_xfailed,
         'X': show_xpassed,
         'f': partial(show_simple, stat='failed'),
@@ -200,7 +200,7 @@ def short_test_summary_replacer(self: TerminalReporter) -> None:
         'E': partial(show_simple, stat='error'),
     }
 
-    lines: list[str] = []
+    lines: List[str] = []
     for char in self.reportchars:
         action = REPORTCHAR_ACTIONS.get(char)
         if action:  # skipping e.g. "P" (passed with output) here.

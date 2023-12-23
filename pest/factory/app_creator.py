@@ -1,4 +1,4 @@
-from typing import cast
+from typing import List, cast
 
 from fastapi.routing import APIRoute
 
@@ -25,7 +25,7 @@ def make_app(
     for router in routers:
         # log routes while we add em
         log.info(f'Setting up {get_meta_value(router, "name")}')
-        for route in cast(list[APIRoute], router.routes):
+        for route in cast(List[APIRoute], router.routes):
             for method in route.methods:
                 if not route.path.endswith('/'):
                     log.debug(f'{method: <7} {prefix}{route.path}')

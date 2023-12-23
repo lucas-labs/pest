@@ -1,6 +1,11 @@
 from dataclasses import asdict
 from inspect import Parameter, signature
-from typing import TYPE_CHECKING, Any, Callable, TypeAlias, get_args
+from typing import TYPE_CHECKING, Any, Callable, List, Tuple, Type, Union, get_args
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 from fastapi import Depends, Request
 from fastapi.routing import APIRoute
@@ -17,10 +22,10 @@ if TYPE_CHECKING:  # pragma: no cover
     from .controller import Controller
 
 HandlerFn: TypeAlias = Callable[..., Any]
-HandlerTuple: TypeAlias = tuple[HandlerFn, HandlerMeta]
+HandlerTuple: TypeAlias = Tuple[HandlerFn, HandlerMeta]
 
 
-def setup_handler(cls: type['Controller'], handler: HandlerTuple) -> APIRoute:
+def setup_handler(cls: Type['Controller'], handler: HandlerTuple) -> APIRoute:
     """
     Sets up a request handler.
 
@@ -42,7 +47,7 @@ def setup_handler(cls: type['Controller'], handler: HandlerTuple) -> APIRoute:
     return route
 
 
-def _patch_handler_fn(cls: type['Controller'], handler: HandlerFn) -> None:
+def _patch_handler_fn(cls: Type['Controller'], handler: HandlerFn) -> None:
     """
     Changes the signature of a route's endpoint to ensure that FastAPI
     performs dependency injection correctly and doesn't expect a `self`
@@ -62,7 +67,7 @@ def _patch_handler_fn(cls: type['Controller'], handler: HandlerFn) -> None:
 
     old_endpoint = handler
     old_signature = signature(old_endpoint)
-    old_parameters: list[Parameter] = list(old_signature.parameters.values())
+    old_parameters: List[Parameter] = list(old_signature.parameters.values())
     old_first_parameter = old_parameters[0]
     new_first_parameter = old_first_parameter.replace(default=Depends(controller))
     new_parameters = [_get_new_param(cls, parameter) for parameter in old_parameters[1:]]
@@ -101,7 +106,7 @@ def _get_new_param(ctrl: type, parameter: Parameter) -> Parameter:
     return parameter.replace(kind=Parameter.KEYWORD_ONLY)
 
 
-def _get_pest_injection(parameter: Parameter) -> list[_Inject] | None:
+def _get_pest_injection(parameter: Parameter) -> Union[List[_Inject], None]:
     """
     checks if the parameter is annotated with `inject` or has a default value of `_Inject`.
     If so, it returns a list of `_Inject` annotations, otherwise it returns `None`.
@@ -156,7 +161,7 @@ class PestFastAPIInjector:
     @internal
     """
 
-    def __init__(self, controller: type['Controller'], token: 'InjectionToken'):
+    def __init__(self, controller: Type['Controller'], token: 'InjectionToken'):
         self.controller = controller
         self.token = token
 

@@ -1,3 +1,6 @@
+import sys
+
+import pytest
 from fastapi.testclient import TestClient
 
 from pest import Pest
@@ -5,7 +8,10 @@ from pest.decorators.handler import delete, get, head, options, patch, post, put
 from pest.metadata.meta import META_KEY
 from pest.metadata.types._meta import PestType
 
-from .cfg.test_modules.rodi_route_dependencies import RodiDependenciesModule
+from .cfg.test_modules.rodi_route_dependencies import (
+    RodiDependenciesModule,
+    RodiDependenciesModule39plus,
+)
 
 
 def test_get_handler():
@@ -112,16 +118,10 @@ def test_trace_handler():
     assert meta['methods'] == ['TRACE']
 
 
-def test_hander_can_inject_di() -> None:
+def test_handler_can_inject_di() -> None:
     """🐀 handlers :: di :: should be able to be injected by rodi"""
-
     app = Pest.create(RodiDependenciesModule)
     client = TestClient(app)
-
-    response = client.get('/annotated')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
 
     response = client.get('/assigned')
     assert response.status_code == 200
@@ -134,6 +134,19 @@ def test_hander_can_inject_di() -> None:
     assert len(response.json().get('id')) > 0
 
     response = client.get('/noinject')
+    assert response.status_code == 200
+    assert isinstance(response.json().get('id'), str)
+    assert len(response.json().get('id')) > 0
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='requires python3.9 or higher')
+def test_handlder_can_inject_di_annotation() -> None:
+    """🐀 handlers :: di :: should be able to be injected by rodi"""
+
+    app = Pest.create(RodiDependenciesModule39plus)
+    client = TestClient(app)
+
+    response = client.get('/annotated')
     assert response.status_code == 200
     assert isinstance(response.json().get('id'), str)
     assert len(response.json().get('id')) > 0

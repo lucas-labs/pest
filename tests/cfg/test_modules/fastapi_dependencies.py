@@ -1,4 +1,9 @@
-from typing import Annotated
+from typing import List, Union
+
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
 
 from fastapi import Depends, Request, Response
 from fastapi.security import OAuth2PasswordBearer
@@ -14,7 +19,7 @@ auth_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login_form')
 
 class User(BaseModel):
     email: str
-    roles: list[str] = []
+    roles: List[str] = []
 
 
 def decode_token(token: str) -> User:
@@ -26,10 +31,10 @@ def decode_token(token: str) -> User:
 
 
 class AuthGuard:
-    def __init__(self, roles: list[str] = []) -> None:
+    def __init__(self, roles: List[str] = []) -> None:
         self.allowed_roles = roles or []
 
-    async def __call__(self, token: str = Depends(auth_scheme)) -> User | None:
+    async def __call__(self, token: str = Depends(auth_scheme)) -> Union[User, None]:
         try:
             user = decode_token(token)
         except Exception as e:

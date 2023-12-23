@@ -1,4 +1,10 @@
-from typing import Callable, TypeVar, Unpack
+from typing import Callable, Type, TypeVar
+
+try:
+    from typing import Unpack
+except ImportError:
+    from typing_extensions import Unpack
+
 
 from pest.decorators._common import meta_decorator
 
@@ -11,7 +17,7 @@ Class = TypeVar('Class', bound=type)
 
 def controller(
     prefix: str, **options: Unpack[ControllerMetaDict]
-) -> Callable[..., type[Controller]]:
+) -> Callable[..., Type[Controller]]:
     """🐀 ⇝ decorator that marks a class as a `controller`"""
     return meta_decorator(
         meta_type=ControllerMeta,
