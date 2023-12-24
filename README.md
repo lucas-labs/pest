@@ -1,11 +1,13 @@
 <p align="center">
-  <img width="150" src="./.github/img/logo.svg">
+  <img height="150" src="./.github/img/logo.svg">
 </p>
 <br/>
 
 <p align="center">
-<strong>
-<!-- <span>pest ≃ fastapi + rodi + mvc + Optional[loguru] + 🪄</span> -->
+<img height="16" src="./.github/img/icons/pest.svg" /> » python <img height="16" src="./.github/img/icons/python.svg" /> web application framework designed for constructing scalable APIs, drawing inspiration from <a href="https://docs.nestjs.com/"> nest.js</a> <img height="16" src="./.github/img/icons/nestjs.svg" /> and based on <a href="https://fastapi.tiangolo.com/"> fastapi</a> <img height="16" src="./.github/img/icons/fastapi.svg" />.
+</p>
+
+<br/>
 
 ```math
 \textcolor{orange}{\textbf{\large \texttt{pest}}} \large\simeq
@@ -16,11 +18,5 @@
   \end{cases}
 ```
 
-<br/><br/>
-🐀
-<br/><br/>
-Python library for building scalable modular API's. Inspired by NestJS.
-</strong>
-</p>
 
 
