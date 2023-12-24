@@ -78,7 +78,7 @@ class PestRouter(APIRouter):
         y viceversa.
         """
 
-        if path.endswith('/'):
+        if path.endswith('/') and path != '/':
             path = path[:-1]
 
         alternate_path = path + '/'

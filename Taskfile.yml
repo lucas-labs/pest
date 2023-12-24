@@ -79,3 +79,7 @@ tasks:
       - task checks
       - task test:all
       
+  build:
+    desc: 🏗️ build package
+    cmds:
+      - poetry build
