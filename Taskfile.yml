@@ -37,12 +37,6 @@ tasks:
     cmds:
       - poetry run ruff check . --fix
 
-  test:
-    aliases: [t]
-    desc: 🧪 run tests 
-    cmds:
-      - poetry run pytest
-
   test:3.8:
     desc: 🧪 run tests on python 3.8
     cmds:
@@ -71,4 +65,17 @@ tasks:
   test:all:
     desc: 🧪 run tests on all python versions
     cmds:
-      - nox --reuse-existing-virtualenvs
+      - task --parallel test:3.12 test:3.11 test:3.10 test:3.9 test:3.8
+
+  checks:
+    desc: 🎨 run all checks
+    cmds:
+      - task --parallel fmt:check lint:check
+
+  precommit:
+    desc: ⎇ run pre-commit tasks
+    cmds:
+      # run all tests
+      - task checks
+      - task test:all
+      
