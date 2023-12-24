@@ -19,10 +19,15 @@ def controller(
     prefix: str, **options: Unpack[ControllerMetaDict]
 ) -> Callable[..., Type[Controller]]:
     """🐀 ⇝ decorator that marks a class as a `controller`"""
+    controller_prefix: str | None = prefix
+
+    if prefix == '/':
+        controller_prefix = None
+
     return meta_decorator(
         meta_type=ControllerMeta,
         meta={
-            'prefix': prefix,
+            'prefix': controller_prefix,
             **options,
         },
         base=Controller,
