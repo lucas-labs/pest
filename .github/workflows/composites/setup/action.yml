@@ -5,6 +5,10 @@ inputs:
     description: "Version of python to install"
     required: true
 
+defaults:
+  run:
+    shell: 'bash'
+
 runs:
   using: "composite"
 
@@ -30,7 +34,6 @@ runs:
       uses: arduino/setup-task@v1
       with:
         version: 3.x
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 🔀 » update PATH env var
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
