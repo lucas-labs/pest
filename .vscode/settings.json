@@ -17,10 +17,10 @@
         // 🧪 tests
         // "tests": true,
         // "noxfile.py": true,
-        "conftest.py": true,
-        ".nox": true,
-        "htmlcov": true,
-        "coverage": true,
+        // "conftest.py": true,
+        // ".nox": true,
+        // "htmlcov": true,
+        // "coverage": true,
         // ".coverage": true,
 
         // 🗑️
