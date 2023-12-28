@@ -22,6 +22,8 @@ def tests(session: Session) -> None:
         'pytest-asyncio',
     )
 
-    params = ['--cov'] if session.python == '3.11' else []
+    params = (
+        ['--cov=pest', 'tests/', '--cov-report=xml'] if session.python == '3.11' else ['tests/']
+    )
 
     session.run('pytest', *params)
