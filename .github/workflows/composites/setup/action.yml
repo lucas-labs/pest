@@ -14,19 +14,23 @@ runs:
 
   steps:
     - name: 🏞️ » setup environment
+      shell: bash
       run: echo "🏞️ » setup environment with python ${{inputs.python-version}}"
 
     - name: 🐍 » setup python@3
       uses: actions/setup-python@v5
+      shell: bash
       with:
         python-version: ${{inputs.python-version}}
         cache: "pip"
 
     - name: 📘 » install Poetry
+      shell: bash
       run: |
         curl -sSL https://install.python-poetry.org | python - -y
 
     - name: 👗 » install nox
+      shell: bash
       run: |
         pip install nox nox-poetry
 
@@ -36,9 +40,11 @@ runs:
         version: 3.x
 
     - name: 🔀 » update PATH env var
+      shell: bash
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: 📜 » log sysinfo
+      shell: bash
       run: |
         uname -a
         python --version
