@@ -1,0 +1,44 @@
+name: "🏞️ » setup environment"
+description: "setup all necessary tools for the workflow to run"
+inputs:
+  python-version:  
+    description: "Version of python to install"
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: 🏞️ » setup environment
+      run: echo "🏞️ » setup environment with python ${{inputs.python-version}}"
+
+    - name: 🐍 » setup python@3
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{inputs.python-version}}
+        cache: "pip"
+
+    - name: 📘 » install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python - -y
+
+    - name: 👗 » install nox
+      run: |
+        pip install nox nox-poetry
+
+    - name: 🧊 » install task
+      uses: arduino/setup-task@v1
+      with:
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🔀 » update PATH env var
+      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: 📜 » log sysinfo
+      run: |
+        uname -a
+        python --version
+        pip --version
+        poetry --version
+        task --version
