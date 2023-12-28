@@ -19,7 +19,6 @@ runs:
 
     - name: 🐍 » setup python@3
       uses: actions/setup-python@v5
-      shell: bash
       with:
         python-version: ${{inputs.python-version}}
         cache: "pip"
