@@ -1,10 +1,37 @@
 [tool.poetry]
-name = "pest"
-version = "0.0.1"
+name = "pest-py"
+version = "0.1.0-alpha.3"
 description = "🐀 ⇝ pest › fastapi + rodi + mvc | python library for building scalable modular API's. Inspired by NestJS."
 authors = ["lucaslabs <lucas@lucaslabs.tech>"]
+homepage = "https://pest.lucode.ar"
+documentation = "https://pest.lucode.ar/docs"
+repository = "https://github.com/lucas-labs/pest"
 readme = "README.md"
 license = "MIT"
+keywords = ["pest", "nestjs", "nest", "api", "rest", "restful", "mvc", "web", "webapp", "di", "dependency injection", "rodi", "fastapi"]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: AsyncIO",
+    "Framework :: FastAPI",
+    "Framework :: Pydantic",
+    "Framework :: Pydantic :: 1",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Internet :: WWW/HTTP",
+]
 
 packages = [
     { include = "pest" }
@@ -32,6 +59,7 @@ pytest-cov = "^4.1.0"
 ruff = "^0.1.3"
 uvicorn = "^0.23.2"
 nox-poetry = "^1.0.3"
+tomli = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core"]

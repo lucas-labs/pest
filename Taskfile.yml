@@ -72,7 +72,12 @@ tasks:
     cmds:
       - task --parallel fmt:check lint:check
 
-  precommit:
+  coverage:
+    desc: 📊 run coverage
+    cmds:
+      - poetry run pytest --cov
+
+  prebuild:
     desc: ⎇ run pre-commit tasks
     cmds:
       # run all tests
@@ -83,3 +88,24 @@ tasks:
     desc: 🏗️ build package
     cmds:
       - poetry build
+
+  local-ci-workflow-release:
+    desc: 🚀 run local ci workflow
+    cmds:
+      - |
+        act push \
+        -W="./.github/workflows/ci.yml" \
+        -e="./.github/act-test/release.json" \
+        --secret-file="./.github/act-test/secrets.env" \
+        --pull=false \
+        --matrix python-version:3.11
+
+  local-ci-workflow-pr:
+    desc: 🚀 run local ci workflow - pull request
+    cmds:
+      - |
+        act pull_request \
+        -W="./.github/workflows/ci.yml" \
+        --secret-file="./.github/act-test/secrets.env" \
+        --pull=false \
+        --matrix python-version:3.11

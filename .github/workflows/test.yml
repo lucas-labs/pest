@@ -1,0 +1,68 @@
+name: "🧪 » test"
+on: 
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  lint:
+    name: "🧹 » lint"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    
+    steps:
+      - name: 📁 » checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 » setup python, poetry and task
+        uses: ./.github/workflows/composites/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 📦 » install ruff globally
+        run: pip install ruff      
+
+      - name: 🧹 » lint
+        run: task lint:check
+
+  test:
+    name: "🧪 » tests"
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    
+    steps:
+      - name: 📁 » checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 » setup python, poetry and task
+        uses: ./.github/workflows/composites/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 🧪 » run tests
+        run: task test:${{ matrix.python-version }}
+
+      # if python 3.11, upload coverage to codecov
+      - name: ☂️ » upload coverage to codecov
+        if: matrix.python-version == '3.11'
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          verbose: true

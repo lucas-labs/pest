@@ -1,0 +1,53 @@
+name: "🚀 » publish"
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  publish-test-pypi:
+    name: 🚀 » publish to test.pypi ⚗️
+    if: ${{ github.event.act }}
+    runs-on: ubuntu-latest
+    environment: pypi-test
+    steps:
+      # checkout
+      - name: 📁 » checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🚀 » build & publish to test.pypi
+        uses: JRubics/poetry-publish@v1.17
+        with:
+          ignore_dev_requirements: "yes"
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          repository_name: "testpypi"
+          repository_url: "https://test.pypi.org/legacy/"
+
+  publish:
+    name: 🚀 » publish to pypi 🏭
+    if: ${{ !github.event.act }}
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      # checkout
+      - name: 📁 » checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🚀 » build & publish to test.pypi
+        uses: JRubics/poetry-publish@v1.17
+        with:
+          ignore_dev_requirements: "yes"
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+
+          

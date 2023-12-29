@@ -1,0 +1,29 @@
+# action.yaml
+name: "poetry project configuration"
+description: "get information about poetry project: version, name, description, etc."
+branding:
+  icon: 'aperture'
+  color: 'green'
+inputs:
+  pyproject-path:
+    description: "location of pyproject file"
+    required: true
+    default: "./pyproject.toml"
+outputs:
+  is-local-higher:
+    description: "True if local version is higher than public version"
+  local-version:
+    description: "Local version of the package"
+  published-version:
+    description: "Public version of the package"
+  package-name:
+    description: "Name of the package"
+  package-description:
+    description: "Description of the package"
+  
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.pyproject-path }}
+    - ${{ inputs.test-regex }}
