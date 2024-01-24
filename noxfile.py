@@ -18,7 +18,6 @@ def tests(session: Session) -> None:
         'loguru',
         'pytest',
         'httpx',
-        'pytest',
         'pytest-asyncio',
     )
 

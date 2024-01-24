@@ -27,8 +27,10 @@ def make_app(
         log.info(f'Setting up {get_meta_value(router, "name")}')
         for route in cast(List[APIRoute], router.routes):
             for method in route.methods:
-                if not route.path.endswith('/'):
-                    log.debug(f'{method: <7} {prefix}{route.path}')
+                full_route = f'{prefix}{route.path}'
+
+                if full_route != '/' and not full_route.endswith('/'):
+                    log.debug(f'{method: <7} {full_route}')
 
         # add the router
         app.include_router(router, prefix=prefix)

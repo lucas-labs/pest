@@ -1,6 +1,6 @@
 from pest.decorators.controller import controller
 from pest.decorators.module import module
-from pest.metadata.types.module_meta import ClassProvider, Scope
+from pest.metadata.types.injectable_meta import ClassProvider, Scope
 
 
 class ProviderFoo:

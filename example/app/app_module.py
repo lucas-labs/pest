@@ -1,5 +1,5 @@
 from pest.decorators.module import module
-from pest.metadata.types.module_meta import ValueProvider
+from pest.metadata.types.injectable_meta import ValueProvider
 
 from .data.data import TodoRepo
 from .modules.todo.module import TodoModule

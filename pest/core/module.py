@@ -8,15 +8,13 @@ from pest.metadata.types._meta import PestType
 
 from ..exceptions.base.pest import PestException
 from ..metadata.meta import get_meta
-from ..metadata.types.module_meta import (
+from ..metadata.types.injectable_meta import (
     ClassProvider,
     ExistingProvider,
     FactoryProvider,
-    InjectionToken,
-    ModuleMeta,
-    Provider,
     ValueProvider,
 )
+from ..metadata.types.module_meta import InjectionToken, ModuleMeta, Provider
 from ..utils.functions import classproperty
 from .common import PestPrimitive
 from .controller import Controller, router_of, setup_controller
@@ -115,7 +113,7 @@ class Module(PestPrimitive):
             self.__parent_module__ = parent
 
         # get module metadata
-        meta: ModuleMeta = get_meta(self.__class__, type=ModuleMeta)
+        meta: ModuleMeta = get_meta(self.__class__, ModuleMeta)
 
         # set internal properties
         self.providers = meta.providers if meta.providers else []

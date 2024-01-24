@@ -240,9 +240,9 @@ def types() -> None:
         # lint the new file using ruff
         command = f'poetry run ruff {typed_dict_path} --fix'
 
-        print(f'{" "*4}⚬ Linting')
+        print(f'{" " * 4}⚬ Linting')
         print(
-            f'{" "*4}⚬ {c("$", color="yellow")} {c("poetry", color="yellow", attrs=["bold"])} '
+            f'{" " * 4}⚬ {c("$", color="yellow")} {c("poetry", color="yellow", attrs=["bold"])} '
             f'run ruff '
             f'{c("--fix", attrs=["dark"])}'
         )
@@ -251,10 +251,10 @@ def types() -> None:
         except subprocess.CalledProcessError as e:
             msg = ' | '.join(str(e.output.decode('utf-8')).rstrip('\n').split('\n'))
             print(
-                f'{" "*4}{c("Err", color="red", attrs=["bold"])} '
+                f'{" " * 4}{c("Err", color="red", attrs=["bold"])} '
                 f'while linting {c(relcwd(typed_dict_path), color="blue")} '
                 f'with {c("ruff", color="yellow")}\n\n'
-                f'{" "*4}{c(msg, color="red")}'
+                f'{" " * 4}{c(msg, color="red")}'
             )
 
         print()

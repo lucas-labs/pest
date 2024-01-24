@@ -1,29 +1,30 @@
-from dataclasses import asdict, is_dataclass
-from typing import Any, Callable, Dict, List, Type, TypeVar, Union, cast
+from dataclasses import asdict, fields, is_dataclass
+from typing import Any, Callable, Dict, List, Mapping, Type, TypeVar, Union, cast
 
 from dacite import Config, from_dict
 
 from ..exceptions.base.pest import PestException
 from ..utils.functions import drop_keys, keep_keys
+from ..utils.protocols import DataclassInstance
 from .types._meta import Meta
 
 META_KEY = '__pest__'
 
 
-DataType = TypeVar('DataType', bound=Union[Dict[str, Any], dict, Meta])
+DataType = TypeVar('DataType', bound=Union[Dict[str, Any], dict, Meta, DataclassInstance])
 GenericValue = TypeVar('GenericValue')
 
 
 def get_meta(
     target: Union[Callable[..., Any], type, object],
+    output_type: Type[DataType] = Dict[str, Any],
     *,
-    type: Type[DataType] = Dict[str, Any],
     raise_error: bool = True,
     clean: bool = False,
     keep: Union[List[str], None] = None,
     drop: Union[List[str], None] = None,
 ) -> DataType:
-    """🐀 ⇝ get pest `metadata` from a `callable`
+    """🐀 ⇝ get `metadata` from a `callable`
     #### Params
     - target: target object, type or function
     - type: return type (will create an instance if it's a `dataclass`)
@@ -51,10 +52,10 @@ def get_meta(
         if not keep and not drop:
             meta = drop_keys(meta, ['meta_type'])
 
-    if is_dataclass(type):
-        return cast(type, from_dict(type, meta, config=Config(check_types=False)))
+    if is_dataclass(output_type):
+        return cast(output_type, from_dict(output_type, meta, config=Config(check_types=False)))
 
-    return cast(type, meta)
+    return cast(output_type, meta)
 
 
 def get_meta_value(
@@ -67,7 +68,9 @@ def get_meta_value(
 
 
 def inject_metadata(
-    callable: Callable[..., Any], metadata: Union[Meta, None] = None, **kwargs: Any
+    callable: Callable[..., Any],
+    metadata: Union[Meta, Mapping[Any, Any], None] = None,
+    **kwargs: Any,
 ) -> None:
     """🐀 ⇝ initialize pest `metadata` for a `callable`
 
@@ -80,9 +83,24 @@ def inject_metadata(
 
     dict_meta = {}
     if metadata is not None:
-        if not is_dataclass(metadata):
-            raise PestException('metadata must be a dataclass')
-        dict_meta = asdict(metadata)
+        if not is_dataclass(metadata) and not isinstance(metadata, dict):
+            raise PestException('metadata must be a dataclass or a dict')
+
+        try:
+            dict_meta: dict = (
+                asdict(metadata)
+                if is_dataclass(metadata) and not isinstance(metadata, type)
+                else metadata
+                if isinstance(metadata, dict)
+                else {}
+            )
+        except Exception as e:
+            if is_dataclass(metadata) and not isinstance(metadata, type):
+                dict_meta = {}
+                for field in fields(metadata):
+                    dict_meta[field.name] = getattr(metadata, field.name)
+            else:
+                raise e
 
     meta = get_meta(callable)
     meta.update({**dict_meta, **kwargs})

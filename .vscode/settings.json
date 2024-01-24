@@ -1,7 +1,7 @@
 {
     "files.exclude": {
         // 📙 sub-libs
-        // "tools": true,
+        "tools": true,
 
         // ⚙️ config
         // "pyproject.toml": true,
@@ -32,7 +32,7 @@
         ".git": true,
         ".gitignore": true,
         ".pytest_cache": true,
-        // ".github": true,
+        ".github": true,
 
         // 📝 docs
         // "**/**/README.md": true

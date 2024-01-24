@@ -1,5 +1,9 @@
+from dataclasses import dataclass
+
 from pest.core.module import setup_module as _setup_module
+from pest.metadata.meta import get_meta, get_meta_value
 from pest.utils.colorize import c
+from pest.utils.decorators import meta
 from pest.utils.module import _get_provider_name, as_tree
 
 from .cfg.test_modules.pest_primitives import FooModule
@@ -39,3 +43,55 @@ def test_module_tree_generation():
     # test with str injection token
     tree = _get_provider_name(Foo)
     assert tree == 'Bar'
+
+
+def test_meta_docorator_dict_meta():
+    """🐀 utils :: `meta` decorator :: should inject dict metadata into a class"""
+
+    @dataclass
+    class QuuxMeta:
+        foo: str
+        baz: str
+
+    @meta({'foo': 'bar', 'baz': 'qux'})
+    class Quux:
+        pass
+
+    metadata = get_meta(Quux)
+    foo_value = get_meta_value(Quux, 'foo', None)
+    baz_value = get_meta_value(Quux, 'baz', None)
+
+    assert foo_value == 'bar'
+    assert baz_value == 'qux'
+    assert metadata == {'foo': 'bar', 'baz': 'qux'}
+
+    meta_as_dataclass = get_meta(Quux, QuuxMeta)
+    assert isinstance(meta_as_dataclass, QuuxMeta)
+    assert meta_as_dataclass.foo == 'bar'
+    assert meta_as_dataclass.baz == 'qux'
+
+
+def test_meta_docorator_dataclass_meta():
+    """🐀 utils :: `meta` decorator :: should inject dataclass metadata into a class"""
+
+    @dataclass
+    class QuuxMeta:
+        foo: str
+        baz: str
+
+    @meta(QuuxMeta(foo='foo', baz='baz'))
+    class Quux:
+        pass
+
+    metadata = get_meta(Quux, QuuxMeta)
+    assert isinstance(metadata, QuuxMeta)
+    assert metadata.foo == 'foo'
+    assert metadata.baz == 'baz'
+
+    foo_value = get_meta_value(Quux, 'foo', None)
+    baz_value = get_meta_value(Quux, 'baz', None)
+
+    assert foo_value == 'foo'
+    assert baz_value == 'baz'
+    metadata = get_meta(Quux)
+    assert metadata == {'foo': 'foo', 'baz': 'baz'}

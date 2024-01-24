@@ -66,7 +66,7 @@ class Controller(PestPrimitive):
 
     @classmethod
     def __str__(cls) -> str:
-        meta = get_meta(cls, type=ControllerMeta, clean=True)
+        meta = get_meta(cls, ControllerMeta, clean=True)
         return f'Controller {meta.prefix}'
 
     @classmethod
@@ -76,7 +76,7 @@ class Controller(PestPrimitive):
     @classmethod
     def __setup_controller_class__(cls, module: Optional['Module']) -> None:
         """sets up a controller class"""
-        meta = get_meta(cls, type=dict, clean=True)
+        meta = get_meta(cls, dict, clean=True)
         cls.__router__ = PestRouter(**meta)
         cls.__parent_module__ = module
         inject_metadata(cls.__router__, name=f'{cls.__name__} {meta.get("prefix", "")}')
@@ -113,6 +113,6 @@ class Controller(PestPrimitive):
         for _, method in members:
             meta_type = get_meta_value(method, key='meta_type', type=PestType, default=None)
             if meta_type == PestType.HANDLER:
-                handlers.append((method, get_meta(method, type=HandlerMeta)))
+                handlers.append((method, get_meta(method, HandlerMeta)))
 
         return handlers
