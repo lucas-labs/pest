@@ -23,6 +23,7 @@ from .http.http import (
     UnauthorizedException,
     UnprocessableEntityException,
     UnsupportedMediaTypeException,
+    exc_response,
 )
 
 __all__ = [
@@ -50,4 +51,5 @@ __all__ = [
     'GatewayTimeoutException',
     'HttpVersionNotSupportedException',
     'PestException',
+    'exc_response',
 ]

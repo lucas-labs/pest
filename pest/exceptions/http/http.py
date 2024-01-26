@@ -25,7 +25,7 @@ class ExceptionResponse(BaseModel):
         )
 
 
-def exc_response(*codes: int) -> Dict[int, Dict[str, Any]]:
+def exc_response(*codes: int) -> Dict[Union[int, str], Dict[str, Any]]:
     """🐀 ⇝ Generate a dict of error responses for the given status codes for use in OpenAPI docs"""
 
     responses = {}
