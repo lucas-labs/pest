@@ -14,6 +14,36 @@ class ExceptionResponse(BaseModel):
     error: Union[str, None] = Field(default=None, description='HTTP status phrase')
     message: Union[List[str], str, None] = Field(default=None, description='Error message')
 
+    @staticmethod
+    def example(code: int) -> 'ExceptionResponse':
+        status = http_status(code)
+
+        return ExceptionResponse(
+            code=status.code,
+            error=status.phrase,
+            message='Detailed error message',
+        )
+
+
+def exc_response(*codes: int) -> Dict[int, Dict[str, Any]]:
+    """🐀 ⇝ Generate a dict of error responses for the given status codes for use in OpenAPI docs"""
+
+    responses = {}
+
+    for code in codes:
+        example = ExceptionResponse.example(code)
+        responses[code] = {
+            'description': example.error,
+            'model': ExceptionResponse,
+            'content': {
+                'application/json': {
+                    'example': example.model_dump(),
+                },
+            },
+        }
+
+    return responses
+
 
 class PestHTTPException(HTTPException):
     """🐀 ⇝ base class for all pest HTTP exceptions"""

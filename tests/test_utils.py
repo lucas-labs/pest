@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from pest.core.module import setup_module as _setup_module
+from pest.exceptions.http.http import exc_response
 from pest.metadata.meta import get_meta, get_meta_value
 from pest.utils.colorize import c
 from pest.utils.decorators import meta
@@ -95,3 +96,23 @@ def test_meta_docorator_dataclass_meta():
     assert baz_value == 'baz'
     metadata = get_meta(Quux)
     assert metadata == {'foo': 'foo', 'baz': 'baz'}
+
+
+def test_exception_example_generator():
+    example = exc_response(404, 418)
+
+    not_found = example[404]
+    assert not_found['description'] == 'Not Found'
+    assert not_found['content']['application/json']['example'] == {
+        'code': 404,
+        'message': 'Detailed error message',
+        'error': 'Not Found',
+    }
+
+    tea_pot = example[418]
+    assert tea_pot['description'] == "I'm a teapot"
+    assert tea_pot['content']['application/json']['example'] == {
+        'code': 418,
+        'message': 'Detailed error message',
+        'error': "I'm a teapot",
+    }
