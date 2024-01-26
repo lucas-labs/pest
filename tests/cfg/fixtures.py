@@ -16,6 +16,7 @@ from pest.core.module import setup_module as _setup_module
 from pest.factory import Pest
 from tests.cfg.test_modules.di_scopes_primitives import Scoped, Transient
 
+from .test_apps.multi_singleton_app import app as multi_singleton_app
 from .test_apps.todo_app import app as todo_app
 from .test_modules.di_scopes_primitives import DIScopesModule, Singleton
 from .test_modules.fastapi_dependencies import FastApiDependenciesModule
@@ -47,6 +48,13 @@ def module_with_controller() -> Module:
 @pytest.fixture()
 def app_n_client() -> TestApp:
     app = todo_app.bootstrap_app()
+    client = TestClient(app)
+    return app, client
+
+
+@pytest.fixture()
+def multiple_singletons_app() -> TestApp:
+    app = multi_singleton_app.bootstrap_app()
     client = TestClient(app)
     return app, client
 

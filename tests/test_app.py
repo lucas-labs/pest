@@ -4,10 +4,12 @@ from fastapi import Request, Response
 from fastapi.testclient import TestClient
 from pytest import raises
 
+from pest.core.application import root_module
 from pest.di import inject
 from pest.factory import Pest
 from pest.middleware.base import CallNext, PestMiddleware, PestMiddlwareCallback
 
+from .cfg.test_apps.multi_singleton_app.app_module import Repo1, Repo2
 from .cfg.test_apps.todo_app.app_module import AppModule, IdGenerator
 from .cfg.test_apps.todo_app.data.data import TodoRepo
 from .cfg.test_apps.todo_app.modules.todo.services.todo_service import TodoService
@@ -525,3 +527,30 @@ def test_app_request_dependency_exception(fastapi_dependencies_app):
         client.get('/users/me', headers={'Authorization': 'Bearer invalid'})
 
     assert excinfo.value.args[0] == 'Invalid token'
+
+
+def test_multiple_singletons_resolves_ok(multiple_singletons_app) -> None:
+    """🐀 app :: dependencies :: should resolve multiple singleton independently"""
+
+    # check issue #31
+    app, client = multiple_singletons_app
+
+    app_module = root_module(app)
+    child_module = app_module.imports[0]
+
+    repo1 = child_module.get(Repo1)
+    repo2 = child_module.get(Repo2)
+
+    assert isinstance(repo1, Repo1)
+    assert isinstance(repo2, Repo2)
+    assert repo1 != repo2
+
+    r1 = client.get('/ctrl/').json()
+
+    # check that providers are actually singletons
+    assert r1['repo1'] != r1['repo2']
+
+    # check that providers are actually singletons
+    r2 = client.get('/ctrl/').json()
+    assert r1['repo1'] == r2['repo1']
+    assert r1['repo2'] == r2['repo2']

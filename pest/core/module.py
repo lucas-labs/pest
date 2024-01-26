@@ -133,12 +133,18 @@ class Module(PestPrimitive):
         # can have access to services provided by the parent module
         # or globally (in the root module)
         if parent is not None:
-            for provider, _ in contained_in(parent):
 
+            def create_factory(provider: InjectionToken) -> Any:
                 def resolve_from_parent() -> Any:
-                    return parent.get(cast(InjectionToken, provider))
+                    resolved = parent.get(cast(InjectionToken, provider))
+                    return resolved
 
-                self.register(FactoryProvider(provide=provider, use_factory=resolve_from_parent))
+                return resolve_from_parent
+
+            for provider, _ in contained_in(parent):
+                self.register(
+                    FactoryProvider(provide=provider, use_factory=create_factory(provider))
+                )
 
         # setup child modules
         for child in meta.imports if meta.imports else []:
