@@ -118,9 +118,7 @@ def _get_pest_injection(parameter: Parameter) -> Union[List[_Inject], None]:
         token = (
             parameter.default.token
             if parameter.default.token is not None
-            else parameter.annotation
-            if parameter.annotation is not Parameter.empty
-            else None
+            else parameter.annotation if parameter.annotation is not Parameter.empty else None
         )
         annotations = (token, inject)
     else:

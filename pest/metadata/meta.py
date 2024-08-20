@@ -59,7 +59,11 @@ def get_meta(
 
 
 def get_meta_value(
-    callable: Callable[..., Any], key: str, default: Any = None, *, type: Type[GenericValue] = Any
+    callable: Callable[..., Any],
+    key: str,
+    default: Any = None,
+    *,
+    type: Type[GenericValue] = Type[Any],
 ) -> GenericValue:
     """🐀 ⇝ get pest metadata `value` from a `callable` by `key`"""
 
@@ -90,9 +94,7 @@ def inject_metadata(
             dict_meta: dict = (
                 asdict(metadata)
                 if is_dataclass(metadata) and not isinstance(metadata, type)
-                else metadata
-                if isinstance(metadata, dict)
-                else {}
+                else metadata if isinstance(metadata, dict) else {}
             )
         except Exception as e:
             if is_dataclass(metadata) and not isinstance(metadata, type):

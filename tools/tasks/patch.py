@@ -40,10 +40,9 @@ Then:
 Done! You can now use your patched library.
 """
 
-
 import os
 import shutil
-from subprocess import run
+from subprocess import run  # noqa: S404
 from typing import List, Tuple
 
 from pydantic import BaseModel

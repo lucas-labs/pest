@@ -29,7 +29,7 @@ def make_app(
             for method in route.methods:
                 full_route = f'{prefix}{route.path}'
 
-                if full_route != '/' and not full_route.endswith('/'):
+                if full_route == '/' or not full_route.endswith('/'):
                     log.debug(f'{method: <7} {full_route}')
 
         # add the router
