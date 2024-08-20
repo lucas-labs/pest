@@ -10,12 +10,7 @@ from typing import (
     Union,
 )
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
-from fastapi import Request, Response
+from fastapi import FastAPI, Request, Response
 from fastapi.params import Depends
 from fastapi.routing import APIRouter
 from starlette.routing import BaseRoute
@@ -45,7 +40,7 @@ class FastAPIParams(TypedDict, total=False):
     ]
     on_startup: Sequence[Callable[[], Any]]
     on_shutdown: Sequence[Callable[[], Any]]
-    lifespan: Lifespan[Self]
+    lifespan: Lifespan[FastAPI]
     terms_of_service: str
     contact: Dict[str, Union[str, Any]]
     license_info: Dict[str, Union[str, Any]]

@@ -164,17 +164,17 @@ class Module(PestPrimitive):
             self.container.bind_types(
                 provider.provide,
                 provider.use_class,
-                life_style=provider.scope
-                if provider.scope is not None
-                else ServiceLifeStyle.TRANSIENT,
+                life_style=(
+                    provider.scope if provider.scope is not None else ServiceLifeStyle.TRANSIENT
+                ),
             )
         elif isinstance(provider, FactoryProvider):
             self.container.register_factory(
                 factory=provider.use_factory,
                 return_type=provider.provide,
-                life_style=provider.scope
-                if provider.scope is not None
-                else ServiceLifeStyle.TRANSIENT,
+                life_style=(
+                    provider.scope if provider.scope is not None else ServiceLifeStyle.TRANSIENT
+                ),
             )
         elif isinstance(provider, ValueProvider):
             self.container.add_instance(

@@ -10,6 +10,7 @@ from typing import (
     Tuple,
     Type,
     Union,
+    cast,
 )
 
 try:
@@ -20,7 +21,6 @@ except ImportError:
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
-from fastapi.middleware.asyncexitstack import AsyncExitStackMiddleware
 from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
@@ -41,6 +41,7 @@ from ..exceptions import handle
 from ..metadata.types.module_meta import InjectionToken
 from ..middleware.base import (
     PestBaseHTTPMiddleware,
+    PestMiddlwareCallback,
 )
 from ..middleware.di import di_scope_middleware
 from ..middleware.types import MiddlewareDef
@@ -65,9 +66,15 @@ class PestApplication(FastAPI):
             []
             if middleware is None
             else [
-                middleware
-                if isinstance(middleware, Middleware)
-                else Middleware(PestBaseHTTPMiddleware, dispatch=middleware, parent_module=module)
+                (
+                    middleware
+                    if isinstance(middleware, Middleware)
+                    else Middleware(
+                        PestBaseHTTPMiddleware,
+                        dispatch=cast(PestMiddlwareCallback, middleware),
+                        parent_module=module,
+                    )
+                )
                 for middleware in middleware
             ]
         )
@@ -259,10 +266,9 @@ class PestApplication(FastAPI):
             + di_scope_mw  # <--- this is the only difference
             + self.user_middleware
             + [Middleware(ExceptionMiddleware, handlers=exception_handlers, debug=debug)]
-            + [Middleware(AsyncExitStackMiddleware)]
         )
 
         app = self.router
-        for cls, options in reversed(middleware):
-            app = cls(app=app, **options)
+        for cls, args, kwargs in reversed(middleware):
+            app = cls(app=app, *args, **kwargs)
         return app

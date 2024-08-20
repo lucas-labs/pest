@@ -1,9 +1,12 @@
 line-length = 100
 indent-width = 4
-output-format = "text"
+output-format = "full"
 
+# [format]
+# quote-style = "preserve"
+
+[lint]
 select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
-
 ignore = [
     "A",         # flake8-builtins https://beta.ruff.rs/docs/settings/#flake8-builtins
     "ANN101",    # missing-type-self https://beta.ruff.rs/docs/rules/missing-type-self/
@@ -14,28 +17,17 @@ ignore = [
     # "F401"       # unused-import https://beta.ruff.rs/docs/rules/unused-import/
 ]
 
-extend-exclude = [
-    ".patches"
-]
-
-
-# [format]
-# preserve is not supported yet, but there's a PR in the works
-# https://github.com/astral-sh/ruff/pull/8822
-# quote-style = "preservev"
-
-
-[flake8-quotes]
+[lint.flake8-quotes]
 docstring-quotes = "double"
 inline-quotes = "single"
 multiline-quotes = "single"
 
 
-[flake8-annotations]
+[lint.flake8-annotations]
 mypy-init-return = true
 
 
-[extend-per-file-ignores]
+[lint.extend-per-file-ignores]
 # ignore in tests:
 #    S101 (use of assert)
 #    ANN001 (missing function argument type annotation)

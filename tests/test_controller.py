@@ -55,7 +55,7 @@ def test_controller_meta():
 
 
 def test_controller_setup():
-    """🐀 controllers :: __setup_controller_class__ :: should setup the controller's router""" ''
+    """🐀 controllers :: __setup_controller_class__ :: should setup the controller's router"""
 
     @controller('/foo')
     class FooController:

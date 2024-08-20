@@ -38,14 +38,12 @@ class PestMiddlwareCallback(Protocol):
         self,
         request: Request,
         call_next: CallNext,
-    ) -> Response:
-        ...
+    ) -> Response: ...
 
 
 @runtime_checkable
 class PestMiddleware(Protocol):
-    async def use(self, request: Request, call_next: CallNext) -> Response:
-        ...
+    async def use(self, request: Request, call_next: CallNext) -> Response: ...
 
     @final
     async def __call__(
