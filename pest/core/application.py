@@ -237,6 +237,9 @@ class PestApplication(FastAPI):
 
         self.add_middleware(CORSMiddleware, **opts)
 
+    def add_middleware(self, middleware_class: type, *args: Any, **kwargs: Any) -> None:
+        super().add_middleware(middleware_class, *args, **kwargs)
+
     def build_middleware_stack(self) -> ASGIApp:
         # Duplicate/override from FastAPI to add the di_scope_middleware, which
         # is required for Pest's DI to work. We need it to run before any other
