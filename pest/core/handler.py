@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from inspect import Parameter, signature
+from inspect import Parameter, isclass, isfunction, signature
 from typing import TYPE_CHECKING, Any, Callable, List, Tuple, Type, Union, get_args
 
 try:
@@ -98,11 +98,22 @@ def _get_new_param(ctrl: type, parameter: Parameter) -> Parameter:
 
             annotation = pest_anns[0]
             if annotation.token is not None:
-                # we replace the parameter with a `Depends` object that resolves the value
-                # through the `module`'s container
-                parameter = parameter.replace(
-                    default=Depends(PestFastAPIInjector(controller=ctrl, token=annotation.token))
-                )
+                # if the token is a function, we replace it with a FastAPI's `Depends(dep)` call
+                if isfunction(annotation.token):
+                    parameter = parameter.replace(default=Depends(annotation.token))
+                elif isclass(annotation.token):
+                    # otherwise we replace the parameter with a `Depends` on `PestFastAPIInjector`
+                    # which will try to resolve the value from the `module`'s container
+                    parameter = parameter.replace(
+                        default=Depends(
+                            PestFastAPIInjector(controller=ctrl, token=annotation.token)
+                        )
+                    )
+                else:
+                    raise PestException(
+                        'Invalid injection annotation token!',
+                        hint=f'Parameter {parameter.name} has an invalid injection token!',
+                    )
     return parameter.replace(kind=Parameter.KEYWORD_ONLY)
 
 
