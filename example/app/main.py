@@ -60,6 +60,7 @@ app = Pest.create(
     logging={
         'intercept': [('uvicorn*', LogLevel.DEBUG), 'pest*', 'fastapi'],
         'level': LogLevel.DEBUG,
+        'format': format_record,
         'access_log': True,
         'sinks': [{'sink': 'example/logs/app.log', 'rotation': '1 week', 'format': format_record}],
     },

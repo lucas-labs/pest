@@ -23,6 +23,7 @@ if TYPE_CHECKING:
             FormatFunction,
             Message,
             PathLikeStr,
+            Record,
             RetentionFunction,
             RotationFunction,
             Writable,
@@ -81,7 +82,7 @@ class LoggingOptions(TypedDict, total=False):
     '''list of built-in loggers to shush using `loguru`'''
     level: LogLevel
     '''default log level for all loggers'''
-    format: Union[str, None]
+    format: Union[str, Callable[['Record'], str], None]
     '''override default log format'''
     access_log: bool
     '''whether to enable access logging'''

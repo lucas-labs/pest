@@ -4,12 +4,12 @@ import logging as pylogging
 import sys
 from fnmatch import fnmatch
 from pprint import pformat
-from typing import List, Tuple
+from typing import Callable, List, Tuple, Union
 
 try:
     from typing import Unpack, cast
 except ImportError:
-    from typing_extensions import Unpack, cast
+    from typing_extensions import Callable, Unpack, cast
 
 from ...exceptions.base.pest import PestException
 from ...utils.functions import set_if_none
@@ -102,11 +102,13 @@ class Loguru:
         verbose = options.get('verbose', False)
         sinks = options.get('sinks', [])
 
-        FORMAT = fmt or FORMAT
+        # if a format string is provided, we replace the default
+        if type(fmt) is str:
+            FORMAT = fmt
 
         cls.__config_standard_interception(intercept, verbose)
         cls.__configure_shush(shush)
-        cls.__config_sinks(sinks, level, access_log)
+        cls.__config_sinks(sinks, level, access_log, fmt)
 
     @classmethod
     def __config_standard_interception(
@@ -163,18 +165,26 @@ class Loguru:
             loguru_logger.disable(logger_name)
 
     @classmethod
-    def __config_sinks(cls, sinks: List[SinkOptions], level: LogLevel, access_log: bool) -> None:
+    def __config_sinks(
+        cls,
+        sinks: List[SinkOptions],
+        level: LogLevel,
+        access_log: bool,
+        fmt: Union[str, Callable[[loguru.Record], str], None],
+    ) -> None:
         """configures loguru sinks (handlers)"""
+        fmt_func = fmt if callable(fmt) else format_record
+
         loguru_logger.configure(handlers=[])
         loguru_logger.add(
             sys.stdout,
             colorize=True,
             diagnose=False,
-            format=format_record,
+            format=fmt_func,
             level=level,
             filter=lambda record: ((True if access_log else no_access(record))),
         )
 
         for sink in sinks:
-            set_if_none(cast(dict, sink), 'format', format_record)
+            set_if_none(cast(dict, sink), 'format', fmt_func)
             loguru_logger.add(**sink)  # type: ignore
