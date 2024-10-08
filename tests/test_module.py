@@ -1,11 +1,9 @@
 from typing import cast
 
+from dij import Container
 from pytest import raises
-from rodi import Container
 
 from pest.core.common import status
-
-# aliased porque setup_module es un builtin de pytest
 from pest.core.module import Status, parent_of
 from pest.core.module import setup_module as _setup_module
 from pest.decorators.module import Module, module

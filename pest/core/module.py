@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
+from dij import ActivationScope, Container, ServiceLifeStyle
 from fastapi import APIRouter
-from rodi import ActivationScope, Container, ServiceLifeStyle
 
 import pest.utils.module as module_utils
 from pest.metadata.types._meta import PestType

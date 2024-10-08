@@ -18,6 +18,7 @@ try:
 except ImportError:
     from typing_extensions import Unpack
 
+from dij import ActivationScope
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
@@ -26,7 +27,6 @@ from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
 from fastapi.utils import generate_unique_id
 from pydantic import ValidationError
-from rodi import ActivationScope
 from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.errors import ServerErrorMiddleware

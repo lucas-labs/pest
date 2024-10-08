@@ -43,9 +43,8 @@ dacite = "^1.8.1"
 fastapi = ">0.103, <0.113.0"
 loguru = "^0.7.2"
 pydantic = ">=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0"
-
-rodi = "2.0.6"
 typing-extensions = "^4.12.2"
+dij = "0.0.2"
 
 [tool.poetry.extras]
 logs = ["loguru"]

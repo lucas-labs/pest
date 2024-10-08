@@ -1,7 +1,7 @@
 from typing import Union
 
+from dij import ActivationScope
 from fastapi import Request, Response
-from rodi import ActivationScope
 from starlette.middleware.base import RequestResponseEndpoint
 
 SCOPE_KEY = '__di_scope__'

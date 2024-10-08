@@ -17,7 +17,7 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias, TypeGuard
 
-from rodi import ActivationScope
+from dij import ActivationScope
 from starlette.middleware.base import BaseHTTPMiddleware, DispatchFunction, T
 from starlette.middleware.base import RequestResponseEndpoint as CallNext
 from starlette.requests import Request
