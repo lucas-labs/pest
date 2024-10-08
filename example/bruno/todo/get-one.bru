@@ -1,0 +1,15 @@
+meta {
+  name: get-one
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{url}}/todo/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 1
+}

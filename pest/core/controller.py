@@ -70,10 +70,6 @@ class Controller(PestPrimitive):
         return f'Controller {meta.prefix}'
 
     @classmethod
-    def __repr__(cls) -> str:
-        return cls.__str__()
-
-    @classmethod
     def __setup_controller_class__(cls, module: Optional['Module']) -> None:
         """sets up a controller class"""
         meta = get_meta(cls, dict, clean=True)

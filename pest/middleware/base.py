@@ -79,15 +79,19 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
             scope = scope_from(request)
             dispatch_fn = cast(
                 PestMiddlwareCallback,
-                dispatch if not isclass(dispatch) else self.parent_module.get(dispatch, scope),
+                (
+                    dispatch
+                    if not isclass(dispatch)
+                    else self.parent_module.get(dispatch, scope, fail_on_coroutine=False)
+                ),
             )
 
-            args, kwargs = self.__resolve_dispatcher_args(dispatch_fn, scope)
+            args, kwargs = await self.__resolve_dispatcher_args(dispatch_fn, scope)
             return await dispatch_fn(request, call_next, *args, **kwargs)
 
         return wrapper
 
-    def __resolve_dispatcher_args(
+    async def __resolve_dispatcher_args(
         self, function: DispatchFunction, scope: Union[ActivationScope, None]
     ) -> Tuple[tuple, dict]:
         signature = Signature.from_callable(function)
@@ -102,10 +106,10 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
                 continue
 
             if param.kind == param.POSITIONAL_ONLY or param.kind == param.POSITIONAL_OR_KEYWORD:
-                args.append(self.parent_module.get(param.annotation, scope))
+                args.append(await self.parent_module.aget(param.annotation, scope))
 
             elif param.kind == param.KEYWORD_ONLY:
-                kwargs[name] = self.parent_module.get(param.annotation, scope)
+                kwargs[name] = await self.parent_module.aget(param.annotation, scope)
 
         return tuple(args), kwargs
 

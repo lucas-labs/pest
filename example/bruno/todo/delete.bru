@@ -1,0 +1,21 @@
+meta {
+  name: delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{url}}/todo/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 5
+}
+
+body:json {
+  {
+    "title": "Don't forget to sleep"
+  }
+}

@@ -2,8 +2,8 @@ line-length = 100
 indent-width = 4
 output-format = "full"
 
-# [format]
-# quote-style = "preserve"
+[format]
+quote-style = "preserve"
 
 [lint]
 select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
@@ -12,9 +12,6 @@ ignore = [
     "ANN101",    # missing-type-self https://beta.ruff.rs/docs/rules/missing-type-self/
     "ANN102",    # missing-type-cls https://beta.ruff.rs/docs/rules/missing-type-cls/
     "ANN401",    # any-type https://beta.ruff.rs/docs/rules/any-type/
-    # "ANN204",    # missing-return-type https://beta.ruff.rs/docs/rules/missing-return-type/
-    # "E402",      # module-import-not-at-top-of-file https://beta.ruff.rs/docs/rules/module-import-not-at-top-of-file/
-    # "F401"       # unused-import https://beta.ruff.rs/docs/rules/unused-import/
 ]
 
 [lint.flake8-quotes]
@@ -28,11 +25,5 @@ mypy-init-return = true
 
 
 [lint.extend-per-file-ignores]
-# ignore in tests:
-#    S101 (use of assert)
-#    ANN001 (missing function argument type annotation)
-#    ANN201 (missing return type annotation )
-#    E701 (multiple statements on one line)
-#    F401 (unused import)
 "**/**/test/**" =  ["S101", "ANN001", "ANN201", "E701"]
 "**/**/test_*.py" =  ["S101", "ANN001", "ANN201", "E701"]

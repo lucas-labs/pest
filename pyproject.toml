@@ -40,17 +40,16 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 dacite = "^1.8.1"
-fastapi = ">0.103, <0.113.0"
+fastapi = ">0.103, <0.116.0"
 loguru = "^0.7.2"
 pydantic = ">=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0"
 typing-extensions = "^4.12.2"
-dij = "0.0.2"
+dij = "0.0.3"
 
 [tool.poetry.extras]
 logs = ["loguru"]
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.8.0"
 httpx = "^0.27.0"
 pytest = "^8.3.2"
 pytest-asyncio = "^0.23.8"
