@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pest-py"
-version = "0.2.1"
+version = "0.3.0"
 description = "🐀 ⇝ pest › fastapi + rodi + mvc | python library for building scalable modular API's. Inspired by NestJS."
 authors = ["lucaslabs <lucas@lucaslabs.tech>"]
 homepage = "https://pest.lucode.ar"
