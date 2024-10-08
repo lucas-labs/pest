@@ -53,9 +53,9 @@ def get_meta(
             meta = drop_keys(meta, ['meta_type'])
 
     if is_dataclass(output_type):
-        return cast(output_type, from_dict(output_type, meta, config=Config(check_types=False)))
+        return cast(output_type, from_dict(output_type, meta, config=Config(check_types=False)))  # type: ignore
 
-    return cast(output_type, meta)
+    return cast(output_type, meta)  # type: ignore
 
 
 def get_meta_value(
@@ -68,7 +68,7 @@ def get_meta_value(
     """🐀 ⇝ get pest metadata `value` from a `callable` by `key`"""
 
     meta = get_meta(callable, raise_error=False)
-    return cast(type, meta.get(key, default))
+    return cast(type, meta.get(key, default))  # type: ignore
 
 
 def inject_metadata(

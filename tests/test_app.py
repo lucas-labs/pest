@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 from fastapi import Request, Response
 from fastapi.testclient import TestClient
 from pytest import raises
@@ -15,7 +16,8 @@ from .cfg.test_apps.todo_app.data.data import TodoRepo
 from .cfg.test_apps.todo_app.modules.todo.services.todo_service import TodoService
 
 
-def test_global_app_provider(app_n_client) -> None:
+@pytest.mark.asyncio
+async def test_global_app_provider(app_n_client) -> None:
     """🐀 app :: providers :: should add metadata to the decorated class"""
     app, _ = app_n_client
 
@@ -27,7 +29,7 @@ def test_global_app_provider(app_n_client) -> None:
     assert id(repo) == id(repo2)
 
     # get service from TodoModule (inner module)
-    service = app.resolve(TodoService)
+    service = await app.aresolve(TodoService)
     assert isinstance(service, TodoService)
 
 
@@ -529,7 +531,8 @@ def test_app_request_dependency_exception(fastapi_dependencies_app):
     assert excinfo.value.args[0] == 'Invalid token'
 
 
-def test_multiple_singletons_resolves_ok(multiple_singletons_app) -> None:
+@pytest.mark.asyncio
+async def test_multiple_singletons_resolves_ok(multiple_singletons_app) -> None:
     """🐀 app :: dependencies :: should resolve multiple singleton independently"""
 
     # check issue #31
@@ -538,8 +541,8 @@ def test_multiple_singletons_resolves_ok(multiple_singletons_app) -> None:
     app_module = root_module(app)
     child_module = app_module.imports[0]
 
-    repo1 = child_module.get(Repo1)
-    repo2 = child_module.get(Repo2)
+    repo1 = await child_module.aget(Repo1)
+    repo2 = await child_module.aget(Repo2)
 
     assert isinstance(repo1, Repo1)
     assert isinstance(repo2, Repo2)

@@ -2,9 +2,9 @@
     "files.exclude": {
         // 📙 sub-libs
         "tools": true,
+        "dist": true,
 
         // ⚙️ config
-        // "pyproject.toml": true,
         "**/**/*.code-workspace": true,
         "poetry.lock": true,
         "poetry.toml": true,
@@ -16,9 +16,9 @@
 
         // 🧪 tests
         // "tests": true,
-        // "noxfile.py": true,
-        // "conftest.py": true,
-        // ".nox": true,
+        "noxfile.py": true,
+        "conftest.py": true,
+        ".nox": true,
         // "htmlcov": true,
         // "coverage": true,
         // ".coverage": true,

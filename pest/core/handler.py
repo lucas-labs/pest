@@ -129,7 +129,9 @@ def _get_pest_injection(parameter: Parameter) -> Union[List[_Inject], None]:
         token = (
             parameter.default.token
             if parameter.default.token is not None
-            else parameter.annotation if parameter.annotation is not Parameter.empty else None
+            else parameter.annotation
+            if parameter.annotation is not Parameter.empty
+            else None
         )
         annotations = (token, inject)
     else:
@@ -180,6 +182,6 @@ class PestFastAPIInjector:
 
         scope = scope_from(request)
         module = module_of(self.controller)
-        di_result = module.get(self.token, scope)
+        di_result = await module.aget(self.token, scope)
 
         return di_result

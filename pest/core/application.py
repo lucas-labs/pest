@@ -18,6 +18,7 @@ try:
 except ImportError:
     from typing_extensions import Unpack
 
+from dij import ActivationScope
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
@@ -26,7 +27,6 @@ from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
 from fastapi.utils import generate_unique_id
 from pydantic import ValidationError
-from rodi import ActivationScope
 from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -79,16 +79,14 @@ class PestApplication(FastAPI):
             ]
         )
 
-        self.add_exception_handlers(
-            [
-                (HTTPException, handle.http),
-                (ValidationError, handle.request_validation),
-                (RequestValidationError, handle.request_validation),
-                (WebSocketRequestValidationError, handle.websocket_request_validation),
-                # for everything else, there's Mastercard (or was it Bancard? 🤔)
-                (Exception, handle.the_rest),
-            ]
-        )
+        self.add_exception_handlers([
+            (HTTPException, handle.http),
+            (ValidationError, handle.request_validation),
+            (RequestValidationError, handle.request_validation),
+            (WebSocketRequestValidationError, handle.websocket_request_validation),
+            # for everything else, there's Mastercard (or was it Bancard? 🤔)
+            (Exception, handle.the_rest),
+        ])
 
     def add_exception_handlers(
         self, handlers: List[Tuple[Union[int, Type[Exception]], Callable]]
@@ -101,6 +99,11 @@ class PestApplication(FastAPI):
 
     def resolve(self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None) -> T:
         return root_module(self).get(token, scope)
+
+    async def aresolve(
+        self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None
+    ) -> T:
+        return await root_module(self).aget(token, scope)
 
     def can_provide(self, token: InjectionToken[T]) -> bool:
         return root_module(self).can_provide(token)

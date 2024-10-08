@@ -25,10 +25,12 @@ def singleton(cls: Type[T]) -> Type[T]:
     ```
     """
 
+    new = cls.__new__
+
     def constructor(cls: Any, *args: Any) -> T:
         instance = getattr(cls, '__instance__', None)
         if instance is None:
-            instance = super(cls, cls).__new__(cls)
+            instance = new(cls)
             setattr(cls, '__instance__', instance)
         return instance
 
@@ -40,7 +42,7 @@ make_singleton = singleton
 
 
 def _inject_class(base: Type[T]) -> Callable[..., Type[T]]:
-    return lambda cls: type(cls.__name__, (base,) + cls.__bases__, dict(cls.__dict__))
+    return lambda cls: type(cls.__name__, (base, cls) + cls.__bases__, dict(cls.__dict__))
 
 
 def mixin(base: Type[T]) -> Callable[..., Type[T]]:

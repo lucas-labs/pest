@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
+from dij import ActivationScope, Container, ServiceLifeStyle
 from fastapi import APIRouter
-from rodi import ActivationScope, Container, ServiceLifeStyle
 
 import pest.utils.module as module_utils
 from pest.metadata.types._meta import PestType
@@ -135,8 +135,8 @@ class Module(PestPrimitive):
         if parent is not None:
 
             def create_factory(provider: InjectionToken) -> Any:
-                def resolve_from_parent() -> Any:
-                    resolved = parent.get(cast(InjectionToken, provider))
+                async def resolve_from_parent() -> Any:
+                    resolved = await parent.aget(cast(InjectionToken, provider))
                     return resolved
 
                 return resolve_from_parent
@@ -191,16 +191,29 @@ class Module(PestPrimitive):
             return True
         return False
 
-    def get(self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None) -> T:
+    def get(
+        self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None, **kwargs: Any
+    ) -> T:
         if token in self.__imported__providers__:
             return self.__get_from_imported(token, scope=scope)
 
-        return self.container.resolve(token, scope=scope)
+        return self.container.resolve(token, scope=scope, **kwargs)
+
+    async def aget(self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None) -> T:
+        if token in self.__imported__providers__:
+            return await self.__aget_from_imported(token, scope=scope)
+
+        return await self.container.aresolve(token, scope=scope)
 
     def __get_from_imported(
         self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None
     ) -> T:
         return self.__imported__providers__[token].get(token, scope=scope)
+
+    async def __aget_from_imported(
+        self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None
+    ) -> T:
+        return await self.__imported__providers__[token].aget(token, scope=scope)
 
     def __get_routers(self) -> List[APIRouter]:
         routers = []

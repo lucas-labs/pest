@@ -1,0 +1,17 @@
+meta {
+  name: create-new
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/todo
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Don't forget to sleep"
+  }
+}

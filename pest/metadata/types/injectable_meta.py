@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Callable, Generic, Type, TypeVar, Union
 
-from rodi import ServiceLifeStyle
+from dij import ServiceLifeStyle
 
 from ._meta import Meta, PestType
 
