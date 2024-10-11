@@ -16,6 +16,7 @@ from pest.core.module import setup_module as _setup_module
 from pest.factory import Pest
 from tests.cfg.test_modules.di_scopes_primitives import Scoped, Transient
 
+from .test_apps.guards_app import app as guards_app
 from .test_apps.multi_singleton_app import app as multi_singleton_app
 from .test_apps.todo_app import app as todo_app
 from .test_modules.di_scopes_primitives import DIScopesModule, Singleton
@@ -55,6 +56,13 @@ def app_n_client() -> TestApp:
 @pytest.fixture()
 def multiple_singletons_app() -> TestApp:
     app = multi_singleton_app.bootstrap_app()
+    client = TestClient(app)
+    return app, client
+
+
+@pytest.fixture()
+def guards_annotated_app() -> TestApp:
+    app = guards_app.bootstrap_app()
     client = TestClient(app)
     return app, client
 

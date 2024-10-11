@@ -99,6 +99,10 @@ def test_meta_docorator_dataclass_meta():
 
 
 def test_exception_example_generator():
+    """
+    🐀 utils :: `exc_response` :: should generate the right example response for a given error code
+    """
+
     example = exc_response(404, 418)
 
     not_found = example[404]

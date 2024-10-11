@@ -24,6 +24,17 @@
             "justMyCode": false
         },
         {
+            "name": "FastAPI: Example2",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "guard:app",
+                "--reload",
+            ],
+            "justMyCode": false
+        },
+        {
             "name": "FastAPI: Test",
             "type": "python",
             "request": "launch",
