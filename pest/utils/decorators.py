@@ -5,18 +5,21 @@ from ..metadata.meta import inject_metadata
 from .protocols import DataclassInstance
 
 Cls = TypeVar('Cls', bound=Type[Any])
+Fn = TypeVar('Fn', bound=Callable[..., Any])
 
 
-def meta(meta: Union[Mapping[str, Any], DataclassInstance]) -> Callable[[Cls], Cls]:
+def meta(
+    meta: Union[Mapping[str, Any], DataclassInstance]
+) -> Callable[[Union[Cls, Fn]], Union[Cls, Fn]]:
     """🐀 » injects metadata into a class"""
 
-    def wrapper(cls: Cls) -> Cls:
+    def decorator(callable: Union[Cls, Fn]) -> Union[Cls, Fn]:
         if isinstance(meta, Mapping):
             metadata = meta
         else:
             metadata = asdict(meta)
 
-        inject_metadata(cls, metadata)
-        return cls
+        inject_metadata(callable, metadata)
+        return callable
 
-    return wrapper
+    return decorator

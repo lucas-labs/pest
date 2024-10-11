@@ -1,4 +1,5 @@
 from .decorators.controller import api, controller, ctrl, router, rtr
+from .decorators.guard import Guard, GuardCb, GuardExtra, use_guard
 from .decorators.handler import delete, get, head, options, patch, post, put, trace
 from .decorators.module import dom, domain, mod, module
 from .factory import Pest
@@ -12,6 +13,8 @@ from .metadata.types.injectable_meta import (
     ValueProvider,
 )
 from .utils.decorators import meta
+
+guard = use_guard
 
 __all__ = [
     'Pest',
@@ -37,6 +40,12 @@ __all__ = [
     'api',
     # decorators - utils
     'meta',
+    # decorators - guard
+    'Guard',
+    'GuardCb',
+    'GuardExtra',
+    'use_guard',
+    'guard',
     # meta - providers
     'ProviderBase',
     'ClassProvider',
