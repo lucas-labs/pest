@@ -11,19 +11,22 @@ async def test_guards_annotated(guards_annotated_app) -> None:
 
     _, client = guards_annotated_app
 
-    admin_token = b64encode('{"id": 1, "name": "John Doe", "role": "admin"}'.encode()).decode()
+    admin_token = b64encode('{"id": 1, "name": "Mr. Spock", "role": "admin"}'.encode()).decode()
     user_token = b64encode('{"id": 1, "name": "Jane Doe", "role": "user"}'.encode()).decode()
 
-    ok = client.get('/secure', headers={'Authorization': admin_token}).json()
-    assert ok == {'message': "You're allowed to see this because your role is admin"}
+    # with authorized user
+    ok = client.get('/secure', headers={'Authorization': f'Bearer {admin_token}'}).json()
+    assert ok == {'message': 'Hello admin Mr. Spock'}
 
-    forb = client.get('/secure', headers={'Authorization': user_token})
+    # with unauthorized user
+    forb = client.get('/secure', headers={'Authorization': f'Bearer {user_token}'})
     assert forb.status_code == 403
     assert forb.json() == {'code': 403, 'error': 'Forbidden', 'message': 'Not authorized'}
 
+    # without token
     unauth = client.get('/secure')
     assert unauth.status_code == 401
-    assert unauth.json() == {'code': 401, 'error': 'Unauthorized', 'message': 'Token is required'}
+    assert unauth.json() == {'code': 401, 'error': 'Unauthorized', 'message': 'Not authenticated'}
 
 
 @pytest.mark.asyncio
@@ -32,16 +35,19 @@ async def test_guards_typed(guards_annotated_app) -> None:
 
     _, client = guards_annotated_app
 
-    admin_token = b64encode('{"id": 1, "name": "John Doe", "role": "admin"}'.encode()).decode()
+    admin_token = b64encode('{"id": 1, "name": "Mr. Spock", "role": "admin"}'.encode()).decode()
     user_token = b64encode('{"id": 1, "name": "Jane Doe", "role": "user"}'.encode()).decode()
 
-    ok = client.get('/secure/typed', headers={'Authorization': admin_token}).json()
-    assert ok == {'message': "You're allowed to see this because your role is admin"}
+    # with authorized user
+    ok = client.get('/secure/typed', headers={'Authorization': f'Bearer {admin_token}'}).json()
+    assert ok == {'message': 'Hello admin Mr. Spock'}
 
-    forb = client.get('/secure/typed', headers={'Authorization': user_token})
+    # with unauthorized user
+    forb = client.get('/secure/typed', headers={'Authorization': f'Bearer {user_token}'})
     assert forb.status_code == 403
     assert forb.json() == {'code': 403, 'error': 'Forbidden', 'message': 'Not authorized'}
 
+    # without token
     unauth = client.get('/secure/typed')
     assert unauth.status_code == 401
-    assert unauth.json() == {'code': 401, 'error': 'Unauthorized', 'message': 'Token is required'}
+    assert unauth.json() == {'code': 401, 'error': 'Unauthorized', 'message': 'Not authenticated'}

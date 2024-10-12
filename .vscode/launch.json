@@ -18,7 +18,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "example.app.main:app",
+                "examples.api.app.main:app",
                 "--reload",
             ],
             "justMyCode": false
@@ -29,7 +29,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "guard:app",
+                "examples.auth_example:app",
                 "--reload",
             ],
             "justMyCode": false
