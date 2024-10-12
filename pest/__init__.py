@@ -1,5 +1,5 @@
 from .decorators.controller import api, controller, ctrl, router, rtr
-from .decorators.guard import Guard, GuardCb, GuardExtra, use_guard
+from .decorators.guard import Guard, GuardCb, GuardCtx, GuardExtra, use_guard
 from .decorators.handler import delete, get, head, options, patch, post, put, trace
 from .decorators.module import dom, domain, mod, module
 from .factory import Pest
@@ -44,6 +44,7 @@ __all__ = [
     'Guard',
     'GuardCb',
     'GuardExtra',
+    'GuardCtx',
     'use_guard',
     'guard',
     # meta - providers

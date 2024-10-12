@@ -19,6 +19,7 @@ def tests(session: Session) -> None:
         'pytest',
         'httpx',
         'pytest-asyncio',
+        'python-multipart',
     )
 
     params = (
