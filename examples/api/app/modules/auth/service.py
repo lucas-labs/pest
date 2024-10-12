@@ -1,4 +1,4 @@
-from example.app.modules.auth.db.session import Session, User
+from examples.api.app.modules.auth.db.session import Session, User
 
 
 class AuthService:
