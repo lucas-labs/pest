@@ -37,6 +37,10 @@ def setup_handler(cls: Type['Controller'], handler: HandlerTuple) -> APIRoute:
     meta_dict = clean_dict(asdict(handler_meta), HandlerMetaDict)
     _patch_handler_fn(cls, handler_fn)
 
+    # by default, exclude None values from the response
+    if 'response_model_exclude_none' not in meta_dict:
+        meta_dict['response_model_exclude_none'] = True
+
     route = APIRoute(
         endpoint=handler_fn,
         path=handler_meta.path,
@@ -129,9 +133,7 @@ def _get_pest_injection(parameter: Parameter) -> Union[List[_Inject], None]:
         token = (
             parameter.default.token
             if parameter.default.token is not None
-            else parameter.annotation
-            if parameter.annotation is not Parameter.empty
-            else None
+            else parameter.annotation if parameter.annotation is not Parameter.empty else None
         )
         annotations = (token, inject)
     else:

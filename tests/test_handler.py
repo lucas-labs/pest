@@ -15,6 +15,7 @@ from .cfg.test_modules.rodi_route_dependencies import (
 from .cfg.test_modules.rodi_route_dependencies_functions import (
     FunctionsDependenciesModule,
     FunctionsDependenciesModule39plus,
+    PydanticResponsesTestModule,
 )
 
 
@@ -120,6 +121,25 @@ def test_trace_handler():
     meta = getattr(foo_handler, META_KEY)
     assert meta['meta_type'] == PestType.HANDLER
     assert meta['methods'] == ['TRACE']
+
+
+def test_handler_exludes_nones_by_default() -> None:
+    """🐀 handlers :: pydantic :: should exclude None values from handler responses by default"""
+    app = Pest.create(PydanticResponsesTestModule)
+    client = TestClient(app)
+
+    response = client.get('/pydantic')
+    json = response.json()
+
+    assert response.status_code == 200
+    assert 'surname' not in json
+
+    response = client.get('/pydantic-with-nones')
+    json = response.json()
+
+    assert response.status_code == 200
+    assert 'surname' in json
+    assert json['surname'] is None
 
 
 def test_handler_can_inject_di() -> None:
