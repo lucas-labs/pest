@@ -109,7 +109,12 @@ def _apply_guard_to_method(
         request_param_name = '__pest_guard_request__'
         params = [
             *params,
-            Parameter(request_param_name, Parameter.POSITIONAL_OR_KEYWORD, annotation=Request),
+            Parameter(
+                request_param_name,
+                Parameter.POSITIONAL_OR_KEYWORD,
+                annotation=Request,
+                default=Request({'type': 'http'}),
+            ),
         ]
     else:
         request_param_name = request_parameter.name
