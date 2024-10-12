@@ -79,14 +79,16 @@ class PestApplication(FastAPI):
             ]
         )
 
-        self.add_exception_handlers([
-            (HTTPException, handle.http),
-            (ValidationError, handle.request_validation),
-            (RequestValidationError, handle.request_validation),
-            (WebSocketRequestValidationError, handle.websocket_request_validation),
-            # for everything else, there's Mastercard (or was it Bancard? 🤔)
-            (Exception, handle.the_rest),
-        ])
+        self.add_exception_handlers(
+            [
+                (HTTPException, handle.http),
+                (ValidationError, handle.request_validation),
+                (RequestValidationError, handle.request_validation),
+                (WebSocketRequestValidationError, handle.websocket_request_validation),
+                # for everything else, there's Mastercard (or was it Bancard? 🤔)
+                (Exception, handle.the_rest),
+            ]
+        )
 
     def add_exception_handlers(
         self, handlers: List[Tuple[Union[int, Type[Exception]], Callable]]
@@ -129,7 +131,7 @@ class PestApplication(FastAPI):
         response_model_by_alias: bool = True,
         response_model_exclude_unset: bool = False,
         response_model_exclude_defaults: bool = False,
-        response_model_exclude_none: bool = False,
+        response_model_exclude_none: bool = True,
         include_in_schema: bool = True,
         response_class: Union[Type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,

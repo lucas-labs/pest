@@ -58,7 +58,7 @@ class PestRouter(APIRouter):
         response_model_by_alias: bool = True,
         response_model_exclude_unset: bool = False,
         response_model_exclude_defaults: bool = False,
-        response_model_exclude_none: bool = False,
+        response_model_exclude_none: bool = True,
         include_in_schema: bool = True,
         response_class: Union[Type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,
