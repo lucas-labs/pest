@@ -9,7 +9,7 @@
 
 <br/>
 
-<p align="center">Check the <a href="https://pest.lucode.ar" target="_blank">Documentation</a></p>
+<p align="center">Check the <a href="https://pest.lucode.dev" target="_blank">Documentation</a></p>
 
 <br/>
 
@@ -51,13 +51,13 @@ poetry add pest-py
 
 ### Quick Start
 
-Head to the [documentation](https://pest.lucode.ar) to learn more about **pest**.
+Head to the [documentation](https://pest.lucode.dev) to learn more about **pest**.
 
 <br/>
 
 ### Tutorial
 
-Follow the [tutorial](https://pest.lucode.ar/docs/learn/getting-started) to learn how to build a simple API with **pest**.
+Follow the [tutorial](https://pest.lucode.dev/docs/learn/getting-started) to learn how to build a simple API with **pest**.
 
 
 
