@@ -89,3 +89,12 @@ class LoggingOptions(TypedDict, total=False):
     verbose: bool
     '''enables all loggers'''
     sinks: List[SinkOptions]
+    '''list of sinks (handlers) to be used by loguru'''
+    force_colorize: bool
+    '''forces colorized output for the default sink'''
+    diagnose: bool
+    '''
+    Whether the exception trace should display the variables values to eases the debugging.
+    `False` (the default) is recommended for production environments, to avoid leaking sensitive
+    data..
+    '''

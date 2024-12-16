@@ -62,7 +62,7 @@ app = Pest.create(
         'level': LogLevel.DEBUG,
         # 'format': format_record,
         'access_log': True,
-        'sinks': [{'sink': 'example/logs/app.log', 'rotation': '1 week', 'format': format_record}],
+        'sinks': [{'sink': 'examples/logs/app.log', 'rotation': '1 week', 'format': format_record}],
     },
     middleware=[Middleware(PureAsgiMiddleware), pest_middleware],
     cors={
