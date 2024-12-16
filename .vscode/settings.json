@@ -6,7 +6,7 @@
 
         // ⚙️ config
         "**/**/*.code-workspace": true,
-        "poetry.lock": true,
+        // "poetry.lock": true,
         "poetry.toml": true,
 
         // 🧼 linters & styles
