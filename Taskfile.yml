@@ -37,11 +37,6 @@ tasks:
     cmds:
       - poetry run ruff check . --fix
 
-  test:3.8:
-    desc: 🧪 run tests on python 3.8
-    cmds:
-      - nox --session tests-3.8 --reuse-existing-virtualenvs
-
   test:3.9:
     desc: 🧪 run tests on python 3.9
     cmds:
@@ -62,10 +57,15 @@ tasks:
     cmds:
       - nox --session tests-3.12 --reuse-existing-virtualenvs
 
+  test:3.13:
+    desc: 🧪 run tests on python 3.13
+    cmds:
+      - nox --session tests-3.13 --reuse-existing-virtualenvs
+
   test:all:
     desc: 🧪 run tests on all python versions
     cmds:
-      - task --parallel test:3.12 test:3.11 test:3.10 test:3.9 test:3.8
+      - task --parallel test:3.13 test:3.12 test:3.11 test:3.10 test:3.9
 
   checks:
     desc: 🎨 run all checks
