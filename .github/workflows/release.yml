@@ -36,7 +36,7 @@ jobs:
           pyproject-path: "./pyproject.toml"
 
       - name: 📑 » generate changelog
-        uses: lucaslabstech/action-release@v1.0.4
+        uses: lucaslabstech/action-release@eb37864cffaf83e679c8aaee07707ba71041b41f # v1.0.4
         id: changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,12 +46,12 @@ jobs:
           
 
       - name: 🗑️ » delete outdated drafts
-        uses: hugo19941994/delete-draft-releases@v1.0.1
+        uses: hugo19941994/delete-draft-releases@1bdca1ea7ffb25ae7f468a7bdb40056dae98175e # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔖 » create draft release
-        uses: ncipollo/release-action@v1.11.1
+        uses: ncipollo/release-action@cdcc88a9acf3ca41c16c37bb7d21b9ad48560d87 # v1.15.0
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         with:

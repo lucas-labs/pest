@@ -31,7 +31,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: 📦 » install ruff globally
-        run: pip install ruff      
+        run: pip install ruff
 
       - name: 🧹 » lint
         run: task lint:check
@@ -61,7 +61,7 @@ jobs:
       # if python 3.11, upload coverage to codecov
       - name: ☂️ » upload coverage to codecov
         if: matrix.python-version == '3.11'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
