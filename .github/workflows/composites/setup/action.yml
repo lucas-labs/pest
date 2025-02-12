@@ -27,6 +27,7 @@ runs:
       shell: bash
       run: |
         curl -sSL https://install.python-poetry.org | python - -y
+        poetry self add poetry-plugin-export
 
     - name: 👗 » install nox
       shell: bash
