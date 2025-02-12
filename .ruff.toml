@@ -9,8 +9,6 @@ quote-style = "preserve"
 select = ["E", "F", "Q", "I", "ANN", "ASYNC", "W", "S", "A"]
 ignore = [
     "A",         # flake8-builtins https://beta.ruff.rs/docs/settings/#flake8-builtins
-    "ANN101",    # missing-type-self https://beta.ruff.rs/docs/rules/missing-type-self/
-    "ANN102",    # missing-type-cls https://beta.ruff.rs/docs/rules/missing-type-cls/
     "ANN401",    # any-type https://beta.ruff.rs/docs/rules/any-type/
 ]
 
@@ -19,10 +17,8 @@ docstring-quotes = "double"
 inline-quotes = "single"
 multiline-quotes = "single"
 
-
 [lint.flake8-annotations]
 mypy-init-return = true
-
 
 [lint.extend-per-file-ignores]
 "**/**/test/**" =  ["S101", "ANN001", "ANN201", "E701"]

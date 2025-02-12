@@ -1,13 +1,12 @@
-[tool.poetry]
+[project]
 name = "pest-py"
 version = "0.4.4"
 description = "🐀 ⇝ pest › fastapi + rodi + mvc | python library for building scalable modular API's. Inspired by NestJS."
-authors = ["Lucas Colombo <lucas@lucode.dev>"]
-homepage = "https://pest.lucode.ar"
-documentation = "https://pest.lucode.ar/docs"
-repository = "https://github.com/lucas-labs/pest"
 readme = "README.md"
-license = "MIT"
+license = { text = "MIT" }
+authors = [
+    { name = "Lucas Colombo", email = "lucas@lucode.dev" }
+]
 keywords = ["pest", "nestjs", "nest", "api", "rest", "restful", "mvc", "web", "webapp", "di", "dependency injection", "rodi", "fastapi"]
 classifiers = [
     "Intended Audience :: Information Technology",
@@ -33,38 +32,43 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 
+requires-python = ">=3.9,<4.0"
+dependencies = [
+    "dacite>=1.0.0,<2.0.0",
+    "fastapi>=0.115.3, <0.116.0",
+    "pydantic>=2.10.6",
+    "typing-extensions>=4.8.0",
+    "dij==0.0.3",
+]
+
+[project.optional-dependencies]
+logs = ["loguru>=0.7.0,<0.8.0"]
+
+[project.urls]
+homepage = "https://pest.lucode.dev"
+documentation = "https://pest.lucode.dev/docs"
+repository = "https://github.com/lucas-labs/pest"
+"Bug Tracker" = "https://github.com/lucas-labs/pest/issues"
+
+[tool.poetry]
 packages = [
     { include = "pest" }
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-dacite = "^1.8.1"
-fastapi = ">=0.115.3, <0.116.0"
-loguru = "^0.7.2"
-pydantic = ">=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0"
-typing-extensions = "^4.12.2"
-dij = "0.0.3"
-
-[tool.poetry.extras]
-logs = ["loguru"]
-
 [tool.poetry.group.dev.dependencies]
-httpx = "^0.27.0"
-pytest = "^8.3.2"
-pytest-asyncio = "^0.24.0"
-pytest-cov = "^5.0.0"
-ruff = "^0.6.1"
-uvicorn = "^0.31.0"
-nox-poetry = "^1.0.3"
-tomli = "^2.0.1"
-python-multipart = ">=0.0.12,<0.0.19"
+httpx = ">=0.23.0"
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.0"
+pytest-cov = "^6.0.0"
+uvicorn = "^0.34.0"
+nox-poetry = "^1.1.0"
+tomli = "^2.2.1"
+python-multipart = ">=0.0.18"
+ruff = "^0.9.6"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 100
-skip-string-normalization = true
-extend-exclude = ".patches/"
