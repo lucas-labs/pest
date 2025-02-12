@@ -25,9 +25,9 @@ jobs:
           fetch-depth: 0
 
       - name: 🚀 » build & publish to test.pypi
-        uses: JRubics/poetry-publish@v1.17
+        uses: JRubics/poetry-publish@4b3306307f536bbfcb559603629b3b4f6aef5ab8 # v2.1
         with:
-          ignore_dev_requirements: "yes"
+          poetry_install_options: "--without dev"
           pypi_token: ${{ secrets.PYPI_TOKEN }}
           repository_name: "testpypi"
           repository_url: "https://test.pypi.org/legacy/"
@@ -45,9 +45,9 @@ jobs:
           fetch-depth: 0
 
       - name: 🚀 » build & publish to test.pypi
-        uses: JRubics/poetry-publish@v1.17
+        uses: JRubics/poetry-publish@4b3306307f536bbfcb559603629b3b4f6aef5ab8 # v2.1
         with:
-          ignore_dev_requirements: "yes"
+          poetry_install_options: "--without dev"
           pypi_token: ${{ secrets.PYPI_TOKEN }}
 
           
