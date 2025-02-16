@@ -28,8 +28,8 @@ class AppModule:
 @pytest.fixture()
 def app() -> Tuple[PestApplication, TestClient]:
     app = Pest.create(root_module=AppModule)
-    client = TestClient(app)
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 def test_request_scoped_provider(app: Tuple[PestApplication, TestClient]) -> None:
