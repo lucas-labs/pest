@@ -10,7 +10,7 @@ from ..metadata.types.controller_meta import ControllerMeta
 from ..metadata.types.handler_meta import HandlerMeta
 from ..utils.fastapi.router import PestRouter
 from ..utils.functions import classproperty
-from .common import PestPrimitive
+from .common import OnApplicationBootstrap, OnModuleInit, PestPrimitive
 from .handler import HandlerTuple, setup_handler
 from .types.status import Status
 
@@ -56,7 +56,7 @@ def module_of(cls: type) -> 'Module':
     return mod
 
 
-class Controller(PestPrimitive):
+class Controller(PestPrimitive, OnModuleInit, OnApplicationBootstrap):
     __router__: ClassVar[PestRouter]
     __parent_module__: ClassVar[Optional[Any]]
 

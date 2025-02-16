@@ -15,8 +15,8 @@ from ..metadata.types.injectable_meta import (
     ValueProvider,
 )
 from ..metadata.types.module_meta import InjectionToken, ModuleMeta, Provider
-from ..utils.functions import classproperty
-from .common import PestPrimitive
+from ..utils.functions import classproperty, maybe_coro
+from .common import OnApplicationBootstrap, OnModuleInit, PestPrimitive
 from .controller import Controller, router_of, setup_controller
 from .types.status import Status
 
@@ -45,14 +45,8 @@ def contained_in(module: 'Module') -> List[Tuple[InjectionToken, Any]]:
     return list(module.container)
 
 
-def setup_module(
-    clazz: type,
-    parent_clazz: Optional['Module'] = None,
-) -> 'Module':
-    """
-    functions that sets up a module. Avoids accessing the
-    module's `__setup_module__` method directly
-    """
+def assure_module(clazz: type) -> None:
+    """assures that a class is a module"""
     if not issubclass(clazz, Module):
         raise PestException(
             f'{clazz.__name__} is not a module.',
@@ -61,24 +55,116 @@ def setup_module(
             ),
         )
 
-    if parent_clazz is not None and not isinstance(parent_clazz, Module):
+
+def assure_module_instance(module: Any) -> None:
+    if not isinstance(module, Module):
         raise PestException(
-            f'{parent_clazz.__name__} is not a module.',
+            f'{module.__name__} is not a module.',
             hint=(
-                f'decorate `{parent_clazz.__name__}` with the `@module` '
-                'decorator (or one of its aliases)'
+                f'decorate `{module.__name__}` with the `@module` decorator (or one of its aliases)'
             ),
         )
 
+
+async def setup_module(
+    clazz: type,
+    parent_clazz: Optional['Module'] = None,
+) -> 'Module':
+    """
+    functions that sets up a module. Avoids accessing the
+    module's `__setup_module__` method directly
+    """
+    assure_module(clazz)
+    if parent_clazz is not None:
+        assure_module_instance(parent_clazz)
+
     module = clazz()
-    module.__setup_module__(parent_clazz)
+    await module.__setup_module__(parent_clazz)
     return module
 
 
 T = TypeVar('T')
 
 
-class Module(PestPrimitive):
+async def _on_module_init(module: 'Module') -> None:
+    """
+    executes the `on_module_init` lifecycle hook for a module, which includes:
+    - calling the lifecycle hooks of the module's providers
+    - calling the lifecycle hooks of the module's controllers
+    - calling the lifecycle hooks of the module itself
+    """
+
+    assure_module_instance(module)
+
+    if module.__class_status__ == Status.READY:
+        return
+
+    for provider in module.providers:
+        # if the provider's scope is singleton/value, we check if the provider has lifecycle
+        # hooks and call them if that's the case
+        if isinstance(provider, ValueProvider) or (
+            hasattr(provider, 'scope') and provider.scope == ServiceLifeStyle.SINGLETON
+        ):
+            # resolve the provider and try to call the lifecycle hooks
+            resolved = module.get(provider.provide)
+            if isinstance(resolved, OnModuleInit):
+                await maybe_coro(resolved.on_module_init())
+
+    for controller in module.controllers:
+        resolved = await maybe_coro(module.aget(cast(Type[Controller], controller)))
+        if isinstance(resolved, OnModuleInit):
+            await maybe_coro(resolved.on_module_init())
+
+    # and finally, ourselves
+    await maybe_coro(module.on_module_init())
+
+
+async def _on_application_bootstrap(module: 'Module') -> None:
+    """
+    executes the `on_application_bootstrap` lifecycle hook for a module, which includes:
+    - calling the lifecycle hooks of the module's providers
+    - calling the lifecycle hooks of the module's controllers
+    - calling the lifecycle hooks of its child modules
+    - calling the lifecycle hooks of the module itself
+    """
+
+    assure_module_instance(module)
+
+    if module.__class_status__ != Status.READY:
+        return
+
+    for provider in module.providers:
+        # if the provider's scope is singleton/value, we check if the provider has lifecycle
+        # hooks and call them if that's the case
+        if isinstance(provider, ValueProvider) or (
+            hasattr(provider, 'scope') and provider.scope == ServiceLifeStyle.SINGLETON
+        ):
+            # resolve the provider and try to call the lifecycle hooks
+            resolved = module.get(provider.provide)
+            if isinstance(resolved, OnApplicationBootstrap):
+                await maybe_coro(resolved.on_application_bootstrap())
+
+    for controller in module.controllers:
+        resolved = await maybe_coro(module.aget(cast(Type[Controller], controller)))
+        if isinstance(resolved, OnApplicationBootstrap):
+            await maybe_coro(resolved.on_application_bootstrap())
+
+    for child in module.imports:
+        await _on_application_bootstrap(child)
+
+    # and finally, ourselves
+    await maybe_coro(module.on_application_bootstrap())
+
+
+def _create_factory_resolver(provider: InjectionToken, module: 'Module') -> Any:
+    async def resolve_from_related() -> Any:
+        resolved = await module.aget(cast(InjectionToken, provider))
+        return resolved
+
+    return resolve_from_related
+
+
+class Module(PestPrimitive, OnModuleInit, OnApplicationBootstrap):
     __imported__providers__: Dict[InjectionToken, 'Module']
     __parent_module__: Optional['Module']
     imports: List['Module']
@@ -104,7 +190,7 @@ class Module(PestPrimitive):
         self.container = Container(strict=False)
         self.controllers = []
 
-    def __setup_module__(self, parent: Optional['Module']) -> None:
+    async def __setup_module__(self, parent: Optional['Module']) -> None:
         if self.__class_status__ != Status.NOT_SETUP:
             return
         self.__class_status__ = Status.SETTING_UP
@@ -133,28 +219,31 @@ class Module(PestPrimitive):
         # can have access to services provided by the parent module
         # or globally (in the root module)
         if parent is not None:
-
-            def create_factory(provider: InjectionToken) -> Any:
-                async def resolve_from_parent() -> Any:
-                    resolved = await parent.aget(cast(InjectionToken, provider))
-                    return resolved
-
-                return resolve_from_parent
-
             for provider, _ in contained_in(parent):
                 self.register(
-                    FactoryProvider(provide=provider, use_factory=create_factory(provider))
+                    FactoryProvider(
+                        provide=provider, use_factory=_create_factory_resolver(provider, parent)
+                    )
                 )
 
         # setup child modules
         for child in meta.imports if meta.imports else []:
-            child_instance = setup_module(child, self)
+            child_instance = await setup_module(child, self)
             self.imports += [child_instance]
 
         # register providers exported by child modules
         for imported_module in self.imports:
             for exported_provider in imported_module.exports:
                 self.__imported__providers__[exported_provider] = imported_module
+
+                self.register(
+                    FactoryProvider(
+                        provide=exported_provider,
+                        use_factory=_create_factory_resolver(exported_provider, imported_module),
+                    )
+                )
+
+        await _on_module_init(self)
 
         # we're done
         self.__class_status__ = Status.READY

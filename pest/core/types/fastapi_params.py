@@ -1,4 +1,5 @@
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Coroutine,
@@ -10,11 +11,13 @@ from typing import (
     Union,
 )
 
-from fastapi import FastAPI, Request, Response
+from fastapi import Request, Response
 from fastapi.params import Depends
 from fastapi.routing import APIRouter
 from starlette.routing import BaseRoute
-from starlette.types import Lifespan
+
+if TYPE_CHECKING:
+    pass
 
 
 class FastAPIParams(TypedDict, total=False):
@@ -40,7 +43,6 @@ class FastAPIParams(TypedDict, total=False):
     ]
     on_startup: Sequence[Callable[[], Any]]
     on_shutdown: Sequence[Callable[[], Any]]
-    lifespan: Lifespan[FastAPI]
     terms_of_service: str
     contact: Dict[str, Union[str, Any]]
     license_info: Dict[str, Union[str, Any]]

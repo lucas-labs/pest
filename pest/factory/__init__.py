@@ -5,6 +5,8 @@ except ImportError:
 
 from typing import Union
 
+from starlette.types import Lifespan
+
 from ..core.application import PestApplication
 from ..core.types.fastapi_params import FastAPIParams
 from ..logging import LoggingOptions, log
@@ -26,6 +28,7 @@ class Pest:
         middleware: MiddlewareDef = [],
         prefix: str = '',
         cors: Union[CorsOptions, None] = None,
+        lifespan: Union[Lifespan[PestApplication], None] = None,
         **fastapi_params: Unpack[FastAPIParams],
     ) -> PestApplication:
         """
@@ -41,8 +44,8 @@ class Pest:
         pre_app.setup(logging=logging)
         log.info(f'Initializing {name}')
 
-        app = make_app(fastapi_params, root_module, prefix=prefix, middleware=middleware)
+        app = make_app(
+            fastapi_params, root_module, lifespan=lifespan, prefix=prefix, middleware=middleware
+        )
         app = post_app.setup(app, cors=cors)
-
-        log.debug(f'{name} initialized: \n{app}')
         return app

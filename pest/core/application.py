@@ -32,7 +32,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.errors import ServerErrorMiddleware
 from starlette.middleware.exceptions import ExceptionMiddleware
 from starlette.routing import BaseRoute
-from starlette.types import ASGIApp
+from starlette.types import ASGIApp, Lifespan
 
 from pest.logging import log
 from pest.middleware.types import CorsOptions
@@ -56,12 +56,16 @@ def root_module(app: 'PestApplication') -> Module:
 class PestApplication(FastAPI):
     """🐀 ⇝ what a pest!"""
 
-    def __init__(
-        self, module: Module, middleware: MiddlewareDef, **kwargs: Unpack[FastAPIParams]
-    ) -> None:
-        super().__init__(**kwargs)
-        self.__pest_module__ = module
+    __pest_module__: Module
 
+    def __init__(
+        self,
+        # module: Module,
+        middleware: MiddlewareDef,
+        lifespan: Union[Lifespan['PestApplication'], None] = None,
+        **kwargs: Unpack[FastAPIParams],
+    ) -> None:
+        super().__init__(lifespan=lifespan, **kwargs)
         self.user_middleware: List[Middleware] = (
             []
             if middleware is None
@@ -72,7 +76,7 @@ class PestApplication(FastAPI):
                     else Middleware(
                         PestBaseHTTPMiddleware,
                         dispatch=cast(PestMiddlwareCallback, middleware),
-                        parent_module=module,
+                        get_parent_module=lambda: root_module(self),
                     )
                 )
                 for middleware in middleware
@@ -227,7 +231,7 @@ class PestApplication(FastAPI):
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_middleware(
-                PestBaseHTTPMiddleware, dispatch=func, parent_module=root_module(self)
+                PestBaseHTTPMiddleware, dispatch=func, get_parent_module=lambda: root_module(self)
             )
             return func
 
@@ -265,7 +269,7 @@ class PestApplication(FastAPI):
             Middleware(
                 PestBaseHTTPMiddleware,
                 dispatch=di_scope_middleware,
-                parent_module=root_module(self),
+                get_parent_module=lambda: root_module(self),
             )
         ]
 
