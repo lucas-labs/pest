@@ -51,13 +51,6 @@ class ValueProvider(ProviderBase, Generic[T]):
 
 
 @dataclass
-class SingletonProvider(ValueProvider, Generic[T]):
-    """🐀 ⇝ defines a `singleton` (value) type provider"""
-
-    pass
-
-
-@dataclass
 class FactoryProvider(ProviderBase, Generic[T]):
     """🐀 ⇝ defines a `factory` type provider"""
 

@@ -1,6 +1,24 @@
-from typing import Any, Callable, Dict, List, Type, TypeVar, Union, cast
+import asyncio
+from contextlib import asynccontextmanager
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncIterator,
+    Callable,
+    Coroutine,
+    Dict,
+    List,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from pydantic import BaseModel
+from starlette.types import Lifespan
+
+if TYPE_CHECKING:
+    from ..core.application import PestApplication
 
 T = TypeVar('T', bound=Dict)
 
@@ -82,3 +100,32 @@ class classproperty:
         if cls is None:
             cls = type(obj)
         return self.method(cls)
+
+
+K = TypeVar('K')
+U = TypeVar('U')
+V = TypeVar('V')
+
+
+async def maybe_coro(stuff: Union[Coroutine[K, U, V], V]) -> V:
+    if asyncio.iscoroutine(stuff):
+        return await stuff
+    else:
+        return stuff
+
+
+def chain_lifespan(
+    *lifespans: Lifespan['PestApplication'],
+) -> Lifespan['PestApplication']:
+    """chains multiple lifespan functions into one"""
+
+    @asynccontextmanager
+    async def combined_lifespan(app: 'PestApplication') -> AsyncIterator[None]:
+        async with lifespans[0](app):
+            if len(lifespans) > 1:
+                async with chain_lifespan(*lifespans[1:])(app):
+                    yield
+            else:
+                yield
+
+    return combined_lifespan
