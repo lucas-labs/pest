@@ -6,25 +6,23 @@
 
         // ⚙️ config
         "**/**/*.code-workspace": true,
-        // "poetry.lock": true,
+        "poetry.lock": true,
         "poetry.toml": true,
+        "Taskfile.yml": true,
 
         // 🧼 linters & styles
         ".ruff.toml": true,
         "coco.yml": true,
-        ".env": true,
 
         // 🧪 tests
         // "tests": true,
-        "noxfile.py": true,
+        // "noxfile.py": true,
         "conftest.py": true,
         ".nox": true,
-        // "htmlcov": true,
-        // "coverage": true,
-        // ".coverage": true,
 
         // 🗑️
         ".task": true, // task-go
+        ".poetry": true,
         ".venv": true,
         ".vscode": true,
         ".ruff_cache": true,
@@ -36,17 +34,8 @@
 
         // 📝 docs
         // "**/**/README.md": true
+        "LICENSE": true,
     },
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-
-    "black-formatter.importStrategy": "fromEnvironment",
 
     "evenBetterToml.schema.associations": {
         "\\.?coco(\\.yml|\\.yaml|rc)$": "https://gist.githubusercontent.com/lucas-labs/0cb798e4b6c7fc720c7111c40d215c21/raw/cb068efd7d73794e738a5240a80f0cb729883553/coco-schema.json"
