@@ -1,5 +1,6 @@
 from typing import cast
 
+import pytest
 from dij import Container
 from pytest import raises
 
@@ -74,9 +75,10 @@ def test_module_meta():
     assert meta['exports'][0] == FakeProvider
 
 
-def test_module_setup():
+@pytest.mark.asyncio
+async def test_module_setup():
     """🐀 modules :: setup_module :: should initialize a module"""
-    mod = _setup_module(Mod)
+    mod = await _setup_module(Mod)
 
     # check it's an instance of Mod and also of Module
     assert isinstance(mod, Mod)
@@ -86,7 +88,8 @@ def test_module_setup():
     assert status(mod) == Status.READY
 
 
-def test_module_container(mod: Mod):
+@pytest.mark.asyncio
+async def test_module_container(mod):
     """🐀 modules :: module.container :: module should have its own container"""
     container: Container = cast(Container, getattr(mod, 'container', None))
     assert container is not None
@@ -138,11 +141,12 @@ def test_di_module_with_controller(module_with_controller: Module):
     assert baz_svc.do_the_baz() == 'baz'
 
 
-def test_module_with_children_setup():
+@pytest.mark.asyncio
+async def test_module_with_children_setup():
     """🐀 modules :: setup_module (with-children) ::
     should initialize the module and its children
     """
-    parent_mod = _setup_module(ParentMod)
+    parent_mod = await _setup_module(ParentMod)
 
     # check it's an instance of ParentMod and also of Module
     assert isinstance(parent_mod, ParentMod)

@@ -126,41 +126,41 @@ def test_trace_handler():
 def test_handler_exludes_nones_by_default() -> None:
     """🐀 handlers :: pydantic :: should exclude None values from handler responses by default"""
     app = Pest.create(PydanticResponsesTestModule)
-    client = TestClient(app)
 
-    response = client.get('/pydantic')
-    json = response.json()
+    with TestClient(app) as client:
+        response = client.get('/pydantic')
+        json = response.json()
 
-    assert response.status_code == 200
-    assert 'surname' not in json
+        assert response.status_code == 200
+        assert 'surname' not in json
 
-    response = client.get('/pydantic-with-nones')
-    json = response.json()
+        response = client.get('/pydantic-with-nones')
+        json = response.json()
 
-    assert response.status_code == 200
-    assert 'surname' in json
-    assert json['surname'] is None
+        assert response.status_code == 200
+        assert 'surname' in json
+        assert json['surname'] is None
 
 
 def test_handler_can_inject_di() -> None:
     """🐀 handlers :: di :: should be able to be injected by rodi"""
     app = Pest.create(RodiDependenciesModule)
-    client = TestClient(app)
 
-    response = client.get('/assigned')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+    with TestClient(app) as client:
+        response = client.get('/assigned')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    response = client.get('/assigned-no-token')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+        response = client.get('/assigned-no-token')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    response = client.get('/noinject')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+        response = client.get('/noinject')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='requires python3.9 or higher')
@@ -168,41 +168,39 @@ def test_handlder_can_inject_di_annotation() -> None:
     """🐀 handlers :: di :: should be able to be injected by rodi using Annotation"""
 
     app = Pest.create(RodiDependenciesModule39plus)
-    client = TestClient(app)
-
-    response = client.get('/annotated')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+    with TestClient(app) as client:
+        response = client.get('/annotated')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
 
 def test_handler_can_inject_functional_deps() -> None:
     """🐀 handlers :: di :: should be able to have functions and generators as dependencies"""
     app = Pest.create(FunctionsDependenciesModule)
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/assigned')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    response = client.get('/assigned')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+        # function dependencies should also be able to get query params
+        response = client.get('/assigned?user=foo')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert response.json().get('id') == 'foo'
 
-    # function dependencies should also be able to get query params
-    response = client.get('/assigned?user=foo')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert response.json().get('id') == 'foo'
+        # should also work with generators
+        response = client.get('/assigned-with-yield')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    # should also work with generators
-    response = client.get('/assigned-with-yield')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
-
-    # generator function dependencies should also be able to get query params
-    response = client.get('/assigned-with-yield?user=foo')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert response.json().get('id') == 'foo'
+        # generator function dependencies should also be able to get query params
+        response = client.get('/assigned-with-yield?user=foo')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert response.json().get('id') == 'foo'
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='requires python3.9 or higher')
@@ -212,27 +210,26 @@ def test_handler_can_inject_functional_deps_annotations() -> None:
                          dependencies
     """
     app = Pest.create(FunctionsDependenciesModule39plus)
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/assigned')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    response = client.get('/assigned')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
+        # function dependencies should also be able to get query params
+        response = client.get('/assigned?user=foo')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert response.json().get('id') == 'foo'
 
-    # function dependencies should also be able to get query params
-    response = client.get('/assigned?user=foo')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert response.json().get('id') == 'foo'
+        # should also work with generators
+        response = client.get('/assigned-with-yield')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert len(response.json().get('id')) > 0
 
-    # should also work with generators
-    response = client.get('/assigned-with-yield')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert len(response.json().get('id')) > 0
-
-    # generator function dependencies should also be able to get query params
-    response = client.get('/assigned-with-yield?user=foo')
-    assert response.status_code == 200
-    assert isinstance(response.json().get('id'), str)
-    assert response.json().get('id') == 'foo'
+        # generator function dependencies should also be able to get query params
+        response = client.get('/assigned-with-yield?user=foo')
+        assert response.status_code == 200
+        assert isinstance(response.json().get('id'), str)
+        assert response.json().get('id') == 'foo'

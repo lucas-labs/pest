@@ -32,39 +32,39 @@ TestApp: TypeAlias = Tuple[PestApplication, TestClient]
 
 
 @pytest.fixture()
-def mod() -> Mod:
-    return cast(Mod, _setup_module(Mod))
+async def mod() -> Mod:
+    return cast(Mod, await _setup_module(Mod))
 
 
 @pytest.fixture()
-def parent_mod() -> Module:
-    return _setup_module(ParentMod)
+async def parent_mod() -> Module:
+    return await _setup_module(ParentMod)
 
 
 @pytest.fixture()
-def module_with_controller() -> Module:
-    return _setup_module(ModuleWithController)
+async def module_with_controller() -> Module:
+    return await _setup_module(ModuleWithController)
 
 
 @pytest.fixture()
 def app_n_client() -> TestApp:
     app = todo_app.bootstrap_app()
-    client = TestClient(app)
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 @pytest.fixture()
 def multiple_singletons_app() -> TestApp:
     app = multi_singleton_app.bootstrap_app()
-    client = TestClient(app)
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 @pytest.fixture()
 def guards_annotated_app() -> TestApp:
     app = guards_app.bootstrap_app()
-    client = TestClient(app)
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 @pytest.fixture()
@@ -85,21 +85,20 @@ def di_app_n_client() -> TestApp:
         response.headers['Transient-Id'] = str(transient.get_id())
         return response
 
-    client = TestClient(app)
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 @pytest.fixture()
 def fastapi_params_app() -> TestApp:
     app = Pest.create(root_module=FastApiParamsModule)
-    client = TestClient(app)
-
-    return app, client
+    with TestClient(app) as client:
+        return app, client
 
 
 @pytest.fixture()
 def fastapi_dependencies_app() -> TestApp:
     app = Pest.create(root_module=FastApiDependenciesModule)
-    client = TestClient(app)
 
-    return app, client
+    with TestClient(app) as client:
+        return app, client
