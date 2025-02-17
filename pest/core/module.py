@@ -133,6 +133,9 @@ async def _on_application_bootstrap(module: 'Module') -> None:
     if module.__class_status__ != Status.READY:
         return
 
+    for child in module.imports:
+        await _on_application_bootstrap(child)
+
     for provider in module.providers:
         # if the provider's scope is singleton/value, we check if the provider has lifecycle
         # hooks and call them if that's the case
@@ -148,9 +151,6 @@ async def _on_application_bootstrap(module: 'Module') -> None:
         resolved = await maybe_coro(module.aget(cast(Type[Controller], controller)))
         if isinstance(resolved, OnApplicationBootstrap):
             await maybe_coro(resolved.on_application_bootstrap())
-
-    for child in module.imports:
-        await _on_application_bootstrap(child)
 
     # and finally, ourselves
     await maybe_coro(module.on_application_bootstrap())
