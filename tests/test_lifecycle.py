@@ -1,4 +1,9 @@
-from typing import Any, Coroutine, List
+from typing import Any, List, Optional
+
+try:
+    from typing import Coroutine
+except ImportError:
+    from typing_extensions import Coroutine
 
 import pytest
 from fastapi.testclient import TestClient
@@ -20,10 +25,10 @@ LIFECYCLE_CALLS: List[str] = []
 
 @controller('/foo')
 class FooController(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooController.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooController.on_application_bootstrap')
 
     @get('/')
@@ -32,10 +37,10 @@ class FooController(OnModuleInit, OnApplicationBootstrap):
 
 
 class FooService(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooService.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooService.on_application_bootstrap')
 
 
@@ -44,19 +49,19 @@ class FooService(OnModuleInit, OnApplicationBootstrap):
     providers=[ValueProvider(provide=FooService, use_value=FooService())],
 )
 class AppModule(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('AppModule.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('AppModule.on_application_bootstrap')
 
 
 @controller('/bar')
 class BarController(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarController.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarController.on_application_bootstrap')
 
     @get('/')
@@ -65,10 +70,10 @@ class BarController(OnModuleInit, OnApplicationBootstrap):
 
 
 class BarService(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarService.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarService.on_application_bootstrap')
 
 
@@ -78,10 +83,10 @@ class BarService(OnModuleInit, OnApplicationBootstrap):
     exports=[BarService],
 )
 class ChildModule(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('ChildModule.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('ChildModule.on_application_bootstrap')
 
 
@@ -91,10 +96,10 @@ class ChildModule(OnModuleInit, OnApplicationBootstrap):
     providers=[ValueProvider(provide=FooService, use_value=FooService())],
 )
 class RootModule(OnModuleInit, OnApplicationBootstrap):
-    def on_module_init(self) -> None | Coroutine[Any, Any, None]:
+    def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('RootModule.on_module_init')
 
-    def on_application_bootstrap(self) -> None | Coroutine[Any, Any, None]:
+    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('RootModule.on_application_bootstrap')
 
 
