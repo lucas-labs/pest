@@ -22,7 +22,7 @@ except ImportError:
         'Failed to import croniter',
         hint=(
             'Install `croniter` to use task scheduling functionality: '
-            '`pip install pest[cron]`, `poetry add pest[cron]` '
+            '`pip install pest-py[cron]`, `poetry add pest-py[cron]` '
             'or just `pip install croniter` or `poetry add croniter`'
         ),
     )
