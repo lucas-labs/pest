@@ -61,9 +61,12 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
     """
 
     def __init__(
-        self, app: ASGIApp, parent_module: Module, dispatch: PestMiddlwareCallback
+        self,
+        app: ASGIApp,
+        get_parent_module: Callable[[], Module],
+        dispatch: PestMiddlwareCallback,
     ) -> None:
-        self.parent_module = parent_module
+        self.get_parent_module = get_parent_module
         super().__init__(app, dispatch=self.__dispatch_fn(dispatch))
 
     def __dispatch_fn(
@@ -72,17 +75,19 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
         if dispatch is None:
             return dispatch
 
-        if _is_class_pest_mw_callback(dispatch):
-            self.parent_module.register(dispatch)
-
         async def wrapper(request: Request, call_next: CallNext) -> Response:
+            parent_module = self.get_parent_module()
+            if isclass(dispatch) and _is_class_pest_mw_callback(dispatch):
+                if not self.get_parent_module().can_provide(dispatch):
+                    parent_module.register(dispatch)
+
             scope = scope_from(request)
             dispatch_fn = cast(
                 PestMiddlwareCallback,
                 (
                     dispatch
                     if not isclass(dispatch)
-                    else self.parent_module.get(dispatch, scope, fail_on_coroutine=False)
+                    else parent_module.get(dispatch, scope, fail_on_coroutine=False)
                 ),
             )
 
@@ -106,10 +111,10 @@ class PestBaseHTTPMiddleware(BaseHTTPMiddleware):
                 continue
 
             if param.kind == param.POSITIONAL_ONLY or param.kind == param.POSITIONAL_OR_KEYWORD:
-                args.append(await self.parent_module.aget(param.annotation, scope))
+                args.append(await self.get_parent_module().aget(param.annotation, scope))
 
             elif param.kind == param.KEYWORD_ONLY:
-                kwargs[name] = await self.parent_module.aget(param.annotation, scope)
+                kwargs[name] = await self.get_parent_module().aget(param.annotation, scope)
 
         return tuple(args), kwargs
 

@@ -122,6 +122,11 @@ class ProtectedController:
         user: User = guard_result['user']
         return {'message': f'Hello {user.role} {user.name}'}
 
+    @get('/sudo')
+    @roles('superuser')
+    def sudo(self, user: Annotated[User, GuardExtra]) -> dict:
+        return {'message': f'Hello {user.role} {user.name}'}
+
 
 @module(controllers=[AuthController, ProtectedController])
 class AppModule:

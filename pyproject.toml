@@ -69,6 +69,9 @@ ruff = "^0.9.6"
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8"
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

@@ -1,3 +1,4 @@
+from .core.common import OnApplicationBootstrap, OnModuleInit
 from .decorators.controller import api, controller, ctrl, router, rtr
 from .decorators.guard import Guard, GuardCb, GuardCtx, GuardExtra, use_guard
 from .decorators.handler import delete, get, head, options, patch, post, put, trace
@@ -9,7 +10,6 @@ from .metadata.types.injectable_meta import (
     FactoryProvider,
     ProviderBase,
     Scope,
-    SingletonProvider,
     ValueProvider,
 )
 from .utils.decorators import meta
@@ -51,8 +51,10 @@ __all__ = [
     'ProviderBase',
     'ClassProvider',
     'ValueProvider',
-    'SingletonProvider',
     'FactoryProvider',
     'ExistingProvider',
     'Scope',
+    # lifecycle hook protocols
+    'OnModuleInit',
+    'OnApplicationBootstrap',
 ]

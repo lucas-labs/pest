@@ -98,17 +98,16 @@ def test_pest_functional_middleware_cb() -> None:
         return response
 
     app = Pest.create(AppModule, middleware=[pest_middleware])
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_1 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_1 = response.headers['X-Process-Time']
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_2 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_2 = response.headers['X-Process-Time']
-
-    assert time_1 != time_2
+        assert time_1 != time_2
 
 
 def test_pest_functional_middleware_cb_with_di():
@@ -127,17 +126,17 @@ def test_pest_functional_middleware_cb_with_di():
         return response
 
     app = Pest.create(AppModule, middleware=[pest_middleware])
-    client = TestClient(app)
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_1 = response.headers['X-Request-Id']
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_1 = response.headers['X-Request-Id']
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_2 = response.headers['X-Request-Id']
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_2 = response.headers['X-Request-Id']
 
-    assert id_1 != id_2
+        assert id_1 != id_2
 
 
 def test_pest_class_based_middleware_cb() -> None:
@@ -150,17 +149,16 @@ def test_pest_class_based_middleware_cb() -> None:
             return response
 
     app = Pest.create(AppModule, middleware=[MiddlewareCallback])
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_1 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_1 = response.headers['X-Process-Time']
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_2 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_2 = response.headers['X-Process-Time']
-
-    assert time_1 != time_2
+        assert time_1 != time_2
 
 
 def test_pest_class_based_middleware_with_di() -> None:
@@ -175,17 +173,16 @@ def test_pest_class_based_middleware_with_di() -> None:
             return response
 
     app = Pest.create(AppModule, middleware=[MiddlewareCallback])
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_1 = response.headers['X-Request-Id']
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_1 = response.headers['X-Request-Id']
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_2 = response.headers['X-Request-Id']
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_2 = response.headers['X-Request-Id']
-
-    assert id_1 != id_2
+        assert id_1 != id_2
 
 
 def test_pest_class_middleware() -> None:
@@ -200,17 +197,16 @@ def test_pest_class_middleware() -> None:
     assert issubclass(Middlware, PestMiddleware)
 
     app = Pest.create(AppModule, middleware=[Middlware])
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_1 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_1 = response.headers['X-Process-Time']
+        response = client.get('/todo')
+        assert 'X-Process-Time' in response.headers
+        time_2 = response.headers['X-Process-Time']
 
-    response = client.get('/todo')
-    assert 'X-Process-Time' in response.headers
-    time_2 = response.headers['X-Process-Time']
-
-    assert time_1 != time_2
+        assert time_1 != time_2
 
 
 def test_pest_class_middleware_with_di() -> None:
@@ -229,17 +225,16 @@ def test_pest_class_middleware_with_di() -> None:
     assert issubclass(Middlware, PestMiddleware)
 
     app = Pest.create(AppModule, middleware=[Middlware])
-    client = TestClient(app)
+    with TestClient(app) as client:
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_1 = response.headers['X-Request-Id']
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_1 = response.headers['X-Request-Id']
+        response = client.get('/todo')
+        assert 'X-Request-Id' in response.headers
+        id_2 = response.headers['X-Request-Id']
 
-    response = client.get('/todo')
-    assert 'X-Request-Id' in response.headers
-    id_2 = response.headers['X-Request-Id']
-
-    assert id_1 != id_2
+        assert id_1 != id_2
 
 
 def test_app_params_path_as_var(fastapi_params_app):

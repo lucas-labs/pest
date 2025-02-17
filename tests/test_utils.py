@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import pytest
+
 from pest.core.module import setup_module as _setup_module
 from pest.exceptions.http.http import exc_response
 from pest.metadata.meta import get_meta, get_meta_value
@@ -26,9 +28,10 @@ def test_colorize_no_color_option():
     assert colored == '🤠 > Howdy, Cowboy!'
 
 
-def test_module_tree_generation():
+@pytest.mark.asyncio
+async def test_module_tree_generation():
     """🐀 utils :: module :: should generate a tree representation of a module"""
-    module = _setup_module(FooModule)
+    module = await _setup_module(FooModule)
 
     tree = as_tree(module)
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
-from typing import Union
+from typing import Any, Coroutine, Protocol, Union, runtime_checkable
 
 from ...utils.functions import classproperty
 
@@ -23,6 +23,40 @@ class PestPrimitive(ABC):
     def __pest_object_type__(cls) -> PestType:
         """🐀 ⇝ returns the type of pest object"""
         ...
+
+
+@runtime_checkable
+class OnModuleInit(Protocol):
+    """🐀 ⇝ on module init protocol
+
+    Protocol defining an `on_module_init` method that is called once the host module's dependencies
+    have been resolved
+    """
+
+    def on_module_init(self) -> Union[None, Coroutine[Any, Any, None]]:
+        """🐀 ⇝ on module init
+
+        called during the initialization of the module, once the host module's dependencies have
+        been resolved
+        """
+        pass
+
+
+@runtime_checkable
+class OnApplicationBootstrap(Protocol):
+    """🐀 ⇝ on application bootstrap protocol
+
+    Protocol defining an `on_application_bootstrap` method that is called during the application's
+    bootstrap phase, once all modules have been initialized, but before listening for connections.
+    """
+
+    def on_application_bootstrap(self) -> Union[None, Coroutine[Any, Any, None]]:
+        """🐀 ⇝ on application bootstrap
+
+        called during the application's bootstrap phase, once all modules have been initialized,
+        but before listening for connections.
+        """
+        pass
 
 
 def is_primitive(clazz: Union[type, object]) -> TypeGuard[PestPrimitive]:
