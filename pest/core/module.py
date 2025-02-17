@@ -1,4 +1,16 @@
-from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from dij import ActivationScope, Container, ServiceLifeStyle
 from fastapi import APIRouter
@@ -19,6 +31,9 @@ from ..utils.functions import classproperty, maybe_coro
 from .common import OnApplicationBootstrap, OnModuleInit, PestPrimitive
 from .controller import Controller, router_of, setup_controller
 from .types.status import Status
+
+if TYPE_CHECKING:
+    from .application import PestApplication
 
 
 def parent_of(module: 'Module') -> Optional['Module']:
@@ -119,7 +134,7 @@ async def _on_module_init(module: 'Module') -> None:
     await maybe_coro(module.on_module_init())
 
 
-async def _on_application_bootstrap(module: 'Module') -> None:
+async def _on_application_bootstrap(module: 'Module', app: 'PestApplication') -> None:
     """
     executes the `on_application_bootstrap` lifecycle hook for a module, which includes:
     - calling the lifecycle hooks of the module's providers
@@ -134,7 +149,7 @@ async def _on_application_bootstrap(module: 'Module') -> None:
         return
 
     for child in module.imports:
-        await _on_application_bootstrap(child)
+        await _on_application_bootstrap(child, app)
 
     for provider in module.providers:
         # if the provider's scope is singleton/value, we check if the provider has lifecycle
@@ -145,15 +160,15 @@ async def _on_application_bootstrap(module: 'Module') -> None:
             # resolve the provider and try to call the lifecycle hooks
             resolved = module.get(provider.provide)
             if isinstance(resolved, OnApplicationBootstrap):
-                await maybe_coro(resolved.on_application_bootstrap())
+                await maybe_coro(resolved.on_application_bootstrap(app))
 
     for controller in module.controllers:
         resolved = await maybe_coro(module.aget(cast(Type[Controller], controller)))
         if isinstance(resolved, OnApplicationBootstrap):
-            await maybe_coro(resolved.on_application_bootstrap())
+            await maybe_coro(resolved.on_application_bootstrap(app))
 
     # and finally, ourselves
-    await maybe_coro(module.on_application_bootstrap())
+    await maybe_coro(module.on_application_bootstrap(app))
 
 
 def _create_factory_resolver(provider: InjectionToken, module: 'Module') -> Any:
@@ -279,6 +294,10 @@ class Module(PestPrimitive, OnModuleInit, OnApplicationBootstrap):
         if token in self.__imported__providers__ or token in self.container:
             return True
         return False
+
+    def __iter__(self) -> Iterator[InjectionToken]:
+        for provider, _ in self.container:
+            yield provider
 
     def get(
         self, token: InjectionToken[T], scope: Union[ActivationScope, None] = None, **kwargs: Any

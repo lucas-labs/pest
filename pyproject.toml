@@ -43,6 +43,7 @@ dependencies = [
 
 [project.optional-dependencies]
 logs = ["loguru>=0.7.0,<0.8.0"]
+cron = ["croniter>=6.0.0,<7.0.0"]
 
 [project.urls]
 homepage = "https://pest.lucode.dev"

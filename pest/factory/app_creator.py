@@ -51,7 +51,7 @@ def app_lifespan(
         log.debug(f'{app.title} initialized: \n{app}')
 
         # trigger the on_application_bootstrap lifecycle hooks on the module tree
-        await _on_application_bootstrap(module_tree)
+        await _on_application_bootstrap(module_tree, app)
 
         yield
 

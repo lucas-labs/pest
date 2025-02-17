@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
-from typing import Any, Coroutine, Protocol, Union, runtime_checkable
+from typing import TYPE_CHECKING, Any, Coroutine, Protocol, Union, runtime_checkable
 
 from ...utils.functions import classproperty
 
@@ -14,6 +14,9 @@ from pest.metadata.types._meta import PestType
 from ...exceptions.base.pest import PestException
 from ..types.status import Status
 
+if TYPE_CHECKING:
+    from ..application import PestApplication
+
 
 class PestPrimitive(ABC):
     __class_status__: Status = Status.NOT_SETUP
@@ -23,6 +26,9 @@ class PestPrimitive(ABC):
     def __pest_object_type__(cls) -> PestType:
         """🐀 ⇝ returns the type of pest object"""
         ...
+
+
+# TODO: OnApplicationShutdown hook
 
 
 @runtime_checkable
@@ -50,7 +56,9 @@ class OnApplicationBootstrap(Protocol):
     bootstrap phase, once all modules have been initialized, but before listening for connections.
     """
 
-    def on_application_bootstrap(self) -> Union[None, Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(
+        self, app: 'PestApplication'
+    ) -> Union[None, Coroutine[Any, Any, None]]:
         """🐀 ⇝ on application bootstrap
 
         called during the application's bootstrap phase, once all modules have been initialized,

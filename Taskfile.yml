@@ -12,8 +12,10 @@ tasks:
       - "{{.TOOL}} generator:types"
     sources:
       - pest/metadata/types/*.py
+      - pest/tasks/decorators/types/*.py
     generates:
       - pest/decorators/dicts/*.py
+      - pest/tasks/decorators/types/dicts/*.py
 
   fmt:check:
     aliases: [fmt]

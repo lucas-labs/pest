@@ -10,12 +10,22 @@ from typing import List, Tuple
 from pest.metadata.types.controller_meta import ControllerMeta
 from pest.metadata.types.handler_meta import HandlerMeta
 from pest.metadata.types.module_meta import ModuleMeta
+from pest.schedule.decorators.types.cron_meta import CronMeta
 from pest.utils.colorize import c
 
-metas = [ModuleMeta, HandlerMeta, ControllerMeta]
-'''Metadata classes to generate typed dicts for.'''
+pest_decorators_dicts_path = os.path.join(os.getcwd(), 'pest', 'decorators', 'dicts')
+pest_task_decorators_types_dicts_path = os.path.join(
+    os.getcwd(), 'pest', 'schedule', 'decorators', 'types', 'dicts'
+)
 
-types_path = os.path.join(os.getcwd(), 'pest', 'decorators', 'dicts')
+metas = [
+    (ModuleMeta, pest_decorators_dicts_path),
+    (HandlerMeta, pest_decorators_dicts_path),
+    (ControllerMeta, pest_decorators_dicts_path),
+    (CronMeta, pest_task_decorators_types_dicts_path),
+    # (SchedulerMeta, pest_task_decorators_types_dicts_path),
+]
+
 
 if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -210,14 +220,13 @@ def write_file(
 
 def types() -> None:
     print(
-        f'🐀 ⇝  Generating {c("`TypeDict`", attrs=["bold"])} '
-        f'for {c("`Metas`", attrs=["bold"])} in {c(relcwd(types_path), color="blue")}\n'
+        f'🐀 ⇝  Generating {c("`TypeDict`", attrs=["bold"])} for {c("`Metas`", attrs=["bold"])}\n'
     )
 
-    # create the types directory if it doesn't exist
-    pathlib.Path(types_path).mkdir(parents=True, exist_ok=True)
+    for meta, types_path in metas:
+        # create the types directory if it doesn't exist
+        pathlib.Path(types_path).mkdir(parents=True, exist_ok=True)
 
-    for meta in metas:
         meta_name = str(meta.__name__)
         type_dict_class_name = f'{meta_name}Dict'
 
@@ -238,30 +247,31 @@ def types() -> None:
         print('    ⚬ The module was generated')
 
         # lint the new file using ruff
-        command = f'poetry run ruff {typed_dict_path} --fix'
+        poetry_commands = [
+            ('linting', 'poetry', f'run ruff check {typed_dict_path} --fix'),
+            ('formatting', 'poetry', f'run ruff format {typed_dict_path}'),
+        ]
 
-        print(f'{" " * 4}⚬ Linting')
-        print(
-            f'{" " * 4}⚬ {c("$", color="yellow")} {c("poetry", color="yellow", attrs=["bold"])} '
-            f'run ruff '
-            f'{c("--fix", attrs=["dark"])}'
-        )
-        try:
-            subprocess.run(command, check=True, capture_output=True)  # noqa: S603
-        except subprocess.CalledProcessError as e:
-            msg = ' | '.join(str(e.output.decode('utf-8')).rstrip('\n').split('\n'))
+        for action, command, args in poetry_commands:
             print(
-                f'{" " * 4}{c("Err", color="red", attrs=["bold"])} '
-                f'while linting {c(relcwd(typed_dict_path), color="blue")} '
-                f'with {c("ruff", color="yellow")}\n\n'
-                f'{" " * 4}{c(msg, color="red")}'
+                f'{" " * 4}⚬ {c("$", color="yellow")} {c(command, color="yellow", attrs=["bold"])} '
+                f'{args}'
             )
+            try:
+                subprocess.run(f'{command} {args}', check=True, capture_output=True)  # noqa: S603
+            except subprocess.CalledProcessError as e:
+                msg = ' | '.join(str(e.output.decode('utf-8')).rstrip('\n').split('\n'))
+                print(
+                    f'{" " * 4}{c("Err", color="red", attrs=["bold"])} '
+                    f'while {action} {c(relcwd(typed_dict_path), color="blue")} '
+                    f'with {c("ruff", color="yellow")}\n\n'
+                    f'{" " * 4}{c(msg, color="red")}'
+                )
 
         print()
 
     print(
-        f'\n🐀 ⇝  {c("`TypeDict`", attrs=["bold"])} '
-        f'generation {c("completed", color="green")}\n',
+        f'\n🐀 ⇝  {c("`TypeDict`", attrs=["bold"])} generation {c("completed", color="green")}\n',
     )
 
 
