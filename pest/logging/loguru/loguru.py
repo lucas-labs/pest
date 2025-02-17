@@ -24,7 +24,7 @@ except ImportError as e:  # noqa: F841
         'Failed to import loguru',
         hint=(
             'Install `loguru` to use logging configuration '
-            'system: `pip install pest[loguru]`, `poetry add pest[loguru]` '
+            'system: `pip install pest-py[loguru]`, `poetry add pest-py[loguru]` '
             'or just `pip install loguru` or `poetry add loguru`'
         ),
     )
@@ -186,7 +186,7 @@ class Loguru:
             diagnose=diagnose,
             format=fmt_func,
             level=level,
-            filter=lambda record: ((True if access_log else no_access(record))),
+            filter=lambda record: (True if access_log else no_access(record)),
         )
 
         for sink in sinks:
