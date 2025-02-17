@@ -114,6 +114,9 @@ class PestApplication(FastAPI):
     def can_provide(self, token: InjectionToken[T]) -> bool:
         return root_module(self).can_provide(token)
 
+    def provides(self) -> List[InjectionToken]:
+        return list(root_module(self))
+
     def add_api_route(
         self,
         path: str,

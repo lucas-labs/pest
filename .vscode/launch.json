@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
@@ -14,7 +14,7 @@
         },
         {
             "name": "FastAPI: Example",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "args": [
@@ -24,8 +24,8 @@
             "justMyCode": false
         },
         {
-            "name": "FastAPI: Example2",
-            "type": "python",
+            "name": "FastAPI: Example Auth",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "args": [
@@ -35,8 +35,19 @@
             "justMyCode": false
         },
         {
+            "name": "FastAPI: Example Scheduler",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "examples.scheduler.main:app",
+                "--reload",
+            ],
+            "justMyCode": false
+        },
+        {
             "name": "FastAPI: Test",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "args": [
@@ -47,7 +58,7 @@
         },
         {
             "name": "Python: Debug Tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "purpose": ["debug-test"],
