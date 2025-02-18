@@ -23,7 +23,9 @@ class CronMeta(ScheduleMeta):
     )
     cron_time: str = field(metadata={'expose': False})
     '''🐀 ⇝ cron time string'''
-    name: Union[str, None]
+    max_repetitions: Union[int, None] = field(default=None)
+    '''🐀 ⇝ maximum number of repetitions'''
+    name: Union[str, None] = field(default=None)
     '''🐀 ⇝ name of the cron job'''
 
 
