@@ -28,7 +28,7 @@ class FooController(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooController.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooController.on_application_bootstrap')
 
     @get('/')
@@ -40,7 +40,7 @@ class FooService(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooService.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('FooService.on_application_bootstrap')
 
 
@@ -52,7 +52,7 @@ class AppModule(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('AppModule.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('AppModule.on_application_bootstrap')
 
 
@@ -61,7 +61,7 @@ class BarController(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarController.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarController.on_application_bootstrap')
 
     @get('/')
@@ -73,7 +73,7 @@ class BarService(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarService.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('BarService.on_application_bootstrap')
 
 
@@ -86,7 +86,7 @@ class ChildModule(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('ChildModule.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('ChildModule.on_application_bootstrap')
 
 
@@ -99,7 +99,7 @@ class RootModule(OnModuleInit, OnApplicationBootstrap):
     def on_module_init(self) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('RootModule.on_module_init')
 
-    def on_application_bootstrap(self) -> Optional[Coroutine[Any, Any, None]]:
+    def on_application_bootstrap(self, app) -> Optional[Coroutine[Any, Any, None]]:
         LIFECYCLE_CALLS.append('RootModule.on_application_bootstrap')
 
 
@@ -190,7 +190,7 @@ async def test_async_lifecycle_hooks() -> None:
         async def on_module_init(self) -> None:
             LIFECYCLE_CALLS.append('AsyncController.on_module_init')
 
-        async def on_application_bootstrap(self) -> None:
+        async def on_application_bootstrap(self, app) -> None:
             LIFECYCLE_CALLS.append('AsyncController.on_application_bootstrap')
 
         @get('/')
@@ -201,7 +201,7 @@ async def test_async_lifecycle_hooks() -> None:
         async def on_module_init(self) -> None:
             LIFECYCLE_CALLS.append('AsyncService.on_module_init')
 
-        async def on_application_bootstrap(self) -> None:
+        async def on_application_bootstrap(self, app) -> None:
             LIFECYCLE_CALLS.append('AsyncService.on_application_bootstrap')
 
     @module(
@@ -212,7 +212,7 @@ async def test_async_lifecycle_hooks() -> None:
         async def on_module_init(self) -> None:
             LIFECYCLE_CALLS.append('AsyncModule.on_module_init')
 
-        async def on_application_bootstrap(self) -> None:
+        async def on_application_bootstrap(self, app) -> None:
             LIFECYCLE_CALLS.append('AsyncModule.on_application_bootstrap')
 
     app = Pest.create(root_module=AsyncModule)
