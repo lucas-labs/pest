@@ -107,14 +107,16 @@ class SchedulerExplorer(OnApplicationBootstrap):
     ) -> Optional[Coroutine[Any, Any, None]]:
         for token in app.provides():
             # check if it's a scheduler
-            meta = get_meta(token, raise_error=False, output_type=SchedulerMeta)
-            if meta is not None and meta.meta_type == SchedulerType.SCHEDULER:
+            sched_meta = get_meta(token, raise_error=False, output_type=SchedulerMeta)
+            if sched_meta is not None and sched_meta.meta_type == SchedulerType.SCHEDULER:
                 # we found a scheduler, now let's loop over its methods to find
                 # which ones has a CronMeta
                 scheduler = app.resolve(token)
 
-                for job, meta in jobs_in(token):
-                    repeateable = repeat_at(cron=meta.cron_time)(job)
+                for job, cron_meta in jobs_in(token):
+                    repeateable = repeat_at(
+                        cron=cron_meta.cron_time, max_repetitions=cron_meta.max_repetitions
+                    )(job)
                     # calls the decorator to repeat the function at the specified time
                     repeateable(scheduler)
 

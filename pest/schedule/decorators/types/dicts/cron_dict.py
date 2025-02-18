@@ -11,5 +11,8 @@ from typing import TypedDict, Union
 
 
 class CronMetaDict(TypedDict, total=False):
+    max_repetitions: Union[int, None]
+    '''🐀 ⇝ maximum number of repetitions'''
+
     name: Union[str, None]
     '''🐀 ⇝ name of the cron job'''
