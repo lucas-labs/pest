@@ -8,6 +8,7 @@ def tests(session: Session) -> None:
         'colorama',
         'pytest-cov',
         'loguru',
+        'croniter',
         'pytest',
         'httpx',
         'pytest-asyncio',
