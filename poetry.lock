@@ -1113,4 +1113,4 @@ logs = ["loguru"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "a4669a3ea091a54ed9518729a247758265643aed290e63123c015a649705bc4c"
+content-hash = "53ce657b59767975ee68ce52ffe28aded395ce3b18f2b8a07b53aa803d7e9074"
