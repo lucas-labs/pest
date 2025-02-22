@@ -121,7 +121,7 @@ async def _on_module_init(module: 'Module') -> None:
             hasattr(provider, 'scope') and provider.scope == ServiceLifeStyle.SINGLETON
         ):
             # resolve the provider and try to call the lifecycle hooks
-            resolved = module.get(provider.provide)
+            resolved = await module.aget(provider.provide)
             if isinstance(resolved, OnModuleInit):
                 await maybe_coro(resolved.on_module_init())
 
