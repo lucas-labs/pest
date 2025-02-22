@@ -108,7 +108,10 @@ class SchedulerExplorer(OnApplicationBootstrap):
         for token in app.provides():
             # check if it's a scheduler
             sched_meta = get_meta(token, raise_error=False, output_type=SchedulerMeta)
-            if sched_meta is not None and sched_meta.meta_type == SchedulerType.SCHEDULER:
+            if (
+                sched_meta is not None
+                and getattr(sched_meta, 'meta_type', None) == SchedulerType.SCHEDULER
+            ):
                 # we found a scheduler, now let's loop over its methods to find
                 # which ones has a CronMeta
                 scheduler = app.resolve(token)
