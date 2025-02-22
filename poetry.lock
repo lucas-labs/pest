@@ -362,14 +362,14 @@ cli = ["tomli"]
 
 [[package]]
 name = "dij"
-version = "0.0.3"
+version = "0.0.4"
 description = "💉 dij » dependency dijection library"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "dij-0.0.3-py3-none-any.whl", hash = "sha256:9b136be350483cf09abe09891c494f2838f1d84538de9d1cf0375b456545b4df"},
-    {file = "dij-0.0.3.tar.gz", hash = "sha256:e6820490c4317652a423167d0f9b8cfb47a31e113ef724bb45ca78e30c2722cf"},
+    {file = "dij-0.0.4-py3-none-any.whl", hash = "sha256:643d46296855072512efd5d2a848a253bbe33100fef8113e212114c053853cb8"},
+    {file = "dij-0.0.4.tar.gz", hash = "sha256:8b6fc5a7fa614eaac49780abd07543249b182d561b7733274278e975528514bf"},
 ]
 
 [package.dependencies]
@@ -1113,4 +1113,4 @@ logs = ["loguru"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "53ce657b59767975ee68ce52ffe28aded395ce3b18f2b8a07b53aa803d7e9074"
+content-hash = "a44c42447c7bbc933dab5cd98bcb5b36521c1b119bcec94ac0f8c7991d19cd8e"

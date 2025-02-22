@@ -38,7 +38,7 @@ dependencies = [
     "fastapi>=0.115.3, <0.116.0",
     "pydantic>=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0",
     "typing-extensions>=4.8.0",
-    "dij==0.0.3",
+    "dij>=0.0.4,<0.1.0",
 ]
 
 [project.optional-dependencies]
