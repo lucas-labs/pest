@@ -1,6 +1,6 @@
 [project]
 name = "pest-py"
-version = "0.5.1"
+version = "0.5.2"
 description = "🐀 ⇝ pest › fastapi + rodi + mvc | python library for building scalable modular API's. Inspired by NestJS."
 readme = "README.md"
 license = { text = "MIT" }
