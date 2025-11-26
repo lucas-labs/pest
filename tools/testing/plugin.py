@@ -93,6 +93,15 @@ def summary_warnings(self: TerminalReporter) -> None:
             self._tw.line()
 
 
+def get_start_time(reporter: TerminalReporter) -> float:
+    if hasattr(reporter, '_sessionstarttime'):
+        return getattr(reporter, '_sessionstarttime')
+    elif hasattr(reporter, '_session_start'):
+        return getattr(reporter._session_start, 'time', timing.time())
+    else:
+        return timing.time()
+
+
 def summary_stats(self: TerminalReporter) -> None:
     if self.verbosity < -1:
         return
@@ -100,7 +109,7 @@ def summary_stats(self: TerminalReporter) -> None:
     self.write('\nSummary\n', purple=True, bold=True)
     self.write_sep('-', None, purple=True, bold=True)
 
-    session_duration = timing.time() - self._sessionstarttime
+    session_duration = timing.time() - get_start_time(self)
     (parts, main_color) = self.build_summary_stats_line()
     line_parts = []
 

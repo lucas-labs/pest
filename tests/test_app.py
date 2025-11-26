@@ -90,24 +90,27 @@ def test_fastapi_handlers(app_n_client) -> None:
 
 
 def test_pest_functional_middleware_cb() -> None:
-    """🐀 app :: middleware :: should execute middleware on each reaquest"""
+    """🐀 app :: middleware :: should execute middleware on each request"""
+    call_count = 0
 
     async def pest_middleware(request: Request, call_next: CallNext) -> Response:
+        nonlocal call_count
+        call_count += 1
         response = await call_next(request)
-        response.headers['X-Process-Time'] = datetime.now().isoformat()
+        response.headers['X-Call-Count'] = str(call_count)
         return response
 
     app = Pest.create(AppModule, middleware=[pest_middleware])
     with TestClient(app) as client:
         response = client.get('/todo')
-        assert 'X-Process-Time' in response.headers
-        time_1 = response.headers['X-Process-Time']
+        assert 'X-Call-Count' in response.headers
+        assert response.headers['X-Call-Count'] == '1'
 
         response = client.get('/todo')
-        assert 'X-Process-Time' in response.headers
-        time_2 = response.headers['X-Process-Time']
+        assert 'X-Call-Count' in response.headers
+        assert response.headers['X-Call-Count'] == '2'
 
-        assert time_1 != time_2
+        assert call_count == 2
 
 
 def test_pest_functional_middleware_cb_with_di():
