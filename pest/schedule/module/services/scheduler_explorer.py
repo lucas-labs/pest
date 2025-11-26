@@ -1,7 +1,7 @@
-from asyncio import ensure_future, iscoroutinefunction, sleep
+from asyncio import ensure_future, sleep
 from datetime import datetime
 from functools import wraps
-from inspect import getmembers, isfunction
+from inspect import getmembers, iscoroutinefunction, isfunction
 from typing import Any, Callable, Coroutine, List, Optional, Tuple
 
 from fastapi.concurrency import run_in_threadpool

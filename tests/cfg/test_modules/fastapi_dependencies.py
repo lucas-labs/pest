@@ -51,7 +51,8 @@ class AuthGuard:
         return user
 
 
-def get_me(request: Request, response: Response) -> User:
+def get_current_user(request: Request, response: Response) -> User:
+    """Dependency function to get current user from request headers."""
     response.headers['X-User-Id'] = '1'
     # try:
     return decode_token(request.headers['Authorization'].split(' ')[1])
@@ -67,7 +68,7 @@ class UsersController:
         return [{'email': 'qwert@fake.com'}, {'email': 'asdfg@hjkl.com'}]
 
     @get('/me')
-    def get_me(self, user: Annotated[User, Depends(get_me)]):
+    def get_me(self, user: Annotated[User, Depends(get_current_user)]):
         assert isinstance(user, User)
         return user
 
