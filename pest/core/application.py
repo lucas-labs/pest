@@ -22,6 +22,7 @@ from dij import ActivationScope
 from fastapi import FastAPI, Response, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
+from fastapi.middleware.asyncexitstack import AsyncExitStackMiddleware
 from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.types import DecoratedCallable, IncEx
@@ -280,7 +281,10 @@ class PestApplication(FastAPI):
             [Middleware(ServerErrorMiddleware, handler=error_handler, debug=debug)]
             + di_scope_mw  # <--- this is the only difference
             + self.user_middleware
-            + [Middleware(ExceptionMiddleware, handlers=exception_handlers, debug=debug)]
+            + [
+                Middleware(ExceptionMiddleware, handlers=exception_handlers, debug=debug),
+                Middleware(AsyncExitStackMiddleware),
+            ]
         )
 
         app = self.router
