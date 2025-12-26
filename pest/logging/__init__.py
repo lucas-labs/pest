@@ -98,3 +98,5 @@ class LoggingOptions(TypedDict, total=False):
     `False` (the default) is recommended for production environments, to avoid leaking sensitive
     data..
     '''
+    serialize: bool
+    '''Whether to serialize logs as JSON'''
