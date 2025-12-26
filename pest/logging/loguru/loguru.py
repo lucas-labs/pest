@@ -103,6 +103,7 @@ class Loguru:
         sinks = options.get('sinks', [])
         colorize = options.get('force_colorize', None)
         diagnose = options.get('diagnose', False)
+        serialize = options.get('serialize', False)
 
         # if a format string is provided, we replace the default
         if type(fmt) is str:
@@ -110,7 +111,7 @@ class Loguru:
 
         cls.__config_standard_interception(intercept, verbose)
         cls.__configure_shush(shush)
-        cls.__config_sinks(sinks, level, access_log, fmt, colorize, diagnose)
+        cls.__config_sinks(sinks, level, access_log, fmt, colorize, diagnose, serialize)
 
     @classmethod
     def __config_standard_interception(
@@ -175,6 +176,7 @@ class Loguru:
         fmt: Union[str, Callable[[loguru.Record], str], None],
         colorize: bool | None = None,
         diagnose: bool = False,
+        serialize: bool = False,
     ) -> None:
         """configures loguru sinks (handlers)"""
         fmt_func = fmt if callable(fmt) else format_record
@@ -185,6 +187,7 @@ class Loguru:
             colorize=colorize,
             diagnose=diagnose,
             format=fmt_func,
+            serialize=serialize,
             level=level,
             filter=lambda record: (True if access_log else no_access(record)),
         )

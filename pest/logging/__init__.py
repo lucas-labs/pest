@@ -98,3 +98,10 @@ class LoggingOptions(TypedDict, total=False):
     `False` (the default) is recommended for production environments, to avoid leaking sensitive
     data..
     '''
+    serialize: bool
+    '''
+    Whether to serialize logs from the default stdout sink as JSON.
+    When enabled, logs are output using loguru's JSON format and the `format` option is ignored
+    for this JSON output. Custom sinks configured via `sinks` can specify their own `serialize`
+    behavior independently.
+    '''
