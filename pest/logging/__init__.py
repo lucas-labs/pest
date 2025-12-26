@@ -99,4 +99,9 @@ class LoggingOptions(TypedDict, total=False):
     data..
     '''
     serialize: bool
-    '''Whether to serialize logs as JSON'''
+    '''
+    Whether to serialize logs from the default stdout sink as JSON.
+    When enabled, logs are output using loguru's JSON format and the `format` option is ignored
+    for this JSON output. Custom sinks configured via `sinks` can specify their own `serialize`
+    behavior independently.
+    '''
